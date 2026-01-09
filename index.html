@@ -4,155 +4,207 @@
   <meta charset="UTF-8">
   <title>Pharmacy SOP Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Materialize CSS (Material Design) -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- Custom Overrides -->
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="grey lighten-4">
 
-<header>
-  <h1>Pharmacy SOP Generator</h1>
-</header>
+<nav class="blue darken-2">
+  <div class="nav-wrapper container">
+    <span class="brand-logo">Pharmacy SOP Generator</span>
+  </div>
+</nav>
 
-<main class="container">
-  <section class="input-section">
-    <!-- MODE -->
-    <div class="card mode-card">
-      <h2>Select Mode</h2>
-      <div class="radio-group">
-        <label for="mode-beginner">
-          <input type="radio" id="mode-beginner" name="mode" value="beginner" checked>
-          Beginner <small>(Simplified for learning)</small>
+<div class="container section">
+
+  <!-- MODE -->
+  <div class="card">
+    <div class="card-content">
+      <span class="card-title">SOP Mode</span>
+      <p>
+        <label>
+          <input name="mode" type="radio" value="beginner" checked />
+          <span>Beginner</span>
         </label>
-        <label for="mode-expert">
-          <input type="radio" id="mode-expert" name="mode" value="expert">
-          Expert <small>(Formal for inspections)</small>
+        &nbsp;&nbsp;
+        <label>
+          <input name="mode" type="radio" value="expert" />
+          <span>Expert</span>
         </label>
-        <label for="mode-custom">
-          <input type="radio" id="mode-custom" name="mode" value="custom">
-          Custom <small>(Fully editable)</small>
+        &nbsp;&nbsp;
+        <label>
+          <input name="mode" type="radio" value="custom" />
+          <span>Custom</span>
         </label>
-      </div>
-    </div>
-
-    <!-- INSTITUTE -->
-    <div class="card">
-      <h3>Institute Details</h3>
-      <label for="instName">Institute / College Name <small>(Required)</small></label>
-      <input id="instName" placeholder="Institute / College Name" required>
-
-      <label for="instDept">Department <small>(e.g., Pharmaceutics)</small></label>
-      <input id="instDept" placeholder="Department">
-    </div>
-
-    <!-- PREDEFINED SOP -->
-    <div id="predefinedBox" class="card">
-      <h3>Predefined SOP</h3>
-      <label for="sopSelect">Select SOP <small>(Choose from available templates)</small></label>
-      <select id="sopSelect"></select>
-    </div>
-
-    <!-- CUSTOM SOP -->
-    <div id="customBox" class="card hidden">
-      <h3>Custom SOP</h3>
-      <label for="customTitle">SOP Title <small>(Required for custom mode)</small></label>
-      <input id="customTitle" placeholder="SOP Title" required>
-    </div>
-
-    <!-- SECTIONS -->
-    <div class="card">
-      <h3>SOP Sections</h3>
-      <p><small>Toggle sections to include/exclude them. Enter details below.</small></p>
-
-      <div class="section-group">
-        <label for="purpose">
-          <input type="checkbox" id="purpose-checkbox" data-sec="purpose" checked>
-          Purpose
-        </label>
-        <textarea id="purpose" placeholder="Describe the purpose of the SOP"></textarea>
-      </div>
-
-      <div class="section-group">
-        <label for="scope">
-          <input type="checkbox" id="scope-checkbox" data-sec="scope" checked>
-          Scope
-        </label>
-        <textarea id="scope" placeholder="Define the scope of application"></textarea>
-      </div>
-
-      <div class="section-group">
-        <label for="responsibility">
-          <input type="checkbox" id="responsibility-checkbox" data-sec="responsibility" checked>
-          Responsibility
-        </label>
-        <textarea id="responsibility" placeholder="Who is responsible? (e.g., Lab In-charge)"></textarea>
-      </div>
-
-      <div class="section-group">
-        <label for="procedure">
-          <input type="checkbox" id="procedure-checkbox" data-sec="procedure" checked>
-          Procedure
-        </label>
-        <textarea id="procedure" placeholder="Enter each step on a new line for automatic numbering"></textarea>
-      </div>
-
-      <div class="section-group">
-        <label for="precautions">
-          <input type="checkbox" id="precautions-checkbox" data-sec="precautions" checked>
-          Precautions
-        </label>
-        <textarea id="precautions" placeholder="List safety precautions"></textarea>
-      </div>
-    </div>
-
-    <!-- AUTHORITIES -->
-    <div class="card">
-      <h3>Authorities</h3>
-      <p><small>Enter names and designations for sign-offs.</small></p>
-
-      <label for="preparedBy">Prepared By – Name</label>
-      <input id="preparedBy" placeholder="Name">
-
-      <label for="preparedDesig">Prepared By – Designation</label>
-      <input id="preparedDesig" placeholder="Designation">
-
-      <label for="checkedBy">Checked By – Name</label>
-      <input id="checkedBy" placeholder="Name">
-
-      <label for="checkedDesig">Checked By – Designation</label>
-      <input id="checkedDesig" placeholder="Designation">
-
-      <label for="approvedBy">Authorized By – Name</label>
-      <input id="approvedBy" placeholder="Name">
-
-      <label for="approvedDesig">Authorized By – Designation</label>
-      <input id="approvedDesig" placeholder="Designation">
-    </div>
-
-    <!-- ACTIONS -->
-    <div class="card actions-card">
-      <button onclick="copySOP()">Copy SOP to Clipboard <small>(Then paste in Word)</small></button>
-      <p class="copy-instructions">
-        Paste into Word using <b>Ctrl + V</b> (do not paste as plain text for formatting).
       </p>
-      <button onclick="window.print()">Print SOP</button>
     </div>
-  </section>
+  </div>
 
-  <section class="preview-section">
-    <!-- LIVE PREVIEW -->
-    <div class="card preview-card">
-      <h3>Live SOP Preview</h3>
-      <button class="toggle-format" onclick="toggleFormat()">Switch Format <small>(Inspection/Beginner)</small></button>
+  <!-- GRID START -->
+  <div class="row">
+
+    <!-- LEFT COLUMN -->
+    <div class="col s12 m6">
+
+      <!-- INSTITUTE -->
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Institute Details</span>
+
+          <div class="input-field">
+            <input id="instName" type="text">
+            <label for="instName">Institute / College Name</label>
+          </div>
+
+          <div class="input-field">
+            <input id="instDept" type="text">
+            <label for="instDept">Department</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOP -->
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">SOP Selection</span>
+          <select id="sopSelect"></select>
+        </div>
+      </div>
+
+      <!-- SECTIONS -->
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">SOP Sections</span>
+
+          <p>
+            <label>
+              <input type="checkbox" data-sec="purpose" checked />
+              <span>Purpose</span>
+            </label>
+          </p>
+          <div class="input-field">
+            <textarea id="purpose" class="materialize-textarea"></textarea>
+          </div>
+
+          <p>
+            <label>
+              <input type="checkbox" data-sec="scope" checked />
+              <span>Scope</span>
+            </label>
+          </p>
+          <div class="input-field">
+            <textarea id="scope" class="materialize-textarea"></textarea>
+          </div>
+
+          <p>
+            <label>
+              <input type="checkbox" data-sec="procedure" checked />
+              <span>Procedure (one step per line)</span>
+            </label>
+          </p>
+          <div class="input-field">
+            <textarea id="procedure" class="materialize-textarea"></textarea>
+          </div>
+
+          <p>
+            <label>
+              <input type="checkbox" data-sec="precautions" checked />
+              <span>Precautions</span>
+            </label>
+          </p>
+          <div class="input-field">
+            <textarea id="precautions" class="materialize-textarea"></textarea>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="col s12 m6">
+
+      <!-- AUTHORITIES -->
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Authorities</span>
+
+          <div class="input-field">
+            <input id="preparedBy" type="text">
+            <label for="preparedBy">Prepared By – Name</label>
+          </div>
+          <div class="input-field">
+            <input id="preparedDesig" type="text">
+            <label for="preparedDesig">Prepared By – Designation</label>
+          </div>
+
+          <div class="input-field">
+            <input id="checkedBy" type="text">
+            <label for="checkedBy">Checked By – Name</label>
+          </div>
+          <div class="input-field">
+            <input id="checkedDesig" type="text">
+            <label for="checkedDesig">Checked By – Designation</label>
+          </div>
+
+          <div class="input-field">
+            <input id="approvedBy" type="text">
+            <label for="approvedBy">Authorized By – Name</label>
+          </div>
+          <div class="input-field">
+            <input id="approvedDesig" type="text">
+            <label for="approvedDesig">Authorized By – Designation</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="card center-align">
+        <div class="card-content">
+          <a class="btn blue waves-effect waves-light" onclick="toggleFormat()">
+            <i class="material-icons left">swap_horiz</i>Switch SOP Format
+          </a>
+          <br><br>
+          <a class="btn green waves-effect waves-light" onclick="copySOP()">
+            <i class="material-icons left">content_copy</i>Select SOP for Word (Ctrl+C)
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="card">
+    <div class="card-content">
+      <span class="card-title">Live SOP Preview</span>
       <div id="preview"></div>
     </div>
-  </section>
-</main>
+  </div>
 
+</div>
+
+<!-- Materialize JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<!-- App Scripts -->
 <script src="js/utils.js"></script>
 <script src="js/modeController.js"></script>
 <script src="js/uiController.js"></script>
 <script src="js/sopEngine.js"></script>
 <script src="js/export.js"></script>
 <script src="js/app.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    M.AutoInit();
+  });
+</script>
 
 </body>
 </html>
