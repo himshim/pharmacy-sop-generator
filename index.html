@@ -1,111 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pharmacy SOP Generator</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Pharmacy SOP Generator</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Pharmacy SOP Generator</h1>
-        <p>Enter details for your SOP (Standard Operating Procedure) for instruments or procedures in pharmacy colleges. This tool aligns with NAAC, NBA, and ISO guidelines for quality assurance. Generate PDF or DOCX with one click.</p>
-        
-        <form id="sopForm">
-            <label for="template">Select Predefined Template:</label>
-            <select id="template">
-                <option value="">-- Custom SOP --</option>
-            </select>
-            
-            <label for="title">SOP Title (e.g., "Operation of HPLC Machine"):</label>
-            <input type="text" id="title" required>
-            
-            <label for="objectives">Objectives (aligned with institutional goals, e.g., OBE):</label>
-            <textarea id="objectives" required></textarea>
-            
-            <label for="purpose">Purpose:</label>
-            <textarea id="purpose" required></textarea>
-            
-            <label for="scope">Scope (e.g., Applicable to B.Pharm students):</label>
-            <textarea id="scope" required></textarea>
-            
-            <label for="responsibilities">Responsibilities (e.g., Lab Technician, Students):</label>
-            <textarea id="responsibilities" required></textarea>
-            
-            <label for="materials">Materials/Equipment Needed:</label>
-            <textarea id="materials"></textarea>
-            
-            <label for="procedure">Step-by-Step Procedure:</label>
-            <textarea id="procedure" required placeholder="1. Step one...\n2. Step two..."></textarea>
-            
-            <label for="safety">Safety Precautions:</label>
-            <textarea id="safety"></textarea>
-            
-            <label for="riskAssessment">Risk Assessment (e.g., hazards, mitigation per ISO/NBA):</label>
-            <textarea id="riskAssessment"></textarea>
-            
-            <label for="training">Training Requirements (e.g., for staff/students):</label>
-            <textarea id="training"></textarea>
-            
-            <label for="feedback">Feedback Mechanism (per NAAC IQAC):</label>
-            <textarea id="feedback"></textarea>
-            
-            <label for="monitoring">Monitoring/Audit (e.g., periodic reviews):</label>
-            <textarea id="monitoring"></textarea>
-            
-            <label for="revisionHistory">Revision History (e.g., version, date, changes):</label>
-            <textarea id="revisionHistory"></textarea>
-            
-            <label for="references">References (e.g., NAAC/NBA/ISO standards):</label>
-            <textarea id="references"></textarea>
-            
-            <h3>Approval Signatures (optional)</h3>
-            <label for="preparedName">Prepared by - Name:</label>
-            <input type="text" id="preparedName">
-            
-            <label for="preparedDesignation">Prepared by - Designation:</label>
-            <input type="text" id="preparedDesignation">
-            
-            <label for="checkedName">Checked by - Name:</label>
-            <input type="text" id="checkedName">
-            
-            <label for="checkedDesignation">Checked by - Designation:</label>
-            <input type="text" id="checkedDesignation">
-            
-            <label for="authorizedName">Authorized by - Name:</label>
-            <input type="text" id="authorizedName">
-            
-            <label for="authorizedDesignation">Authorized by - Designation:</label>
-            <input type="text" id="authorizedDesignation">
-            
-            <label for="design">SOP Design Format:</label>
-            <select id="design">
-                <option value="standard">Standard (Professional, Structured)</option>
-                <option value="modern">Modern (Clean, with Headers)</option>
-                <option value="minimalist">Minimalist (Simple, Compact)</option>
-            </select>
-            
-            <label for="logo">Upload Logo (optional, for header branding):</label>
-            <input type="file" id="logo" accept="image/*">
-            
-            <label for="format">Output Format:</label>
-            <select id="format">
-                <option value="pdf">PDF</option>
-                <option value="docx">DOCX</option>
-            </select>
-            
-            <button type="submit">Generate SOP</button>
-        </form>
-    </div>
-    
-    <div id="previewContainer" class="preview-container">
-        <h2>Live Preview</h2>
-        <div id="preview" class="preview"></div>
-    </div>
-    
-    <script src="script.js"></script>
+
+<h1>📄 Pharmacy SOP Generator</h1>
+
+<!-- MODE -->
+<div class="card">
+  <label><input type="radio" name="mode" value="beginner" checked> Beginner</label>
+  <label><input type="radio" name="mode" value="expert"> Expert</label>
+  <label><input type="radio" name="mode" value="custom"> Custom</label>
+</div>
+
+<!-- PREDEFINED MODE -->
+<div id="predefinedBox" class="card">
+  <label>Department</label>
+  <select id="departmentSelect"></select>
+
+  <label>Instrument SOP</label>
+  <select id="sopSelect"></select>
+</div>
+
+<!-- CUSTOM MODE -->
+<div id="customBox" class="card hidden">
+  <label>Title</label>
+  <input id="customTitle">
+
+  <label>Department</label>
+  <input id="customDept">
+</div>
+
+<!-- SECTIONS -->
+<div class="card">
+  <h3>Sections</h3>
+  <label><input type="checkbox" data-sec="purpose" checked> Purpose</label>
+  <label><input type="checkbox" data-sec="scope" checked> Scope</label>
+  <label><input type="checkbox" data-sec="responsibility" checked> Responsibility</label>
+  <label><input type="checkbox" data-sec="procedure" checked> Procedure</label>
+  <label><input type="checkbox" data-sec="precautions" checked> Precautions</label>
+  <label><input type="checkbox" data-sec="references"> References</label>
+</div>
+
+<button id="generateBtn">Generate SOP</button>
+
+<pre id="output"></pre>
+
+<script src="js/utils.js"></script>
+<script src="js/modeController.js"></script>
+<script src="js/sopEngine.js"></script>
+<script src="js/uiController.js"></script>
+<script src="js/app.js"></script>
+
 </body>
-  </html>
+</html>
