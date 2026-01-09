@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "id": "uv",
+    "title": "Operation of UV Spectrophotometer",
+    "department": "Pharmaceutics"
+  },
+  "sections": {
+    "purpose": "To describe the procedure for operating UV Spectrophotometer.",
+    "scope": "Applicable to teaching laboratories.",
+    "responsibility": "Lab in-charge and students.",
+    "procedure": [
+      "Switch ON the instrument.",
+      "Allow warm-up.",
+      "Set wavelength.",
+      "Measure sample."
+    ],
+    "precautions": "Avoid touching optical surfaces."
+  }
+}
