@@ -1,10 +1,10 @@
 /* ==================================================
-   SOP PREVIEW – WORD / INSPECTION GRADE
+   SOP PREVIEW – PROFESSIONAL WORD-LIKE FORMAT
    ================================================== */
 
 #preview {
   background: #ffffff;
-  max-width: 210mm;                 /* A4 width */
+  max-width: 210mm;
   margin: auto;
   padding: 35px 40px;
   font-family: "Times New Roman", Times, serif;
@@ -29,7 +29,7 @@
   font-weight: bold;
   margin: 6px 0 18px 0;
   text-transform: uppercase;
-  white-space: nowrap;   /* prevents breaking into multiple lines */
+  white-space: nowrap;
 }
 
 /* ---------- SECTION HEADINGS ---------- */
@@ -49,26 +49,7 @@
   text-align: justify;
 }
 
-/* ---------- METADATA TABLES ---------- */
-
-#preview table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 12px;
-  font-size: 11.5pt;
-}
-
-#preview table td {
-  padding: 6px 4px;
-  vertical-align: top;
-}
-
-/* signature table spacing */
-#preview table:last-of-type td {
-  padding-top: 24px;
-}
-
-/* ---------- DIVIDERS ---------- */
+/* ---------- DIVIDER ---------- */
 
 #preview hr {
   border: none;
@@ -76,19 +57,66 @@
   margin: 14px 0;
 }
 
-/* ---------- END OF SOP ---------- */
+/* ==================================================
+   SIGNATURE / APPROVAL BLOCK (IMPORTANT PART)
+   ================================================== */
+
+#preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 18px;
+  font-size: 11.5pt;
+}
+
+#preview table td {
+  vertical-align: top;
+  padding: 8px 10px;
+}
+
+/* Role title */
+#preview table td b {
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* Name line */
+#preview table td span {
+  display: inline-block;
+  min-width: 160px;
+  border-bottom: 1px solid #000;
+  padding-bottom: 2px;
+}
+
+/* Designation text */
+.signature-designation {
+  display: block;
+  font-size: 11pt;
+  margin-top: 4px;
+}
+
+/* Date line */
+.signature-date {
+  display: inline-block;
+  min-width: 100px;
+  border-bottom: 1px solid #000;
+  margin-left: 6px;
+}
+
+/* ==================================================
+   END OF SOP MARKER
+   ================================================== */
 
 #preview::after {
   content: "— End of SOP —";
   display: block;
   text-align: center;
-  margin-top: 28px;
+  margin-top: 30px;
   font-size: 11pt;
   font-style: italic;
 }
 
 /* ==================================================
-   PRINT CONTROL – DO NOT TOUCH LOGIC
+   PRINT CONTROL
    ================================================== */
 
 .no-print {
