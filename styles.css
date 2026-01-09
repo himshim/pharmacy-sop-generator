@@ -1,5 +1,5 @@
 /* ==================================================
-   SOP PREVIEW – PROFESSIONAL WORD-LIKE FORMAT
+   SOP PREVIEW – WORD / INSPECTION FORMAT
    ================================================== */
 
 #preview {
@@ -13,7 +13,7 @@
   color: #000;
 }
 
-/* ---------- MAIN HEADINGS ---------- */
+/* HEADINGS */
 
 #preview h2 {
   text-align: center;
@@ -29,82 +29,56 @@
   font-weight: bold;
   margin: 6px 0 18px 0;
   text-transform: uppercase;
-  white-space: nowrap;
 }
-
-/* ---------- SECTION HEADINGS ---------- */
 
 #preview h4 {
   font-size: 12pt;
   font-weight: bold;
   margin-top: 20px;
   margin-bottom: 6px;
-  text-transform: uppercase;
 }
 
-/* ---------- TEXT ---------- */
+/* TEXT */
 
 #preview p {
   margin: 4px 0 10px 0;
   text-align: justify;
 }
 
-/* ---------- DIVIDER ---------- */
-
-#preview hr {
-  border: none;
-  border-top: 1px solid #000;
-  margin: 14px 0;
-}
-
-/* ==================================================
-   SIGNATURE / APPROVAL BLOCK (IMPORTANT PART)
-   ================================================== */
+/* TABLES */
 
 #preview table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 18px;
-  font-size: 11.5pt;
+  margin-top: 14px;
 }
 
 #preview table td {
+  padding: 6px 8px;
   vertical-align: top;
-  padding: 8px 10px;
 }
 
-/* Role title */
-#preview table td b {
-  display: block;
-  margin-bottom: 6px;
-}
+/* SIGNATURES */
 
-/* Name line */
 #preview table td span {
   display: inline-block;
   min-width: 160px;
   border-bottom: 1px solid #000;
-  padding-bottom: 2px;
 }
 
-/* Designation text */
 .signature-designation {
   display: block;
   font-size: 11pt;
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
-/* Date line */
 .signature-date {
   display: inline-block;
-  min-width: 100px;
+  min-width: 120px;
   border-bottom: 1px solid #000;
-  margin-left: 6px;
 }
 
-/* ==================================================
-   END OF SOP MARKER
-   ================================================== */
+/* END MARKER */
 
 #preview::after {
   content: "— End of SOP —";
@@ -115,9 +89,7 @@
   font-style: italic;
 }
 
-/* ==================================================
-   PRINT CONTROL
-   ================================================== */
+/* PRINT CONTROL */
 
 .no-print {
   display: block;
@@ -138,16 +110,8 @@
     left: 0;
     top: 0;
     width: 100%;
-    padding: 0;
     margin: 0;
-  }
-
-  h4 {
-    page-break-after: avoid;
-  }
-
-  table {
-    page-break-inside: avoid;
+    padding: 0;
   }
 
   @page {
