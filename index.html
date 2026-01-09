@@ -5,13 +5,14 @@
   <title>Pharmacy SOP Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Materialize CSS only -->
+  <!-- Materialize CSS -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <!-- Alpine -->
+  <!-- Alpine.js -->
   <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
+  <!-- Custom Styles -->
   <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -50,6 +51,8 @@
   </div>
 
   <div class="row">
+
+    <!-- LEFT COLUMN -->
     <div class="col s12 m6">
 
       <!-- INSTITUTE -->
@@ -100,6 +103,7 @@
 
     </div>
 
+    <!-- RIGHT COLUMN -->
     <div class="col s12 m6">
 
       <!-- AUTHORITIES -->
@@ -135,51 +139,49 @@
 <div id="print-zone">
   <div id="preview">
 
-    <h4 style="text-align:center" x-text="institute.name"></h4>
-    <h5 style="text-align:center">STANDARD OPERATING PROCEDURE</h5>
+    <h2 x-text="institute.name"></h2>
+    <h3>STANDARD OPERATING PROCEDURE</h3>
 
     <table>
       <tr><td><b>Department</b></td><td x-text="institute.dept"></td></tr>
       <tr><td><b>SOP Title</b></td><td x-text="title"></td></tr>
     </table>
 
-    <h5>1.0 Purpose</h5>
+    <h4>1.0 Purpose</h4>
     <p x-text="sections.purpose"></p>
 
-    <h5>2.0 Scope</h5>
+    <h4>2.0 Scope</h4>
     <p x-text="sections.scope"></p>
 
-    <h5>3.0 Procedure</h5>
+    <h4>3.0 Procedure</h4>
     <template x-for="(p,i) in procedureList" :key="i">
       <p x-text="'3.'+(i+1)+' '+p"></p>
     </template>
 
-    <h5>4.0 Precautions</h5>
+    <h4>4.0 Precautions</h4>
     <p x-text="sections.precautions"></p>
 
     <table style="margin-top:40px;">
       <tr>
         <td>
-          Prepared By<br>
-          <span x-text="authority.prepared"></span><br>
-          <small x-text="authority.preparedDesig"></small><br>
-          Date: <span x-text="dates.prepared || '__________'"></span>
+          <b>Prepared By</b>
+          <span x-text="authority.prepared"></span>
+          <small class="signature-designation" x-text="authority.preparedDesig"></small>
+          Date: <span class="signature-date" x-text="dates.prepared || ''"></span>
         </td>
         <td>
-          Reviewed By<br>
-          <span x-text="authority.reviewed"></span><br>
-          <small x-text="authority.reviewedDesig"></small><br>
-          Date: <span x-text="dates.reviewed || '__________'"></span>
+          <b>Reviewed By</b>
+          <span x-text="authority.reviewed"></span>
+          <small class="signature-designation" x-text="authority.reviewedDesig"></small>
+          Date: <span class="signature-date" x-text="dates.reviewed || ''"></span>
         </td>
         <td>
-          Approved By<br>
-          <span x-text="authority.approved"></span><br>
-          <small x-text="authority.approvedDesig"></small>
+          <b>Approved By</b>
+          <span x-text="authority.approved"></span>
+          <small class="signature-designation" x-text="authority.approvedDesig"></small>
         </td>
       </tr>
     </table>
-
-    <p style="text-align:center; margin-top:30px;"><i>— End of SOP —</i></p>
 
   </div>
 </div>
