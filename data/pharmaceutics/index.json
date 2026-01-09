@@ -1,0 +1,13 @@
+{
+  "department": "Pharmaceutics",
+  "instruments": [
+    {
+      "key": "uv",
+      "name": "UV Spectrophotometer"
+    },
+    {
+      "key": "hplc",
+      "name": "HPLC System"
+    }
+  ]
+}
