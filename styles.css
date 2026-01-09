@@ -1,21 +1,121 @@
+/* ===============================
+   GLOBAL
+   =============================== */
+
 body {
-  font-family: "Roboto", Arial, sans-serif;
+  background: #f5f5f5;
 }
 
-.card {
-  border-radius: 8px;
-}
-
-.card-title {
-  font-weight: 600;
-}
-
-textarea.materialize-textarea {
-  min-height: 80px;
-}
+/* ===============================
+   PREVIEW CONTAINER
+   =============================== */
 
 #preview {
-  padding: 15px;
-  background: #fafafa;
-  border-left: 5px solid #1976d2;
+  background: #ffffff;
+  padding: 40px;
+  margin-top: 20px;
+  color: #000;
+  line-height: 1.6;
+}
+
+/* ===============================
+   FONTS
+   =============================== */
+
+#preview.font-times {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 12pt;
+}
+
+#preview.font-arial {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11.5pt;
+}
+
+/* ===============================
+   HEADINGS (PRINT STANDARD)
+   =============================== */
+
+#preview h2,
+#preview h3,
+#preview h4 {
+  text-align: center;
+  margin: 12px 0;
+  font-weight: bold;
+}
+
+#preview h2 {
+  font-size: 16pt;
+  text-transform: uppercase;
+}
+
+#preview h3 {
+  font-size: 14pt;
+}
+
+#preview h4 {
+  font-size: 12pt;
+  text-align: left; /* section headings left-aligned */
+}
+
+/* ===============================
+   PARAGRAPHS
+   =============================== */
+
+#preview p {
+  text-align: justify;
+  margin: 6px 0;
+}
+
+/* ===============================
+   TABLES (WORD + PRINT SAFE)
+   =============================== */
+
+#preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+
+#preview td {
+  border: 1px solid #000;
+  padding: 6px;
+  vertical-align: top;
+  font-size: 12pt;
+}
+
+/* ===============================
+   HORIZONTAL RULE
+   =============================== */
+
+#preview hr {
+  border: none;
+  border-top: 1px solid #000;
+  margin: 16px 0;
+}
+
+/* ===============================
+   PRINT RULES
+   =============================== */
+
+@media print {
+
+  body {
+    background: #fff;
+  }
+
+  nav,
+  .card:not(:has(#preview)),
+  .btn {
+    display: none !important;
+  }
+
+  #preview {
+    padding: 0;
+    margin: 0;
+  }
+
+  @page {
+    margin: 25mm;
+  }
 }
