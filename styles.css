@@ -9,31 +9,22 @@ h1 { text-align: center; }
 .card {
   background: #fff;
   padding: 15px;
-  margin: 10px auto;
-  max-width: 500px;
+  margin: 12px auto;
+  max-width: 700px;
   border-radius: 6px;
 }
 
-label {
-  display: block;
-  margin-top: 8px;
-}
-
-input, select {
+textarea, input, select {
   width: 100%;
   padding: 6px;
+  margin-top: 5px;
 }
 
-button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-}
+textarea { min-height: 60px; }
 
-pre {
-  background: #fff;
-  padding: 15px;
-  white-space: pre-wrap;
+.preview {
+  background: #fafafa;
+  border-left: 4px solid #333;
 }
 
 .hidden { display: none; }
