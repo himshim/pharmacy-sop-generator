@@ -16,8 +16,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 
-<!-- ✅ ONLY CHANGE IS x-init BELOW -->
-<body class="grey lighten-4" x-data="sopApp()" x-init="loadSOP('uv')">
+<body class="grey lighten-4" x-data="sopApp()" x-init="loadSOP(sopKey)">
 
 <nav class="blue darken-2 no-print">
   <div class="nav-wrapper container">
@@ -39,6 +38,7 @@
   <div class="row">
     <div class="col s12 m6">
 
+      <!-- INSTITUTE -->
       <div class="card">
         <div class="card-content">
           <span class="card-title">Institute</span>
@@ -47,25 +47,33 @@
         </div>
       </div>
 
-      <span class="card-title">SOP Content</span>
+      <!-- SOP CONTENT -->
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">SOP Content</span>
 
-<div class="input-field">
-  <select x-model="sopKey" @change="loadSOP(sopKey)">
-    <template x-for="sop in sopList" :key="sop.key">
-      <option :value="sop.key" x-text="sop.label"></option>
-    </template>
-  </select>
-  <label>Select SOP</label>
-</div>
-          <textarea placeholder="Purpose" x-model="sections.purpose"></textarea>
-          <textarea placeholder="Scope" x-model="sections.scope"></textarea>
-          <textarea placeholder="Procedure (one per line)" x-model="procedureText"></textarea>
-          <textarea placeholder="Precautions" x-model="sections.precautions"></textarea>
+          <!-- SOP SELECT -->
+          <div class="input-field">
+            <select x-model="sopKey" @change="loadSOP(sopKey)">
+              <template x-for="sop in sopList" :key="sop.key">
+                <option :value="sop.key" x-text="sop.label"></option>
+              </template>
+            </select>
+            <label>Select SOP</label>
+          </div>
+
+          <input placeholder="SOP Title" x-model="title">
+
+          <textarea placeholder="Purpose" x-model="sections.purpose" class="materialize-textarea"></textarea>
+          <textarea placeholder="Scope" x-model="sections.scope" class="materialize-textarea"></textarea>
+          <textarea placeholder="Procedure (one per line)" x-model="sections.procedure" class="materialize-textarea"></textarea>
+          <textarea placeholder="Precautions" x-model="sections.precautions" class="materialize-textarea"></textarea>
         </div>
       </div>
 
     </div>
 
+    <!-- RIGHT COLUMN -->
     <div class="col s12 m6">
 
       <div class="card">
@@ -92,11 +100,9 @@
 
 <!-- ================= PRINT ZONE ================= -->
 <div id="print-zone">
-
-  <!-- SOP PREVIEW -->
   <div id="preview">
 
-    <!-- BEGINNER FORMAT -->
+    <!-- BEGINNER -->
     <template x-if="format === 'beginner'">
       <div>
         <h2 x-text="institute.name"></h2>
@@ -121,7 +127,7 @@
       </div>
     </template>
 
-    <!-- INSPECTION FORMAT -->
+    <!-- INSPECTION -->
     <template x-if="format === 'inspection'">
       <div>
         <h2>STANDARD OPERATING PROCEDURE</h2>
@@ -151,26 +157,24 @@
     <!-- SIGNATURES -->
     <table>
       <tr>
-        <td>
-          Prepared By<br>
-          <span x-text="authority.prepared"></span><br>
-          Date: <span x-text="dates.prepared"></span>
-        </td>
-        <td>
-          Reviewed By<br>
-          <span x-text="authority.reviewed"></span><br>
-          Date: <span x-text="dates.reviewed"></span>
-        </td>
-        <td>
-          Approved By<br>
-          <span x-text="authority.approved"></span>
-        </td>
+        <td>Prepared By<br><span x-text="authority.prepared"></span><br>Date: <span x-text="dates.prepared"></span></td>
+        <td>Reviewed By<br><span x-text="authority.reviewed"></span><br>Date: <span x-text="dates.reviewed"></span></td>
+        <td>Approved By<br><span x-text="authority.approved"></span></td>
       </tr>
     </table>
 
   </div>
 </div>
 
+<!-- JS -->
 <script src="js/alpineApp.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    M.FormSelect.init(document.querySelectorAll('select'));
+  });
+</script>
+
 </body>
 </html>
