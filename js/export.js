@@ -1,103 +1,79 @@
-/* =================================================
-   EXPORT SOP FROM PREVIEW (HTML-BASED)
-   ================================================= */
+/* =========================================================
+   COPY SOP AS WORD-READY HTML (BULLETPROOF VERSION)
+   ========================================================= */
 
-function getPreviewElement() {
-  return document.getElementById("preview");
-}
+function copySOP() {
+  const preview = document.getElementById("preview");
 
-/* =======================
-   DOCX EXPORT (FIXED)
-   ======================= */
-
-function exportDOCX() {
-  const preview = getPreviewElement();
-
-  if (!window.docx || !window.saveAs) {
-    alert("DOCX library not loaded");
+  if (!preview || !preview.innerHTML.trim()) {
+    alert("Nothing to copy.");
     return;
   }
 
-  const paragraphs = [];
+  /* ---- Create a clean, Word-safe container ---- */
+  const wrapper = document.createElement("div");
 
-  preview.querySelectorAll("*").forEach(el => {
-    const text = el.innerText?.trim();
-    if (!text) return;
+  wrapper.style.fontFamily = "Times New Roman, serif";
+  wrapper.style.fontSize = "12pt";
+  wrapper.style.lineHeight = "1.5";
+  wrapper.style.color = "#000";
 
-    if (el.tagName.startsWith("H")) {
-      paragraphs.push(
-        new docx.Paragraph({
-          text,
-          heading: docx.HeadingLevel.HEADING_2,
-          spacing: { after: 300 }
-        })
-      );
-    } else {
-      paragraphs.push(
-        new docx.Paragraph({
-          text,
-          spacing: { after: 200 }
-        })
-      );
-    }
+  /* ---- Clone SOP content ---- */
+  const clone = preview.cloneNode(true);
+
+  /* ---- Force Word-friendly inline styles ---- */
+  clone.querySelectorAll("h2").forEach(h => {
+    h.style.textAlign = "center";
+    h.style.fontSize = "16pt";
+    h.style.textTransform = "uppercase";
+    h.style.margin = "12pt 0";
   });
 
-  const doc = new docx.Document({
-    sections: [{
-      properties: {},
-      children: paragraphs
-    }]
+  clone.querySelectorAll("h4").forEach(h => {
+    h.style.fontSize = "13pt";
+    h.style.textTransform = "uppercase";
+    h.style.marginTop = "12pt";
   });
 
-  docx.Packer.toBlob(doc).then(blob => {
-    saveAs(blob, "SOP.docx");
+  clone.querySelectorAll("p").forEach(p => {
+    p.style.margin = "6pt 0";
+    p.style.textAlign = "justify";
   });
-}
 
-/* =======================
-   PDF EXPORT (POLISHED)
-   ======================= */
+  clone.querySelectorAll("table").forEach(t => {
+    t.style.width = "100%";
+    t.style.borderCollapse = "collapse";
+    t.style.marginTop = "10pt";
+  });
 
-function exportPDF() {
-  const preview = getPreviewElement();
+  clone.querySelectorAll("td").forEach(td => {
+    td.style.border = "1px solid #000";
+    td.style.padding = "6pt";
+    td.style.verticalAlign = "top";
+  });
 
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF("p", "mm", "a4");
+  clone.querySelectorAll("hr").forEach(hr => {
+    hr.style.border = "none";
+    hr.style.borderTop = "1px solid #000";
+    hr.style.margin = "12pt 0";
+  });
 
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const margin = 15;
-  let y = 20;
+  wrapper.appendChild(clone);
 
-  function addLine(text, bold = false) {
-    if (y > 270) {
-      pdf.addPage();
-      y = 20;
-    }
+  /* ---- Copy as HTML ---- */
+  const range = document.createRange();
+  range.selectNodeContents(wrapper);
 
-    pdf.setFont("Times", bold ? "bold" : "normal");
-    pdf.text(text, margin, y);
-    y += 7;
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+
+  try {
+    document.execCommand("copy");
+    alert("SOP copied. Paste directly into Word.");
+  } catch (e) {
+    alert("Copy failed. Please try manual selection.");
   }
 
-  preview.childNodes.forEach(node => {
-    if (!node.innerText) return;
-
-    const text = node.innerText.trim();
-    if (!text) return;
-
-    if (node.querySelector && node.querySelector("h2")) {
-      pdf.setFontSize(14);
-      addLine(text, true);
-      pdf.setFontSize(12);
-    } else if (node.querySelector && node.querySelector("h4")) {
-      pdf.setFontSize(12);
-      addLine(text, true);
-      pdf.setFontSize(12);
-    } else {
-      text.split("\n").forEach(line => addLine(line));
-      y += 2;
-    }
-  });
-
-  pdf.save("SOP.pdf");
+  selection.removeAllRanges();
 }
