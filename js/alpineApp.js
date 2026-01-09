@@ -21,7 +21,12 @@ function sopApp() {
     institute: { name: '', dept: '' },
 
     title: '',
-    sections: { purpose: '', scope: '', procedure: '', precautions: '' },
+    sections: {
+      purpose: '',
+      scope: '',
+      procedure: '',
+      precautions: ''
+    },
 
     authority: {
       prepared: '', preparedDesig: '',
@@ -46,6 +51,20 @@ function sopApp() {
       this.format = this.format === 'inspection' ? 'beginner' : 'inspection';
     },
 
+    /* ========= DROPDOWN HANDLERS (FIX) ========= */
+
+    departmentChanged(event) {
+      this.department = event.target.value;
+      this.loadDepartment();
+    },
+
+    sopChanged(event) {
+      this.sopKey = event.target.value;
+      this.loadSOP(this.sopKey);
+    },
+
+    /* ========= LOADERS ========= */
+
     async loadDepartment() {
       this.sopList = [];
       this.sopKey = '';
@@ -54,12 +73,7 @@ function sopApp() {
       try {
         const res = await fetch(`data/${this.department}/index.json`);
         const data = await res.json();
-        this.sopList = data.instruments;
-
-        if (this.sopList.length) {
-          this.sopKey = this.sopList[0].key;
-          this.loadSOP(this.sopKey);
-        }
+        this.sopList = data.instruments || [];
 
         this.$nextTick(() => {
           M.FormSelect.init(document.querySelectorAll('select'));
@@ -71,6 +85,7 @@ function sopApp() {
 
     async loadSOP(key) {
       if (!key) return;
+
       try {
         const res = await fetch(`data/${this.department}/${key}.json`);
         const data = await res.json();
