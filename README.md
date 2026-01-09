@@ -1,7 +1,5 @@
 # Pharmacy SOP Generator
 
-![Pharmacy SOP Generator Banner](https://via.placeholder.com/1280x300?text=Pharmacy+SOP+Generator) <!-- Replace with actual banner image if available -->
-
 [![GitHub stars](https://img.shields.io/github/stars/himshim/pharmacy-sop-generator?style=social)](https://github.com/himshim/pharmacy-sop-generator/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/himshim/pharmacy-sop-generator?style=social)](https://github.com/himshim/pharmacy-sop-generator/network)
 [![GitHub issues](https://img.shields.io/github/issues/himshim/pharmacy-sop-generator)](https://github.com/himshim/pharmacy-sop-generator/issues)
@@ -127,7 +125,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📧 Contact
 
 - **Developer**: Himanshu Sharma ([@himshim26](https://x.com/himshim26))
-- **Email**: [your.email@example.com](mailto:himshim26@protonmail.com)
+- **Email**: [himshim26@protonmail.com](mailto:himshim26@protonmail.com)
 - **GitHub**: [himshim](https://github.com/himshim)
 
 Star ⭐ the repo if you find it useful! Let's standardize pharmacy procedures together. 🚀
