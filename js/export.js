@@ -1,8 +1,8 @@
 /* =========================================================
-   COPY SOP AS WORD-READY HTML (MODERN & RELIABLE)
+   SELECT SOP FOR WORD COPY (100% RELIABLE METHOD)
    ========================================================= */
 
-async function copySOP() {
+function copySOP() {
   const preview = document.getElementById("preview");
 
   if (!preview || !preview.innerHTML.trim()) {
@@ -10,81 +10,54 @@ async function copySOP() {
     return;
   }
 
-  /* -------- Create Word-safe HTML -------- */
-  const wrapper = document.createElement("div");
-
-  wrapper.style.fontFamily = "Times New Roman, serif";
-  wrapper.style.fontSize = "12pt";
-  wrapper.style.lineHeight = "1.5";
-  wrapper.style.color = "#000";
-
-  const clone = preview.cloneNode(true);
-
-  /* ---- Force inline styles (Word understands these) ---- */
-  clone.querySelectorAll("h2").forEach(h => {
+  /* -------- Normalize styles for Word -------- */
+  preview.querySelectorAll("h2").forEach(h => {
     h.style.textAlign = "center";
     h.style.fontSize = "16pt";
     h.style.textTransform = "uppercase";
-    h.style.margin = "12pt 0";
   });
 
-  clone.querySelectorAll("h4").forEach(h => {
+  preview.querySelectorAll("h4").forEach(h => {
     h.style.fontSize = "13pt";
     h.style.textTransform = "uppercase";
-    h.style.marginTop = "12pt";
   });
 
-  clone.querySelectorAll("p").forEach(p => {
-    p.style.margin = "6pt 0";
+  preview.querySelectorAll("p").forEach(p => {
+    p.style.fontSize = "12pt";
+    p.style.fontFamily = "Times New Roman, serif";
     p.style.textAlign = "justify";
   });
 
-  clone.querySelectorAll("table").forEach(t => {
+  preview.querySelectorAll("table").forEach(t => {
     t.style.width = "100%";
     t.style.borderCollapse = "collapse";
-    t.style.marginTop = "10pt";
   });
 
-  clone.querySelectorAll("td").forEach(td => {
+  preview.querySelectorAll("td").forEach(td => {
     td.style.border = "1px solid #000";
     td.style.padding = "6pt";
-    td.style.verticalAlign = "top";
   });
 
-  clone.querySelectorAll("hr").forEach(hr => {
+  preview.querySelectorAll("hr").forEach(hr => {
     hr.style.border = "none";
     hr.style.borderTop = "1px solid #000";
-    hr.style.margin = "12pt 0";
   });
 
-  wrapper.appendChild(clone);
+  /* -------- Auto-select SOP content -------- */
+  const range = document.createRange();
+  range.selectNodeContents(preview);
 
-  /* -------- Clipboard API (HTML + Plain Text) -------- */
-  const htmlBlob = new Blob(
-    [wrapper.innerHTML],
-    { type: "text/html" }
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+
+  /* -------- Scroll into view -------- */
+  preview.scrollIntoView({ behavior: "smooth" });
+
+  alert(
+    "SOP selected.\n\n" +
+    "Now press Ctrl + C to copy.\n" +
+    "Then paste directly into Word using Ctrl + V.\n\n" +
+    "⚠ Do NOT use Paste as Text."
   );
-
-  const textBlob = new Blob(
-    [wrapper.innerText],
-    { type: "text/plain" }
-  );
-
-  try {
-    await navigator.clipboard.write([
-      new ClipboardItem({
-        "text/html": htmlBlob,
-        "text/plain": textBlob
-      })
-    ]);
-
-    alert("✅ SOP copied. Paste directly into Word (Ctrl + V).");
-  } catch (err) {
-    console.error(err);
-    alert(
-      "❌ Copy failed.\n\n" +
-      "This browser blocked clipboard access.\n" +
-      "Please use Chrome/Edge and allow clipboard permission."
-    );
-  }
 }
