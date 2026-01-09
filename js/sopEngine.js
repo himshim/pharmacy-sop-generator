@@ -1,5 +1,5 @@
 /* =====================================================
-   SOP ENGINE WITH DUAL FORMAT SUPPORT
+   SOP ENGINE WITH DUAL FORMAT SUPPORT (FINAL)
    ===================================================== */
 
 let sopFormat = "inspection"; // "inspection" | "beginner"
@@ -89,7 +89,7 @@ function renderInspectionFormat(d) {
 }
 
 /* =====================================================
-   FORMAT B — BEGINNER / TEACHING FORMAT
+   FORMAT B — BEGINNER / TEACHING FORMAT (CORRECTED)
    ===================================================== */
 
 function renderBeginnerFormat(d) {
@@ -97,6 +97,7 @@ function renderBeginnerFormat(d) {
 
   html += `
     <h2>${d.institute.name || "INSTITUTE NAME"}</h2>
+    <h4>${d.institute.dept || "DEPARTMENT"}</h4>
     <h3>STANDARD OPERATING PROCEDURE</h3>
     <h4>${d.meta.title || "SOP TITLE"}</h4>
     <hr>
@@ -111,6 +112,17 @@ function renderBeginnerFormat(d) {
   });
 
   html += `<h4>Precautions</h4><p>${d.sections.precautions || ""}</p>`;
+
+  html += `
+    <hr>
+    <table>
+      <tr>
+        <td><b>Prepared By</b><br>${d.authority.prepared || ""}</td>
+        <td><b>Checked By</b><br>${d.authority.checked || ""}</td>
+        <td><b>Authorized By</b><br>${d.authority.approved || ""}</td>
+      </tr>
+    </table>
+  `;
 
   return html;
 }
