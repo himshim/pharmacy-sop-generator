@@ -5,13 +5,10 @@
   <title>Pharmacy SOP Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Materialize -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <!-- Alpine -->
   <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
   <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -24,6 +21,24 @@
 </nav>
 
 <div class="container section no-print">
+
+  <!-- SOP MODE -->
+  <div class="card">
+    <div class="card-content">
+      <span class="card-title">SOP Mode</span>
+      <p>
+        <label>
+          <input type="radio" name="mode" checked @change="switchMode('predefined')">
+          <span>Predefined SOP</span>
+        </label>
+        &nbsp;&nbsp;
+        <label>
+          <input type="radio" name="mode" @change="switchMode('custom')">
+          <span>Custom SOP</span>
+        </label>
+      </p>
+    </div>
+  </div>
 
   <!-- FORMAT -->
   <div class="card">
@@ -45,30 +60,42 @@
         </div>
       </div>
 
-      <!-- SOP SELECTION -->
+      <!-- PREDEFINED SELECTION -->
+      <template x-if="sopMode === 'predefined'">
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">SOP Selection</span>
+
+            <div class="input-field">
+              <select x-model="department" @change="loadDepartment()">
+                <template x-for="d in departments" :key="d.key">
+                  <option :value="d.key" x-text="d.name"></option>
+                </template>
+              </select>
+              <label>Department</label>
+            </div>
+
+            <div class="input-field">
+              <select x-model="sopKey" @change="loadSOP(sopKey)">
+                <template x-for="s in sopList" :key="s.key">
+                  <option :value="s.key" x-text="s.name"></option>
+                </template>
+              </select>
+              <label>SOP</label>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- SOP CONTENT -->
       <div class="card">
         <div class="card-content">
-          <span class="card-title">SOP Selection</span>
-
-          <!-- DEPARTMENT SELECT -->
-          <div class="input-field">
-            <select x-model="department" @change="loadDepartment()">
-              <template x-for="d in departments" :key="d.key">
-                <option :value="d.key" x-text="d.name"></option>
-              </template>
-            </select>
-            <label>Select Department</label>
-          </div>
-
-          <!-- SOP SELECT -->
-          <div class="input-field">
-            <select x-model="sopKey" @change="loadSOP(sopKey)">
-              <template x-for="sop in sopList" :key="sop.key">
-                <option :value="sop.key" x-text="sop.name"></option>
-              </template>
-            </select>
-            <label>Select SOP</label>
-          </div>
+          <span class="card-title">SOP Content</span>
+          <input placeholder="SOP Title" x-model="title">
+          <textarea class="materialize-textarea" placeholder="Purpose" x-model="sections.purpose"></textarea>
+          <textarea class="materialize-textarea" placeholder="Scope" x-model="sections.scope"></textarea>
+          <textarea class="materialize-textarea" placeholder="Procedure (one per line)" x-model="sections.procedure"></textarea>
+          <textarea class="materialize-textarea" placeholder="Precautions" x-model="sections.precautions"></textarea>
         </div>
       </div>
 
@@ -84,19 +111,37 @@
   </div>
 </div>
 
-<!-- PREVIEW (unchanged, your existing preview stays here) -->
+<!-- PRINT -->
 <div id="print-zone">
   <div id="preview">
-    <!-- your existing preview templates -->
+    <h3 style="text-align:center" x-text="institute.name"></h3>
+    <h4 style="text-align:center">STANDARD OPERATING PROCEDURE</h4>
+    <p><b>Department:</b> <span x-text="institute.dept"></span></p>
+    <p><b>Title:</b> <span x-text="title"></span></p>
+
+    <h5>Purpose</h5>
+    <p x-text="sections.purpose"></p>
+
+    <h5>Scope</h5>
+    <p x-text="sections.scope"></p>
+
+    <h5>Procedure</h5>
+    <template x-for="(p,i) in procedureList" :key="i">
+      <p x-text="(i+1)+'. '+p"></p>
+    </template>
+
+    <h5>Precautions</h5>
+    <p x-text="sections.precautions"></p>
+
+    <p style="text-align:center; margin-top:40px;"><i>— End of SOP —</i></p>
   </div>
 </div>
 
 <script src="js/alpineApp.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    M.FormSelect.init(document.querySelectorAll('select'));
+  document.addEventListener('DOMContentLoaded', () => {
+    M.AutoInit();
   });
 </script>
 
