@@ -1,8 +1,8 @@
 /* =========================================================
-   COPY SOP AS WORD-READY HTML (BULLETPROOF VERSION)
+   COPY SOP AS WORD-READY HTML (MODERN & RELIABLE)
    ========================================================= */
 
-function copySOP() {
+async function copySOP() {
   const preview = document.getElementById("preview");
 
   if (!preview || !preview.innerHTML.trim()) {
@@ -10,7 +10,7 @@ function copySOP() {
     return;
   }
 
-  /* ---- Create a clean, Word-safe container ---- */
+  /* -------- Create Word-safe HTML -------- */
   const wrapper = document.createElement("div");
 
   wrapper.style.fontFamily = "Times New Roman, serif";
@@ -18,10 +18,9 @@ function copySOP() {
   wrapper.style.lineHeight = "1.5";
   wrapper.style.color = "#000";
 
-  /* ---- Clone SOP content ---- */
   const clone = preview.cloneNode(true);
 
-  /* ---- Force Word-friendly inline styles ---- */
+  /* ---- Force inline styles (Word understands these) ---- */
   clone.querySelectorAll("h2").forEach(h => {
     h.style.textAlign = "center";
     h.style.fontSize = "16pt";
@@ -60,20 +59,32 @@ function copySOP() {
 
   wrapper.appendChild(clone);
 
-  /* ---- Copy as HTML ---- */
-  const range = document.createRange();
-  range.selectNodeContents(wrapper);
+  /* -------- Clipboard API (HTML + Plain Text) -------- */
+  const htmlBlob = new Blob(
+    [wrapper.innerHTML],
+    { type: "text/html" }
+  );
 
-  const selection = window.getSelection();
-  selection.removeAllRanges();
-  selection.addRange(range);
+  const textBlob = new Blob(
+    [wrapper.innerText],
+    { type: "text/plain" }
+  );
 
   try {
-    document.execCommand("copy");
-    alert("SOP copied. Paste directly into Word.");
-  } catch (e) {
-    alert("Copy failed. Please try manual selection.");
-  }
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        "text/html": htmlBlob,
+        "text/plain": textBlob
+      })
+    ]);
 
-  selection.removeAllRanges();
+    alert("✅ SOP copied. Paste directly into Word (Ctrl + V).");
+  } catch (err) {
+    console.error(err);
+    alert(
+      "❌ Copy failed.\n\n" +
+      "This browser blocked clipboard access.\n" +
+      "Please use Chrome/Edge and allow clipboard permission."
+    );
+  }
 }
