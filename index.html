@@ -9,56 +9,100 @@
 
 <h1>📄 Pharmacy SOP Generator</h1>
 
-<!-- MODE -->
+<!-- MODE SELECTION -->
 <div class="card">
-  <label><input type="radio" name="mode" value="beginner" checked> Beginner</label>
-  <label><input type="radio" name="mode" value="expert"> Expert</label>
-  <label><input type="radio" name="mode" value="custom"> Custom</label>
+  <label>
+    <input type="radio" name="mode" value="beginner" checked>
+    Beginner
+  </label>
+  <label>
+    <input type="radio" name="mode" value="expert">
+    Expert
+  </label>
+  <label>
+    <input type="radio" name="mode" value="custom">
+    Custom
+  </label>
 </div>
 
-<!-- INSTITUTE HEADER -->
+<!-- INSTITUTE DETAILS -->
 <div class="card">
   <h3>Institute Details</h3>
-  <input id="instName" placeholder="Institute / College Name">
+
+  <label>Institute / College Name</label>
+  <input id="instName" placeholder="Enter institute name">
+
+  <label>Department</label>
+  <input id="instDept" placeholder="Enter department">
+
+  <label>Institute Logo (optional)</label>
   <input type="file" id="instLogo">
-  <input id="instDept" placeholder="Department">
 </div>
 
-<!-- SOP SELECTION -->
+<!-- PREDEFINED SOP -->
 <div id="predefinedBox" class="card">
   <h3>Predefined SOP</h3>
+  <label>Select SOP</label>
   <select id="sopSelect"></select>
 </div>
 
 <!-- CUSTOM SOP -->
 <div id="customBox" class="card hidden">
   <h3>Custom SOP</h3>
-  <input id="customTitle" placeholder="SOP Title">
+  <label>SOP Title</label>
+  <input id="customTitle" placeholder="Enter SOP title">
 </div>
 
-<!-- SECTIONS -->
+<!-- SOP SECTIONS -->
 <div class="card">
-  <h3>Sections</h3>
+  <h3>SOP Sections</h3>
 
-  <label><input type="checkbox" data-sec="purpose" checked> Purpose</label>
-  <textarea id="purpose"></textarea>
+  <label>
+    <input type="checkbox" data-sec="purpose" checked>
+    Purpose
+  </label>
+  <textarea id="purpose" placeholder="Enter purpose"></textarea>
 
-  <label><input type="checkbox" data-sec="scope" checked> Scope</label>
-  <textarea id="scope"></textarea>
+  <label>
+    <input type="checkbox" data-sec="scope" checked>
+    Scope
+  </label>
+  <textarea id="scope" placeholder="Enter scope"></textarea>
 
-  <label><input type="checkbox" data-sec="procedure" checked> Procedure (one step per line)</label>
-  <textarea id="procedure"></textarea>
+  <label>
+    <input type="checkbox" data-sec="procedure" checked>
+    Procedure (one step per line)
+  </label>
+  <textarea id="procedure" placeholder="Enter procedure steps"></textarea>
 
-  <label><input type="checkbox" data-sec="precautions" checked> Precautions</label>
-  <textarea id="precautions"></textarea>
+  <label>
+    <input type="checkbox" data-sec="precautions" checked>
+    Precautions
+  </label>
+  <textarea id="precautions" placeholder="Enter precautions"></textarea>
 </div>
 
 <!-- AUTHORITIES -->
 <div class="card">
-  <h3>Authorities</h3>
-  <input id="preparedBy" placeholder="Prepared By">
-  <input id="checkedBy" placeholder="Checked By">
-  <input id="approvedBy" placeholder="Authorized By">
+  <h3>Authorities / Approval</h3>
+
+  <label>Prepared By – Name</label>
+  <input id="preparedBy" placeholder="Name">
+
+  <label>Prepared By – Designation</label>
+  <input id="preparedDesig" placeholder="Designation">
+
+  <label>Checked By – Name</label>
+  <input id="checkedBy" placeholder="Name">
+
+  <label>Checked By – Designation</label>
+  <input id="checkedDesig" placeholder="Designation">
+
+  <label>Authorized By – Name</label>
+  <input id="approvedBy" placeholder="Name">
+
+  <label>Authorized By – Designation</label>
+  <input id="approvedDesig" placeholder="Designation">
 </div>
 
 <!-- LIVE PREVIEW -->
@@ -67,6 +111,7 @@
   <div id="preview"></div>
 </div>
 
+<!-- SCRIPTS -->
 <script src="js/utils.js"></script>
 <script src="js/modeController.js"></script>
 <script src="js/uiController.js"></script>
