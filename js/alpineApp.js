@@ -1,10 +1,10 @@
 function sopApp() {
   return {
-    /* ================= MODE ================= */
+    /* ========== MODE ========== */
     sopMode: 'predefined', // predefined | custom
     format: 'beginner',
 
-    /* ================= DEPARTMENTS ================= */
+    /* ========== DEPARTMENTS ========== */
     departments: [
       { key: 'pharmaceutics', name: 'Pharmaceutics' },
       { key: 'pharmaceutical-analysis', name: 'Pharmaceutical Analysis' },
@@ -20,38 +20,28 @@ function sopApp() {
     sopList: [],
     sopKey: '',
 
-    /* ================= INSTITUTE ================= */
-    institute: {
-      name: '',
-      dept: ''
-    },
+    /* ========== INSTITUTE ========== */
+    institute: { name: '', dept: '' },
 
-    /* ================= SOP CONTENT ================= */
+    /* ========== SOP DATA ========== */
     title: '',
     sections: {
       purpose: '',
       scope: '',
-      procedure: '',
+      procedure: [],   // IMPORTANT: ARRAY
       precautions: ''
     },
 
-    /* ================= AUTHORITIES ================= */
-    authority: {
-      prepared: '',
-      reviewed: '',
-      approved: ''
-    },
-    dates: {
-      prepared: '',
-      reviewed: ''
-    },
+    /* ========== AUTHORITIES ========== */
+    authority: { prepared: '', reviewed: '', approved: '' },
+    dates: { prepared: '', reviewed: '' },
 
-    /* ================= INIT ================= */
+    /* ========== INIT ========== */
     init() {
       this.loadDepartment();
     },
 
-    /* ================= MODE SWITCH ================= */
+    /* ========== MODE SWITCH ========== */
     switchMode(mode) {
       this.sopMode = mode;
 
@@ -62,18 +52,17 @@ function sopApp() {
       }
     },
 
-    /* ================= CLEAR FOR CUSTOM ================= */
     clearSOP() {
       this.title = '';
       this.sections = {
         purpose: '',
         scope: '',
-        procedure: '',
+        procedure: [],
         precautions: ''
       };
     },
 
-    /* ================= LOAD DEPARTMENT ================= */
+    /* ========== LOAD DEPARTMENT INDEX ========== */
     async loadDepartment() {
       if (this.sopMode !== 'predefined') return;
 
@@ -82,16 +71,18 @@ function sopApp() {
         const data = await res.json();
 
         this.sopList = data.instruments || [];
+
         if (this.sopList.length > 0) {
           this.sopKey = this.sopList[0].key;
           this.loadSOP(this.sopKey);
         }
       } catch (e) {
-        console.error('Department load failed', e);
+        console.error('Failed to load department index', e);
+        this.sopList = [];
       }
     },
 
-    /* ================= LOAD SOP ================= */
+    /* ========== LOAD SOP FILE ========== */
     async loadSOP(key) {
       if (this.sopMode !== 'predefined') return;
 
@@ -99,18 +90,33 @@ function sopApp() {
         const res = await fetch(`data/${this.department}/${key}.json`);
         const data = await res.json();
 
-        this.title = data.meta.title;
-        this.sections = data.sections;
+        this.title = data.meta?.title || '';
+        this.sections = {
+          purpose: data.sections?.purpose || '',
+          scope: data.sections?.scope || '',
+          procedure: Array.isArray(data.sections?.procedure)
+            ? data.sections.procedure
+            : [],
+          precautions: data.sections?.precautions || ''
+        };
       } catch (e) {
-        console.error('SOP load failed', e);
+        console.error('Failed to load SOP', e);
       }
     },
 
+    /* ========== FORMAT ========== */
     toggleFormat() {
       this.format = this.format === 'beginner' ? 'inspection' : 'beginner';
     },
 
+    /* ========== RENDER PROCEDURE ========== */
     get procedureList() {
+      // predefined SOP → array
+      if (Array.isArray(this.sections.procedure)) {
+        return this.sections.procedure;
+      }
+
+      // custom SOP → textarea
       return this.sections.procedure
         ? this.sections.procedure.split('\n').filter(l => l.trim())
         : [];
