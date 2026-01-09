@@ -1,12 +1,12 @@
-/* =========================
-   GLOBAL SCREEN STYLES
-   ========================= */
+/* ==================================================
+   SCREEN STYLES (UI)
+   ================================================== */
 
 body {
   font-family: Arial, Helvetica, sans-serif;
   background: #f4f4f4;
-  padding: 20px;
   margin: 0;
+  padding: 20px;
 }
 
 h1 {
@@ -24,7 +24,7 @@ h2, h3, h4 {
   margin: 12px auto;
   max-width: 800px;
   border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
 
 label {
@@ -66,9 +66,9 @@ button {
   display: none;
 }
 
-/* =========================
-   LIVE PREVIEW (SCREEN)
-   ========================= */
+/* ==================================================
+   LIVE SOP PREVIEW (SCREEN)
+   ================================================== */
 
 .preview {
   background: #fafafa;
@@ -99,31 +99,32 @@ button {
 .preview hr {
   border: none;
   border-top: 1px solid #000;
-  margin: 12px 0;
+  margin: 14px 0;
 }
 
-/* =========================
-   PRINT OPTIMIZED SOP STYLE
-   ========================= */
+/* ==================================================
+   PRINT OPTIMIZED SOP STYLE (FINAL)
+   ================================================== */
 
 @media print {
 
-  /* Hide UI, show only SOP */
+  /* 🔥 HARD RESET: hide EVERYTHING */
   body * {
-    visibility: hidden;
+    display: none !important;
   }
 
+  /* 🔥 SHOW ONLY SOP PREVIEW */
   .preview,
   .preview * {
-    visibility: visible;
+    display: block !important;
   }
 
   .preview {
     position: absolute;
-    left: 0;
     top: 0;
+    left: 0;
     width: 100%;
-    background: #fff;
+    background: #ffffff;
     padding: 0;
     margin: 0;
     border: none;
@@ -135,7 +136,6 @@ button {
     margin: 20mm;
   }
 
-  /* Typography */
   body {
     font-family: "Times New Roman", serif;
     font-size: 12pt;
@@ -143,11 +143,13 @@ button {
     color: #000;
   }
 
+  /* Headings */
   h2 {
     font-size: 16pt;
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 12px;
+    text-align: center;
   }
 
   h4 {
@@ -159,13 +161,14 @@ button {
 
   p {
     margin: 4px 0;
+    text-align: justify;
   }
 
-  /* SOP tables */
+  /* Tables */
   table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 8px;
+    margin-top: 10px;
     page-break-inside: avoid;
   }
 
@@ -180,11 +183,6 @@ button {
     border: none;
     border-top: 1px solid #000;
     margin: 14px 0;
-  }
-
-  /* Procedure numbering */
-  p {
-    text-align: justify;
   }
 
   /* Signature block spacing */
