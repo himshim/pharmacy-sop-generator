@@ -10,39 +10,39 @@ function renderPreview() {
     </div>
   `;
 
-  /* ================= HEADER TABLE ================= */
+  /* ================= BASIC DETAILS ================= */
 
   html += `
     <table style="width:100%; border-collapse:collapse; margin-top:15px;">
       <tr>
-        <td><strong>Institution</strong></td>
+        <td><strong>Institution:</strong></td>
         <td>${d.institute.name || "____________________________"}</td>
       </tr>
       <tr>
-        <td><strong>Department</strong></td>
+        <td><strong>Department:</strong></td>
         <td>${d.institute.dept || "____________________________"}</td>
       </tr>
       <tr>
-        <td><strong>SOP Title</strong></td>
+        <td><strong>SOP Title:</strong></td>
         <td>${d.meta.title || "____________________________"}</td>
       </tr>
     </table>
   `;
 
-  /* ================= METADATA BLOCK ================= */
+  /* ================= METADATA (BOXED) ================= */
 
   html += `
-    <table style="width:100%; border-collapse:collapse; margin-top:10px; border:1px solid #000;">
+    <table style="width:100%; border-collapse:collapse; margin-top:10px;">
       <tr>
-        <td><strong>SOP No</strong></td>
+        <td><strong>SOP No:</strong></td>
         <td>__________________________</td>
-        <td><strong>Revision No</strong></td>
+        <td><strong>Revision No:</strong></td>
         <td>__________________________</td>
       </tr>
       <tr>
-        <td><strong>Effective Date</strong></td>
+        <td><strong>Effective Date:</strong></td>
         <td>__________________________</td>
-        <td><strong>Review Date</strong></td>
+        <td><strong>Review Date:</strong></td>
         <td>__________________________</td>
       </tr>
     </table>
