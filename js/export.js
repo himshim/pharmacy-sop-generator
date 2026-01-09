@@ -2,7 +2,7 @@
    SELECT SOP FOR WORD (TABLE-BASED, WORD-PROOF)
    ========================================================= */
 
-function copySOP() {
+async function copySOP() {
   const d = collectData();
 
   /* -------- Build Word-safe SOP HTML -------- */
@@ -22,9 +22,9 @@ function copySOP() {
   /* ===== BASIC DETAILS TABLE ===== */
   container.innerHTML += `
     <table border="1" cellpadding="6" cellspacing="0" width="100%">
-      <tr><td><b>Institution</b></td><td>${d.institute.name || ""}</td></tr>
-      <tr><td><b>Department</b></td><td>${d.institute.dept || ""}</td></tr>
-      <tr><td><b>SOP Title</b></td><td>${d.meta.title || ""}</td></tr>
+      <tr><td><b>Institution</b></td><td>${escapeHTML(d.institute.name || "")}</td></tr>
+      <tr><td><b>Department</b></td><td>${escapeHTML(d.institute.dept || "")}</td></tr>
+      <tr><td><b>SOP Title</b></td><td>${escapeHTML(d.meta.title || "")}</td></tr>
     </table>
     <br>
   `;
@@ -49,7 +49,7 @@ function copySOP() {
   function addSection(title, body) {
     container.innerHTML += `
       <p><b>${sec}.0 ${title}</b></p>
-      <p>${body}</p>
+      <p>${escapeHTML(body)}</p>
     `;
     sec++;
   }
@@ -59,13 +59,13 @@ function copySOP() {
 
   addSection(
     "RESPONSIBILITY",
-    "Laboratory In-charge, faculty members, and trained users are responsible for implementation of this SOP."
+    d.sections.responsibility || "Laboratory In-charge, faculty members, and trained users are responsible for implementation of this SOP."
   );
 
   /* ===== PROCEDURE ===== */
   container.innerHTML += `<p><b>${sec}.0 PROCEDURE</b></p>`;
   d.sections.procedure.forEach((step, i) => {
-    container.innerHTML += `<p>${sec}.${i + 1} ${step}</p>`;
+    container.innerHTML += `<p>\( {sec}. \){i + 1} ${escapeHTML(step)}</p>`;
   });
   sec++;
 
@@ -76,15 +76,35 @@ function copySOP() {
     <br>
     <table border="1" cellpadding="6" cellspacing="0" width="100%">
       <tr>
-        <td><b>Prepared By</b><br>${d.authority.prepared || ""}<br>Date: ________</td>
-        <td><b>Checked By</b><br>${d.authority.checked || ""}<br>Date: ________</td>
-        <td><b>Authorized By</b><br>${d.authority.approved || ""}<br>Date: ________</td>
+        <td><b>Prepared By</b><br>${escapeHTML(d.authority.prepared || "")}<br>Date: ________</td>
+        <td><b>Checked By</b><br>${escapeHTML(d.authority.checked || "")}<br>Date: ________</td>
+        <td><b>Authorized By</b><br>${escapeHTML(d.authority.approved || "")}<br>Date: ________</td>
       </tr>
     </table>
 
     <p style="text-align:center; font-style:italic;">— End of SOP —</p>
   `;
 
+  const htmlContent = container.innerHTML;
+
+  /* -------- Try Clipboard API for HTML -------- */
+  try {
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const clipboardItem = new ClipboardItem({ 'text/html': blob });
+    await navigator.clipboard.write([clipboardItem]);
+    alert(
+      "SOP copied to clipboard in Word-safe format.\n\n" +
+      "Paste into Word using Ctrl + V.\n\n" +
+      "Do NOT use Paste as Text."
+    );
+  } catch (err) {
+    console.error('Clipboard API failed, falling back to selection method.', err);
+    // Fallback to original selection method
+    fallbackCopySOP(container);
+  }
+}
+
+function fallbackCopySOP(container) {
   /* -------- Insert into DOM temporarily -------- */
   document.body.appendChild(container);
 
@@ -101,8 +121,14 @@ function copySOP() {
     "SOP selected in Word-safe format.\n\n" +
     "Press Ctrl + C to copy.\n" +
     "Paste into Word using Ctrl + V.\n\n" +
-    "⚠ Do NOT use Paste as Text."
+    "Do NOT use Paste as Text."
   );
+
+  try {
+    document.execCommand('copy');
+  } catch (e) {
+    console.error('ExecCommand copy failed', e);
+  }
 
   /* -------- Cleanup after copy -------- */
   setTimeout(() => {
