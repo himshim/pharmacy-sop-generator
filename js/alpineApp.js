@@ -2,12 +2,8 @@ function sopApp() {
   return {
     format: 'beginner',
 
-    institute: {
-      name: '',
-      dept: ''
-    },
-
-    title: 'Operation of UV Spectrophotometer',
+    institute: { name: '', dept: '' },
+    title: '',
 
     sections: {
       purpose: '',
@@ -19,8 +15,17 @@ function sopApp() {
 
     authority: {
       prepared: '',
-      checked: '',
+      reviewed: '',
       approved: ''
+    },
+
+    dates: {
+      prepared: '',
+      reviewed: ''
+    },
+
+    toggleFormat() {
+      this.format = this.format === 'beginner' ? 'inspection' : 'beginner';
     },
 
     get procedure() {
