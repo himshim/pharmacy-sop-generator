@@ -72,7 +72,11 @@
       <div class="card">
         <div class="card-content">
           <span class="card-title">SOP Selection</span>
-          <select id="sopSelect"></select>
+
+          <!-- ✅ FIXED SOP DROPDOWN -->
+          <select id="sopSelect" onchange="loadSOP(this.value)">
+            <option value="uv" selected>UV Spectrophotometer</option>
+          </select>
         </div>
       </div>
 
