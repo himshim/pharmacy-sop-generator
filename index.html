@@ -12,10 +12,12 @@
   <!-- Alpine -->
   <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
+  <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="grey lighten-4" x-data="sopApp()">
+<!-- ✅ ONLY CHANGE IS x-init BELOW -->
+<body class="grey lighten-4" x-data="sopApp()" x-init="loadSOP('uv')">
 
 <nav class="blue darken-2 no-print">
   <div class="nav-wrapper container">
@@ -88,6 +90,7 @@
   <!-- SOP PREVIEW -->
   <div id="preview">
 
+    <!-- BEGINNER FORMAT -->
     <template x-if="format === 'beginner'">
       <div>
         <h2 x-text="institute.name"></h2>
@@ -112,6 +115,7 @@
       </div>
     </template>
 
+    <!-- INSPECTION FORMAT -->
     <template x-if="format === 'inspection'">
       <div>
         <h2>STANDARD OPERATING PROCEDURE</h2>
@@ -138,12 +142,23 @@
       </div>
     </template>
 
-    <!-- SIGNATURE + DATES -->
+    <!-- SIGNATURES -->
     <table>
       <tr>
-        <td>Prepared By<br><span x-text="authority.prepared"></span><br>Date: <span x-text="dates.prepared"></span></td>
-        <td>Reviewed By<br><span x-text="authority.reviewed"></span><br>Date: <span x-text="dates.reviewed"></span></td>
-        <td>Approved By<br><span x-text="authority.approved"></span></td>
+        <td>
+          Prepared By<br>
+          <span x-text="authority.prepared"></span><br>
+          Date: <span x-text="dates.prepared"></span>
+        </td>
+        <td>
+          Reviewed By<br>
+          <span x-text="authority.reviewed"></span><br>
+          Date: <span x-text="dates.reviewed"></span>
+        </td>
+        <td>
+          Approved By<br>
+          <span x-text="authority.approved"></span>
+        </td>
       </tr>
     </table>
 
