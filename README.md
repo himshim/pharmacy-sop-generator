@@ -1,2 +1,2 @@
-# pharmacy-sop-generator
+ pharmacy-sop-generator
 This repository contains a static web app hosted on GitHub Pages for generating Standard Operating Procedures (SOPs) for instruments and procedures in pharmacy colleges. The design incorporates guidelines from NAAC, NBA, and ISO standards.
