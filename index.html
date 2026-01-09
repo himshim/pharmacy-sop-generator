@@ -70,21 +70,26 @@
           <div class="card-content">
             <span class="card-title">SOP Selection</span>
 
-            <label>Department</label>
-            <select x-model="department" @change="loadDepartment()">
-              <option disabled value="">Select Department</option>
-              <template x-for="d in departments" :key="d.key">
-                <option :value="d.key" x-text="d.name"></option>
-              </template>
-            </select>
+            <div class="input-field">
+              <select x-model="department" @change="loadDepartment()">
+                <option value="" disabled>Select Department</option>
+                <template x-for="d in departments" :key="d.key">
+                  <option :value="d.key" x-text="d.name"></option>
+                </template>
+              </select>
+              <label>Department</label>
+            </div>
 
-            <label style="margin-top:10px;">SOP</label>
-            <select x-model="sopKey" @change="loadSOP(sopKey)">
-              <option disabled value="">Select SOP</option>
-              <template x-for="s in sopList" :key="s.key">
-                <option :value="s.key" x-text="s.name"></option>
-              </template>
-            </select>
+            <div class="input-field">
+              <select x-model="sopKey" @change="loadSOP(sopKey)">
+                <option value="" disabled>Select SOP</option>
+                <template x-for="s in sopList" :key="s.key">
+                  <option :value="s.key" x-text="s.name"></option>
+                </template>
+              </select>
+              <label>SOP</label>
+            </div>
+
           </div>
         </div>
       </template>
@@ -94,10 +99,10 @@
         <div class="card-content">
           <span class="card-title">SOP Content</span>
           <input placeholder="SOP Title" x-model="title">
-          <textarea placeholder="Purpose" x-model="sections.purpose"></textarea>
-          <textarea placeholder="Scope" x-model="sections.scope"></textarea>
-          <textarea placeholder="Procedure (one step per line)" x-model="sections.procedure"></textarea>
-          <textarea placeholder="Precautions" x-model="sections.precautions"></textarea>
+          <textarea class="materialize-textarea" placeholder="Purpose" x-model="sections.purpose"></textarea>
+          <textarea class="materialize-textarea" placeholder="Scope" x-model="sections.scope"></textarea>
+          <textarea class="materialize-textarea" placeholder="Procedure (one step per line)" x-model="sections.procedure"></textarea>
+          <textarea class="materialize-textarea" placeholder="Precautions" x-model="sections.precautions"></textarea>
         </div>
       </div>
 
@@ -164,21 +169,21 @@
     <table style="margin-top:40px;">
       <tr>
         <td>
-          <b>Prepared By</b>
+          <b>Prepared By</b><br>
           <span x-text="authority.prepared"></span>
-          <small class="signature-designation" x-text="authority.preparedDesig"></small>
+          <div class="signature-designation" x-text="authority.preparedDesig"></div>
           Date: <span class="signature-date" x-text="dates.prepared || ''"></span>
         </td>
         <td>
-          <b>Reviewed By</b>
+          <b>Reviewed By</b><br>
           <span x-text="authority.reviewed"></span>
-          <small class="signature-designation" x-text="authority.reviewedDesig"></small>
+          <div class="signature-designation" x-text="authority.reviewedDesig"></div>
           Date: <span class="signature-date" x-text="dates.reviewed || ''"></span>
         </td>
         <td>
-          <b>Approved By</b>
+          <b>Approved By</b><br>
           <span x-text="authority.approved"></span>
-          <small class="signature-designation" x-text="authority.approvedDesig"></small>
+          <div class="signature-designation" x-text="authority.approvedDesig"></div>
         </td>
       </tr>
     </table>
@@ -186,6 +191,14 @@
   </div>
 </div>
 
+<!-- Scripts -->
 <script src="js/alpineApp.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    M.FormSelect.init(document.querySelectorAll('select'));
+  });
+</script>
+
 </body>
 </html>
