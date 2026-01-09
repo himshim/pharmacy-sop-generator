@@ -1,46 +1,41 @@
-const DEPARTMENTS = [
-  "pharmaceutics",
-  "pharmaceutical-chemistry",
-  "pharmacology",
-  "microbiology"
-];
+let currentSOP = null;
 
-let loadedSOPs = [];
-
-async function loadDepartments() {
-  const deptSel = document.getElementById("departmentSelect");
-  DEPARTMENTS.forEach(d => {
-    const o = document.createElement("option");
-    o.value = d;
-    o.textContent = d.replace("-", " ");
-    deptSel.appendChild(o);
-  });
-  loadSOPs(DEPARTMENTS[0]);
+async function loadDefaultSOP() {
+  const res = await fetch("data/pharmaceutics/uv.json");
+  currentSOP = await res.json();
+  fillFromSOP();
 }
 
-async function loadSOPs(dept) {
-  loadedSOPs = [];
-  const sopSel = document.getElementById("sopSelect");
-  sopSel.innerHTML = "";
+function fillFromSOP() {
+  if (!currentSOP) return;
 
-  const candidates = ["uv","dissolution","hplc","balance","ph-meter","plethysmograph","laminar-airflow"];
-
-  for (const name of candidates) {
-    try {
-      const r = await fetch(`data/${dept}/${name}.json`);
-      if (r.ok) loadedSOPs.push(await r.json());
-    } catch {}
-  }
-
-  loadedSOPs.forEach(s => {
-    const o = document.createElement("option");
-    o.value = s.meta.id;
-    o.textContent = s.meta.title;
-    sopSel.appendChild(o);
-  });
+  purpose.value = currentSOP.sections.purpose || "";
+  scope.value = currentSOP.sections.scope || "";
+  procedure.value = (currentSOP.sections.procedure || []).join("\n");
+  precautions.value = currentSOP.sections.precautions || "";
 }
 
-function getSelectedSOP() {
-  const id = document.getElementById("sopSelect").value;
-  return loadedSOPs.find(s => s.meta.id === id);
+function collectData() {
+  return {
+    meta: {
+      title: currentMode === "custom"
+        ? customTitle.value
+        : currentSOP.meta.title
+    },
+    institute: {
+      name: instName.value,
+      dept: instDept.value
+    },
+    sections: {
+      purpose: purpose.value,
+      scope: scope.value,
+      procedure: procedure.value.split("\n"),
+      precautions: precautions.value
+    },
+    authority: {
+      prepared: preparedBy.value,
+      checked: checkedBy.value,
+      approved: approvedBy.value
+    }
+  };
 }
