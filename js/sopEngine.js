@@ -1,127 +1,116 @@
+/* =====================================================
+   SOP ENGINE WITH DUAL FORMAT SUPPORT
+   ===================================================== */
+
+let sopFormat = "inspection"; // "inspection" | "beginner"
+
+function toggleFormat() {
+  sopFormat = sopFormat === "inspection" ? "beginner" : "inspection";
+  renderPreview();
+}
+
+/* =====================================================
+   MAIN RENDER
+   ===================================================== */
+
 function renderPreview() {
   const d = collectData();
   let html = "";
 
-  /* ================= SOP TITLE ================= */
-
-  html += `
-    <div style="text-align:center;">
-      <h2>STANDARD OPERATING PROCEDURE</h2>
-    </div>
-  `;
-
-  /* ================= BASIC DETAILS ================= */
-
-  html += `
-    <table style="width:100%; border-collapse:collapse; margin-top:15px;">
-      <tr>
-        <td><strong>Institution:</strong></td>
-        <td>${d.institute.name || "____________________________"}</td>
-      </tr>
-      <tr>
-        <td><strong>Department:</strong></td>
-        <td>${d.institute.dept || "____________________________"}</td>
-      </tr>
-      <tr>
-        <td><strong>SOP Title:</strong></td>
-        <td>${d.meta.title || "____________________________"}</td>
-      </tr>
-    </table>
-  `;
-
-  /* ================= METADATA (BOXED) ================= */
-
-  html += `
-    <table style="width:100%; border-collapse:collapse; margin-top:10px;">
-      <tr>
-        <td><strong>SOP No:</strong></td>
-        <td>__________________________</td>
-        <td><strong>Revision No:</strong></td>
-        <td>__________________________</td>
-      </tr>
-      <tr>
-        <td><strong>Effective Date:</strong></td>
-        <td>__________________________</td>
-        <td><strong>Review Date:</strong></td>
-        <td>__________________________</td>
-      </tr>
-    </table>
-
-    <hr>
-  `;
-
-  /* ================= SOP SECTIONS ================= */
-
-  const enabled = [...document.querySelectorAll("input[data-sec]:checked")]
-    .map(c => c.dataset.sec);
-
-  let sec = 1;
-
-  if (enabled.includes("purpose")) {
-    html += `<h4>${sec}.0 PURPOSE</h4><p>${d.sections.purpose || ""}</p>`;
-    sec++;
+  if (sopFormat === "inspection") {
+    html = renderInspectionFormat(d);
+  } else {
+    html = renderBeginnerFormat(d);
   }
-
-  if (enabled.includes("scope")) {
-    html += `<h4>${sec}.0 SCOPE</h4><p>${d.sections.scope || ""}</p>`;
-    sec++;
-  }
-
-  html += `
-    <h4>${sec}.0 RESPONSIBILITY</h4>
-    <p>
-      Laboratory In-charge, faculty members, and trained users
-      are responsible for implementation of this SOP.
-    </p>
-  `;
-  sec++;
-
-  if (enabled.includes("procedure")) {
-    html += `<h4>${sec}.0 PROCEDURE</h4>`;
-    d.sections.procedure
-      .filter(s => s.trim() !== "")
-      .forEach((step, i) => {
-        html += `<p>${sec}.${i + 1} ${step}</p>`;
-      });
-    sec++;
-  }
-
-  if (enabled.includes("precautions")) {
-    html += `<h4>${sec}.0 PRECAUTIONS</h4><p>${d.sections.precautions || ""}</p>`;
-    sec++;
-  }
-
-  /* ================= SIGNATURE BLOCK ================= */
-
-  html += `
-    <hr>
-
-    <table style="width:100%; margin-top:30px;">
-      <tr>
-        <td>
-          <strong>Prepared By</strong><br>
-          ${d.authority.prepared || "__________________________"}<br>
-          Date: __________
-        </td>
-        <td>
-          <strong>Checked By</strong><br>
-          ${d.authority.checked || "__________________________"}<br>
-          Date: __________
-        </td>
-        <td>
-          <strong>Authorized By</strong><br>
-          ${d.authority.approved || "__________________________"}<br>
-          Date: __________
-        </td>
-      </tr>
-    </table>
-
-    <hr>
-
-    <div style="text-align:center; font-style:italic; margin-top:10px;">
-      — End of SOP —
-    </div>
-  `;
 
   document.getElementById("preview").innerHTML = html;
+}
+
+/* =====================================================
+   FORMAT A — INSPECTION / QA FORMAT
+   ===================================================== */
+
+function renderInspectionFormat(d) {
+  let sec = 1;
+  let html = "";
+
+  html += `
+    <h2>STANDARD OPERATING PROCEDURE</h2>
+
+    <table>
+      <tr><td><b>Institution</b></td><td>${d.institute.name || ""}</td></tr>
+      <tr><td><b>Department</b></td><td>${d.institute.dept || ""}</td></tr>
+      <tr><td><b>SOP Title</b></td><td>${d.meta.title || ""}</td></tr>
+    </table>
+
+    <table>
+      <tr>
+        <td><b>SOP No</b></td><td>__________</td>
+        <td><b>Revision No</b></td><td>__________</td>
+      </tr>
+      <tr>
+        <td><b>Effective Date</b></td><td>__________</td>
+        <td><b>Review Date</b></td><td>__________</td>
+      </tr>
+    </table>
+    <hr>
+  `;
+
+  html += `<h4>${sec++}.0 PURPOSE</h4><p>${d.sections.purpose || ""}</p>`;
+  html += `<h4>${sec++}.0 SCOPE</h4><p>${d.sections.scope || ""}</p>`;
+
+  html += `
+    <h4>${sec++}.0 RESPONSIBILITY</h4>
+    <p>Laboratory In-charge, faculty members, and trained users.</p>
+  `;
+
+  html += `<h4>${sec}.0 PROCEDURE</h4>`;
+  d.sections.procedure.forEach((s, i) => {
+    html += `<p>${sec}.${i + 1} ${s}</p>`;
+  });
+  sec++;
+
+  html += `<h4>${sec}.0 PRECAUTIONS</h4><p>${d.sections.precautions || ""}</p>`;
+
+  html += `
+    <hr>
+    <table>
+      <tr>
+        <td><b>Prepared By</b><br>${d.authority.prepared || ""}<br>Date: ___</td>
+        <td><b>Checked By</b><br>${d.authority.checked || ""}<br>Date: ___</td>
+        <td><b>Authorized By</b><br>${d.authority.approved || ""}<br>Date: ___</td>
+      </tr>
+    </table>
+
+    <p style="text-align:center;font-style:italic;">— End of SOP —</p>
+  `;
+
+  return html;
+}
+
+/* =====================================================
+   FORMAT B — BEGINNER / TEACHING FORMAT
+   ===================================================== */
+
+function renderBeginnerFormat(d) {
+  let html = "";
+
+  html += `
+    <h2>${d.institute.name || "INSTITUTE NAME"}</h2>
+    <h3>STANDARD OPERATING PROCEDURE</h3>
+    <h4>${d.meta.title || "SOP TITLE"}</h4>
+    <hr>
+  `;
+
+  html += `<h4>Purpose</h4><p>${d.sections.purpose || ""}</p>`;
+  html += `<h4>Scope</h4><p>${d.sections.scope || ""}</p>`;
+
+  html += `<h4>Procedure</h4>`;
+  d.sections.procedure.forEach((s, i) => {
+    html += `<p>${i + 1}. ${s}</p>`;
+  });
+
+  html += `<h4>Precautions</h4><p>${d.sections.precautions || ""}</p>`;
+
+  return html;
 }
