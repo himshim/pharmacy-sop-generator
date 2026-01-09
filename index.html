@@ -16,43 +16,61 @@
   <label><input type="radio" name="mode" value="custom"> Custom</label>
 </div>
 
-<!-- PREDEFINED MODE -->
-<div id="predefinedBox" class="card">
-  <label>Department</label>
-  <select id="departmentSelect"></select>
+<!-- INSTITUTE HEADER -->
+<div class="card">
+  <h3>Institute Details</h3>
+  <input id="instName" placeholder="Institute / College Name">
+  <input type="file" id="instLogo">
+  <input id="instDept" placeholder="Department">
+</div>
 
-  <label>Instrument SOP</label>
+<!-- SOP SELECTION -->
+<div id="predefinedBox" class="card">
+  <h3>Predefined SOP</h3>
   <select id="sopSelect"></select>
 </div>
 
-<!-- CUSTOM MODE -->
+<!-- CUSTOM SOP -->
 <div id="customBox" class="card hidden">
-  <label>Title</label>
-  <input id="customTitle">
-
-  <label>Department</label>
-  <input id="customDept">
+  <h3>Custom SOP</h3>
+  <input id="customTitle" placeholder="SOP Title">
 </div>
 
 <!-- SECTIONS -->
 <div class="card">
   <h3>Sections</h3>
+
   <label><input type="checkbox" data-sec="purpose" checked> Purpose</label>
+  <textarea id="purpose"></textarea>
+
   <label><input type="checkbox" data-sec="scope" checked> Scope</label>
-  <label><input type="checkbox" data-sec="responsibility" checked> Responsibility</label>
-  <label><input type="checkbox" data-sec="procedure" checked> Procedure</label>
+  <textarea id="scope"></textarea>
+
+  <label><input type="checkbox" data-sec="procedure" checked> Procedure (one step per line)</label>
+  <textarea id="procedure"></textarea>
+
   <label><input type="checkbox" data-sec="precautions" checked> Precautions</label>
-  <label><input type="checkbox" data-sec="references"> References</label>
+  <textarea id="precautions"></textarea>
 </div>
 
-<button id="generateBtn">Generate SOP</button>
+<!-- AUTHORITIES -->
+<div class="card">
+  <h3>Authorities</h3>
+  <input id="preparedBy" placeholder="Prepared By">
+  <input id="checkedBy" placeholder="Checked By">
+  <input id="approvedBy" placeholder="Authorized By">
+</div>
 
-<pre id="output"></pre>
+<!-- LIVE PREVIEW -->
+<div class="card preview">
+  <h3>📄 Live SOP Preview</h3>
+  <div id="preview"></div>
+</div>
 
 <script src="js/utils.js"></script>
 <script src="js/modeController.js"></script>
-<script src="js/sopEngine.js"></script>
 <script src="js/uiController.js"></script>
+<script src="js/sopEngine.js"></script>
 <script src="js/app.js"></script>
 
 </body>
