@@ -1,9 +1,10 @@
 function sopApp() {
   return {
-    /* ===== UI STATE ===== */
+    /* ================= MODE ================= */
+    sopMode: 'predefined', // predefined | custom
     format: 'beginner',
 
-    /* ===== DEPARTMENTS ===== */
+    /* ================= DEPARTMENTS ================= */
     departments: [
       { key: 'pharmaceutics', name: 'Pharmaceutics' },
       { key: 'pharmaceutical-analysis', name: 'Pharmaceutical Analysis' },
@@ -16,57 +17,92 @@ function sopApp() {
     ],
 
     department: 'pharmaceutics',
-
-    /* ===== SOP LIST ===== */
     sopList: [],
     sopKey: '',
 
-    /* ===== INSTITUTE ===== */
-    institute: { name: '', dept: '' },
+    /* ================= INSTITUTE ================= */
+    institute: {
+      name: '',
+      dept: ''
+    },
 
-    /* ===== SOP DATA ===== */
+    /* ================= SOP CONTENT ================= */
     title: '',
     sections: {
       purpose: '',
       scope: '',
-      procedure: [],
+      procedure: '',
       precautions: ''
     },
 
-    /* ===== AUTHORITIES ===== */
-    authority: { prepared: '', reviewed: '', approved: '' },
-    dates: { prepared: '', reviewed: '' },
+    /* ================= AUTHORITIES ================= */
+    authority: {
+      prepared: '',
+      reviewed: '',
+      approved: ''
+    },
+    dates: {
+      prepared: '',
+      reviewed: ''
+    },
 
-    /* ===== LOAD DEPARTMENT INDEX ===== */
+    /* ================= INIT ================= */
+    init() {
+      this.loadDepartment();
+    },
+
+    /* ================= MODE SWITCH ================= */
+    switchMode(mode) {
+      this.sopMode = mode;
+
+      if (mode === 'custom') {
+        this.clearSOP();
+      } else {
+        this.loadDepartment();
+      }
+    },
+
+    /* ================= CLEAR FOR CUSTOM ================= */
+    clearSOP() {
+      this.title = '';
+      this.sections = {
+        purpose: '',
+        scope: '',
+        procedure: '',
+        precautions: ''
+      };
+    },
+
+    /* ================= LOAD DEPARTMENT ================= */
     async loadDepartment() {
+      if (this.sopMode !== 'predefined') return;
+
       try {
         const res = await fetch(`data/${this.department}/index.json`);
-        if (!res.ok) throw new Error('Department index not found');
-
         const data = await res.json();
-        this.sopList = data.instruments || [];
 
+        this.sopList = data.instruments || [];
         if (this.sopList.length > 0) {
           this.sopKey = this.sopList[0].key;
           this.loadSOP(this.sopKey);
         }
-      } catch (err) {
-        console.error(err);
-        this.sopList = [];
+      } catch (e) {
+        console.error('Department load failed', e);
       }
     },
 
-    /* ===== LOAD SOP ===== */
+    /* ================= LOAD SOP ================= */
     async loadSOP(key) {
+      if (this.sopMode !== 'predefined') return;
+
       try {
         const res = await fetch(`data/${this.department}/${key}.json`);
-        if (!res.ok) throw new Error('SOP file not found');
-
         const data = await res.json();
-        this.title = data.meta?.title || '';
-        this.sections = data.sections || this.sections;
-      } catch (err) {
-        console.error(err);
+
+        this.title = data.meta.title;
+        this.sections = data.sections;
+      } catch (e) {
+        console.error('SOP load failed', e);
       }
     },
 
@@ -74,12 +110,10 @@ function sopApp() {
       this.format = this.format === 'beginner' ? 'inspection' : 'beginner';
     },
 
-    get procedure() {
-      return this.sections.procedure || [];
-    },
-
-    init() {
-      this.loadDepartment();
+    get procedureList() {
+      return this.sections.procedure
+        ? this.sections.procedure.split('\n').filter(l => l.trim())
+        : [];
     }
   };
 }
