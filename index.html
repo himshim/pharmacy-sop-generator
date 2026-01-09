@@ -9,30 +9,35 @@
 </head>
 <body>
 
-<h1>📄 Pharmacy SOP Generator</h1>
+<h1>Pharmacy SOP Generator</h1>
 
 <!-- MODE -->
 <div class="card">
-  <label><input type="radio" name="mode" value="beginner" checked> Beginner</label>
-  <label><input type="radio" name="mode" value="expert"> Expert</label>
-  <label><input type="radio" name="mode" value="custom"> Custom</label>
+  <label for="mode-beginner"><input type="radio" id="mode-beginner" name="mode" value="beginner" checked> Beginner</label>
+  <label for="mode-expert"><input type="radio" id="mode-expert" name="mode" value="expert"> Expert</label>
+  <label for="mode-custom"><input type="radio" id="mode-custom" name="mode" value="custom"> Custom</label>
 </div>
 
 <!-- INSTITUTE -->
 <div class="card">
   <h3>Institute Details</h3>
+  <label for="instName">Institute / College Name</label>
   <input id="instName" placeholder="Institute / College Name">
+
+  <label for="instDept">Department</label>
   <input id="instDept" placeholder="Department">
 </div>
 
 <!-- SOP -->
 <div id="predefinedBox" class="card">
   <h3>Predefined SOP</h3>
+  <label for="sopSelect">Select SOP</label>
   <select id="sopSelect"></select>
 </div>
 
 <div id="customBox" class="card hidden">
   <h3>Custom SOP</h3>
+  <label for="customTitle">SOP Title</label>
   <input id="customTitle" placeholder="SOP Title">
 </div>
 
@@ -40,41 +45,53 @@
 <div class="card">
   <h3>SOP Sections</h3>
 
-  <label><input type="checkbox" data-sec="purpose" checked> Purpose</label>
-  <textarea id="purpose"></textarea>
+  <label for="purpose"><input type="checkbox" data-sec="purpose" checked> Purpose</label>
+  <textarea id="purpose" placeholder="Purpose"></textarea>
 
-  <label><input type="checkbox" data-sec="scope" checked> Scope</label>
-  <textarea id="scope"></textarea>
+  <label for="scope"><input type="checkbox" data-sec="scope" checked> Scope</label>
+  <textarea id="scope" placeholder="Scope"></textarea>
 
-  <label><input type="checkbox" data-sec="procedure" checked> Procedure</label>
-  <textarea id="procedure"></textarea>
+  <label for="responsibility"><input type="checkbox" data-sec="responsibility" checked> Responsibility</label>
+  <textarea id="responsibility" placeholder="Responsibility"></textarea>
 
-  <label><input type="checkbox" data-sec="precautions" checked> Precautions</label>
-  <textarea id="precautions"></textarea>
+  <label for="procedure"><input type="checkbox" data-sec="procedure" checked> Procedure</label>
+  <textarea id="procedure" placeholder="Procedure (one step per line)"></textarea>
+
+  <label for="precautions"><input type="checkbox" data-sec="precautions" checked> Precautions</label>
+  <textarea id="precautions" placeholder="Precautions"></textarea>
 </div>
 
 <!-- AUTHORITIES -->
 <div class="card">
   <h3>Authorities</h3>
 
+  <label for="preparedBy">Prepared By – Name</label>
   <input id="preparedBy" placeholder="Prepared By – Name">
+
+  <label for="preparedDesig">Prepared By – Designation</label>
   <input id="preparedDesig" placeholder="Prepared By – Designation">
 
+  <label for="checkedBy">Checked By – Name</label>
   <input id="checkedBy" placeholder="Checked By – Name">
+
+  <label for="checkedDesig">Checked By – Designation</label>
   <input id="checkedDesig" placeholder="Checked By – Designation">
 
+  <label for="approvedBy">Authorized By – Name</label>
   <input id="approvedBy" placeholder="Authorized By – Name">
+
+  <label for="approvedDesig">Authorized By – Designation</label>
   <input id="approvedDesig" placeholder="Authorized By – Designation">
 </div>
 
 <!-- COPY ACTION -->
 <div class="card">
- <button onclick="copySOP()">📋 Select SOP (Ctrl + C → Paste in Word)</button>
-  <p style="font-size:12px; opacity:0.7;">
+ <button onclick="copySOP()">Select SOP (Ctrl + C → Paste in Word)</button>
+  <p class="copy-instructions">
     Paste into Word using <b>Ctrl + V</b> (do not paste as plain text)
   </p>
 </div>
-  <button onclick="toggleFormat()">🔁 Switch SOP Format</button>
+  <button onclick="toggleFormat()">Switch SOP Format</button>
 
 
 <!-- LIVE PREVIEW -->
