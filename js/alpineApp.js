@@ -51,26 +51,38 @@ function sopApp() {
       this.sopKey = '';
       this.clearSOP();
 
-      const res = await fetch(`data/${this.department}/index.json`);
-      const data = await res.json();
-      this.sopList = data.instruments;
+      try {
+        const res = await fetch(`data/${this.department}/index.json`);
+        const data = await res.json();
+        this.sopList = data.instruments;
 
-      if (this.sopList.length) {
-        this.sopKey = this.sopList[0].key;
-        this.loadSOP(this.sopKey);
+        if (this.sopList.length) {
+          this.sopKey = this.sopList[0].key;
+          this.loadSOP(this.sopKey);
+        }
+
+        this.$nextTick(() => {
+          M.FormSelect.init(document.querySelectorAll('select'));
+        });
+      } catch (e) {
+        console.error('Department load error:', e);
       }
     },
 
     async loadSOP(key) {
       if (!key) return;
-      const res = await fetch(`data/${this.department}/${key}.json`);
-      const data = await res.json();
+      try {
+        const res = await fetch(`data/${this.department}/${key}.json`);
+        const data = await res.json();
 
-      this.title = data.meta.title;
-      this.sections.purpose = data.sections.purpose;
-      this.sections.scope = data.sections.scope;
-      this.sections.procedure = data.sections.procedure.join('\n');
-      this.sections.precautions = data.sections.precautions;
+        this.title = data.meta.title;
+        this.sections.purpose = data.sections.purpose;
+        this.sections.scope = data.sections.scope;
+        this.sections.procedure = data.sections.procedure.join('\n');
+        this.sections.precautions = data.sections.precautions;
+      } catch (e) {
+        console.error('SOP load error:', e);
+      }
     },
 
     clearSOP() {
