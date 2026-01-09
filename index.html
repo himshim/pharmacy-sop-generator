@@ -5,14 +5,18 @@
   <title>Pharmacy SOP Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Materialize CSS (Material Design) -->
+  <!-- Materialize CSS -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <!-- Custom Overrides -->
+  <!-- Alpine.js -->
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+  <!-- Custom Styles -->
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="grey lighten-4">
+
+<body class="grey lighten-4" x-data="sopApp()">
 
 <nav class="blue darken-2">
   <div class="nav-wrapper container">
@@ -22,213 +26,180 @@
 
 <div class="container section">
 
-  <!-- MODE -->
+  <!-- FORMAT TOGGLE -->
   <div class="card">
     <div class="card-content">
-      <span class="card-title">SOP Mode</span>
-      <p>
-        <label>
-          <input name="mode" type="radio" value="beginner" checked />
-          <span>Beginner</span>
-        </label>
-        &nbsp;&nbsp;
-        <label>
-          <input name="mode" type="radio" value="expert" />
-          <span>Expert</span>
-        </label>
-        &nbsp;&nbsp;
-        <label>
-          <input name="mode" type="radio" value="custom" />
-          <span>Custom</span>
-        </label>
-      </p>
+      <span class="card-title">SOP Format</span>
+      <a class="btn blue" @click="format = (format === 'beginner' ? 'inspection' : 'beginner')">
+        Switch Format
+      </a>
     </div>
   </div>
 
-  <!-- GRID START -->
+  <!-- FORM GRID -->
   <div class="row">
 
-    <!-- LEFT COLUMN -->
     <div class="col s12 m6">
-
-      <!-- INSTITUTE -->
       <div class="card">
         <div class="card-content">
           <span class="card-title">Institute Details</span>
 
           <div class="input-field">
-            <input id="instName" type="text">
-            <label for="instName">Institute / College Name</label>
+            <input type="text" x-model="institute.name">
+            <label class="active">Institute Name</label>
           </div>
 
           <div class="input-field">
-            <input id="instDept" type="text">
-            <label for="instDept">Department</label>
+            <input type="text" x-model="institute.dept">
+            <label class="active">Department</label>
           </div>
         </div>
       </div>
 
-      <!-- SOP -->
       <div class="card">
         <div class="card-content">
-          <span class="card-title">SOP Selection</span>
+          <span class="card-title">SOP Content</span>
 
-          <!-- ✅ FIXED SOP DROPDOWN -->
-          <select id="sopSelect" onchange="loadSOP(this.value)">
-            <option value="uv" selected>UV Spectrophotometer</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- SECTIONS -->
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title">SOP Sections</span>
-
-          <p>
-            <label>
-              <input type="checkbox" data-sec="purpose" checked />
-              <span>Purpose</span>
-            </label>
-          </p>
           <div class="input-field">
-            <textarea id="purpose" class="materialize-textarea"></textarea>
+            <textarea class="materialize-textarea" x-model="title"></textarea>
+            <label class="active">SOP Title</label>
           </div>
 
-          <p>
-            <label>
-              <input type="checkbox" data-sec="scope" checked />
-              <span>Scope</span>
-            </label>
-          </p>
           <div class="input-field">
-            <textarea id="scope" class="materialize-textarea"></textarea>
+            <textarea class="materialize-textarea" x-model="sections.purpose"></textarea>
+            <label class="active">Purpose</label>
           </div>
 
-          <p>
-            <label>
-              <input type="checkbox" data-sec="procedure" checked />
-              <span>Procedure (one step per line)</span>
-            </label>
-          </p>
           <div class="input-field">
-            <textarea id="procedure" class="materialize-textarea"></textarea>
+            <textarea class="materialize-textarea" x-model="sections.scope"></textarea>
+            <label class="active">Scope</label>
           </div>
 
-          <p>
-            <label>
-              <input type="checkbox" data-sec="precautions" checked />
-              <span>Precautions</span>
-            </label>
-          </p>
           <div class="input-field">
-            <textarea id="precautions" class="materialize-textarea"></textarea>
+            <textarea class="materialize-textarea" x-model="procedureText"></textarea>
+            <label class="active">Procedure (one step per line)</label>
+          </div>
+
+          <div class="input-field">
+            <textarea class="materialize-textarea" x-model="sections.precautions"></textarea>
+            <label class="active">Precautions</label>
           </div>
         </div>
       </div>
-
     </div>
 
-    <!-- RIGHT COLUMN -->
     <div class="col s12 m6">
-
-<!-- FONT SELECTION -->
-<div class="card">
-  <div class="card-content">
-    <span class="card-title">Preview Font</span>
-
-    <p>
-      <label>
-        <input name="fontChoice" type="radio" value="times" checked />
-        <span>Times New Roman (Recommended)</span>
-      </label>
-    </p>
-    <p>
-      <label>
-        <input name="fontChoice" type="radio" value="arial" />
-        <span>Arial</span>
-      </label>
-    </p>
-  </div>
-</div>
-
-      <!-- AUTHORITIES -->
       <div class="card">
         <div class="card-content">
           <span class="card-title">Authorities</span>
 
           <div class="input-field">
-            <input id="preparedBy" type="text">
-            <label for="preparedBy">Prepared By – Name</label>
-          </div>
-          <div class="input-field">
-            <input id="preparedDesig" type="text">
-            <label for="preparedDesig">Prepared By – Designation</label>
+            <input type="text" x-model="authority.prepared">
+            <label class="active">Prepared By</label>
           </div>
 
           <div class="input-field">
-            <input id="checkedBy" type="text">
-            <label for="checkedBy">Checked By – Name</label>
-          </div>
-          <div class="input-field">
-            <input id="checkedDesig" type="text">
-            <label for="checkedDesig">Checked By – Designation</label>
+            <input type="text" x-model="authority.checked">
+            <label class="active">Checked By</label>
           </div>
 
           <div class="input-field">
-            <input id="approvedBy" type="text">
-            <label for="approvedBy">Authorized By – Name</label>
-          </div>
-          <div class="input-field">
-            <input id="approvedDesig" type="text">
-            <label for="approvedDesig">Authorized By – Designation</label>
+            <input type="text" x-model="authority.approved">
+            <label class="active">Authorized By</label>
           </div>
         </div>
       </div>
 
-      <!-- ACTIONS -->
       <div class="card center-align">
         <div class="card-content">
-          <a class="btn blue waves-effect waves-light" onclick="toggleFormat()">
-            <i class="material-icons left">swap_horiz</i>Switch SOP Format
-          </a>
-          <br><br>
-          <a class="btn green waves-effect waves-light" onclick="copySOP()">
-            <i class="material-icons left">content_copy</i>Select SOP for Word (Ctrl+C)
-          </a>
+          <button class="btn green" onclick="window.print()">
+            Print SOP
+          </button>
         </div>
       </div>
-
     </div>
 
   </div>
 
-  <!-- PREVIEW -->
+  <!-- LIVE PREVIEW -->
   <div class="card">
     <div class="card-content">
       <span class="card-title">Live SOP Preview</span>
-      <div id="preview"></div>
+
+      <div id="preview" class="font-times">
+
+        <!-- BEGINNER -->
+        <template x-if="format === 'beginner'">
+          <div>
+            <h2 x-text="institute.name || 'INSTITUTE NAME'"></h2>
+            <h3>STANDARD OPERATING PROCEDURE</h3>
+
+            <p><b>Department:</b> <span x-text="institute.dept"></span></p>
+            <p><b>SOP Title:</b> <span x-text="title"></span></p>
+            <hr>
+
+            <h4>Purpose</h4>
+            <p x-text="sections.purpose"></p>
+
+            <h4>Scope</h4>
+            <p x-text="sections.scope"></p>
+
+            <h4>Procedure</h4>
+            <template x-for="(step, i) in procedure" :key="i">
+              <p x-text="(i+1) + '. ' + step"></p>
+            </template>
+
+            <h4>Precautions</h4>
+            <p x-text="sections.precautions"></p>
+
+            <hr>
+            <table>
+              <tr>
+                <td><b>Prepared By</b><br><span x-text="authority.prepared"></span></td>
+                <td><b>Checked By</b><br><span x-text="authority.checked"></span></td>
+                <td><b>Authorized By</b><br><span x-text="authority.approved"></span></td>
+              </tr>
+            </table>
+          </div>
+        </template>
+
+        <!-- INSPECTION -->
+        <template x-if="format === 'inspection'">
+          <div>
+            <h2>STANDARD OPERATING PROCEDURE</h2>
+
+            <table>
+              <tr><td><b>Institution</b></td><td x-text="institute.name"></td></tr>
+              <tr><td><b>Department</b></td><td x-text="institute.dept"></td></tr>
+              <tr><td><b>SOP Title</b></td><td x-text="title"></td></tr>
+            </table>
+
+            <hr>
+
+            <h4>1.0 PURPOSE</h4>
+            <p x-text="sections.purpose"></p>
+
+            <h4>2.0 SCOPE</h4>
+            <p x-text="sections.scope"></p>
+
+            <h4>3.0 PROCEDURE</h4>
+            <template x-for="(step, i) in procedure" :key="i">
+              <p x-text="'3.' + (i+1) + ' ' + step"></p>
+            </template>
+
+            <h4>4.0 PRECAUTIONS</h4>
+            <p x-text="sections.precautions"></p>
+          </div>
+        </template>
+
+      </div>
     </div>
   </div>
 
 </div>
 
-<!-- Materialize JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
-<!-- App Scripts -->
-<script src="js/utils.js"></script>
-<script src="js/modeController.js"></script>
-<script src="js/uiController.js"></script>
-<script src="js/sopEngine.js"></script>
-<script src="js/export.js"></script>
-<script src="js/app.js"></script>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    M.AutoInit();
-  });
-</script>
+<script src="js/alpineApp.js"></script>
 
 </body>
 </html>
