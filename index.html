@@ -47,10 +47,16 @@
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title">SOP Content</span>
-          <input placeholder="SOP Title" x-model="title">
+      <span class="card-title">SOP Content</span>
+
+<div class="input-field">
+  <select x-model="sopKey" @change="loadSOP(sopKey)">
+    <template x-for="sop in sopList" :key="sop.key">
+      <option :value="sop.key" x-text="sop.label"></option>
+    </template>
+  </select>
+  <label>Select SOP</label>
+</div>
           <textarea placeholder="Purpose" x-model="sections.purpose"></textarea>
           <textarea placeholder="Scope" x-model="sections.scope"></textarea>
           <textarea placeholder="Procedure (one per line)" x-model="procedureText"></textarea>
