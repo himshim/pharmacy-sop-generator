@@ -5,10 +5,13 @@
   <title>Pharmacy SOP Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- Materialize CSS only -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+  <!-- Alpine -->
   <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
   <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -26,25 +29,23 @@
   <div class="card">
     <div class="card-content">
       <span class="card-title">SOP Mode</span>
-      <p>
-        <label>
-          <input type="radio" name="mode" checked @change="switchMode('predefined')">
-          <span>Predefined SOP</span>
-        </label>
-        &nbsp;&nbsp;
-        <label>
-          <input type="radio" name="mode" @change="switchMode('custom')">
-          <span>Custom SOP</span>
-        </label>
-      </p>
+      <label>
+        <input type="radio" name="mode" checked @change="switchMode('predefined')">
+        <span>Predefined SOP</span>
+      </label>
+      &nbsp;&nbsp;
+      <label>
+        <input type="radio" name="mode" @change="switchMode('custom')">
+        <span>Custom SOP</span>
+      </label>
     </div>
   </div>
 
-  <!-- FORMAT -->
+  <!-- SOP FORMAT -->
   <div class="card">
     <div class="card-content">
       <span class="card-title">SOP Format</span>
-      <a class="btn blue" @click="toggleFormat()">Switch Format</a>
+      <button class="btn blue" @click="toggleFormat()">Switch Format</button>
     </div>
   </div>
 
@@ -60,29 +61,26 @@
         </div>
       </div>
 
-      <!-- PREDEFINED SELECTION -->
+      <!-- SOP SELECTION -->
       <template x-if="sopMode === 'predefined'">
         <div class="card">
           <div class="card-content">
             <span class="card-title">SOP Selection</span>
 
-            <div class="input-field">
-              <select x-model="department" @change="loadDepartment()">
-                <template x-for="d in departments" :key="d.key">
-                  <option :value="d.key" x-text="d.name"></option>
-                </template>
-              </select>
-              <label>Department</label>
-            </div>
+            <!-- PLAIN SELECT (IMPORTANT) -->
+            <label>Department</label>
+            <select x-model="department" @change="loadDepartment()">
+              <template x-for="d in departments" :key="d.key">
+                <option :value="d.key" x-text="d.name"></option>
+              </template>
+            </select>
 
-            <div class="input-field">
-              <select x-model="sopKey" @change="loadSOP(sopKey)">
-                <template x-for="s in sopList" :key="s.key">
-                  <option :value="s.key" x-text="s.name"></option>
-                </template>
-              </select>
-              <label>SOP</label>
-            </div>
+            <label style="margin-top:10px;">SOP</label>
+            <select x-model="sopKey" @change="loadSOP(sopKey)">
+              <template x-for="s in sopList" :key="s.key">
+                <option :value="s.key" x-text="s.name"></option>
+              </template>
+            </select>
           </div>
         </div>
       </template>
@@ -92,55 +90,117 @@
         <div class="card-content">
           <span class="card-title">SOP Content</span>
           <input placeholder="SOP Title" x-model="title">
-          <textarea class="materialize-textarea" placeholder="Purpose" x-model="sections.purpose"></textarea>
-          <textarea class="materialize-textarea" placeholder="Scope" x-model="sections.scope"></textarea>
-          <textarea class="materialize-textarea" placeholder="Procedure (one per line)" x-model="sections.procedure"></textarea>
-          <textarea class="materialize-textarea" placeholder="Precautions" x-model="sections.precautions"></textarea>
+          <textarea placeholder="Purpose" x-model="sections.purpose"></textarea>
+          <textarea placeholder="Scope" x-model="sections.scope"></textarea>
+          <textarea placeholder="Procedure (one step per line)" x-model="sections.procedure"></textarea>
+          <textarea placeholder="Precautions" x-model="sections.precautions"></textarea>
         </div>
       </div>
 
     </div>
 
     <div class="col s12 m6">
+
+      <!-- AUTHORITIES -->
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Authorities</span>
+          <input placeholder="Prepared By" x-model="authority.prepared">
+          <input placeholder="Reviewed By" x-model="authority.reviewed">
+          <input placeholder="Approved By" x-model="authority.approved">
+          <input type="date" x-model="dates.prepared">
+          <input type="date" x-model="dates.reviewed">
+        </div>
+      </div>
+
       <div class="card center-align">
         <div class="card-content">
           <button class="btn green" onclick="window.print()">Print SOP</button>
         </div>
       </div>
+
     </div>
   </div>
 </div>
 
-<!-- PRINT -->
+<!-- PRINT ZONE -->
 <div id="print-zone">
   <div id="preview">
-    <h3 style="text-align:center" x-text="institute.name"></h3>
-    <h4 style="text-align:center">STANDARD OPERATING PROCEDURE</h4>
-    <p><b>Department:</b> <span x-text="institute.dept"></span></p>
-    <p><b>Title:</b> <span x-text="title"></span></p>
 
-    <h5>Purpose</h5>
-    <p x-text="sections.purpose"></p>
+    <!-- BEGINNER FORMAT -->
+    <template x-if="format === 'beginner'">
+      <div>
+        <h4 style="text-align:center">STANDARD OPERATING PROCEDURE</h4>
+        <p><b>Department:</b> <span x-text="institute.dept"></span></p>
+        <p><b>Title:</b> <span x-text="title"></span></p>
 
-    <h5>Scope</h5>
-    <p x-text="sections.scope"></p>
+        <h5>Purpose</h5>
+        <p x-text="sections.purpose"></p>
 
-    <h5>Procedure</h5>
-    <template x-for="(p,i) in procedureList" :key="i">
-      <p x-text="(i+1)+'. '+p"></p>
+        <h5>Scope</h5>
+        <p x-text="sections.scope"></p>
+
+        <h5>Procedure</h5>
+        <template x-for="(p,i) in procedureList" :key="i">
+          <p x-text="(i+1)+'. '+p"></p>
+        </template>
+
+        <h5>Precautions</h5>
+        <p x-text="sections.precautions"></p>
+      </div>
     </template>
 
-    <h5>Precautions</h5>
-    <p x-text="sections.precautions"></p>
+    <!-- INSPECTION FORMAT -->
+    <template x-if="format === 'inspection'">
+      <div>
+        <h4 style="text-align:center">STANDARD OPERATING PROCEDURE</h4>
 
-    <p style="text-align:center; margin-top:40px;"><i>— End of SOP —</i></p>
+        <table>
+          <tr><td>Department</td><td x-text="institute.dept"></td></tr>
+          <tr><td>SOP Title</td><td x-text="title"></td></tr>
+        </table>
+
+        <h5>1.0 Purpose</h5>
+        <p x-text="sections.purpose"></p>
+
+        <h5>2.0 Scope</h5>
+        <p x-text="sections.scope"></p>
+
+        <h5>3.0 Procedure</h5>
+        <template x-for="(p,i) in procedureList" :key="i">
+          <p x-text="'3.'+(i+1)+' '+p"></p>
+        </template>
+
+        <h5>4.0 Precautions</h5>
+        <p x-text="sections.precautions"></p>
+      </div>
+    </template>
+
+    <!-- SIGNATURES -->
+    <table style="margin-top:40px;">
+      <tr>
+        <td>
+          Prepared By<br>
+          <span x-text="authority.prepared"></span><br>
+          Date: <span x-text="dates.prepared || '__________'"></span>
+        </td>
+        <td>
+          Reviewed By<br>
+          <span x-text="authority.reviewed"></span><br>
+          Date: <span x-text="dates.reviewed || '__________'"></span>
+        </td>
+        <td>
+          Approved By<br>
+          <span x-text="authority.approved"></span>
+        </td>
+      </tr>
+    </table>
+
+    <p style="text-align:center; margin-top:30px;"><i>— End of SOP —</i></p>
+
   </div>
 </div>
 
 <script src="js/alpineApp.js"></script>
-
-<!-- ❌ REMOVED Materialize JS AutoInit on purpose -->
-<!-- Keeping Materialize CSS only -->
-
 </body>
 </html>
