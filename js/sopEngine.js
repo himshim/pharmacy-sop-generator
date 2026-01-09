@@ -1,5 +1,5 @@
 /* =====================================================
-   SOP ENGINE WITH DUAL FORMAT SUPPORT (BUG-FREE)
+   SOP ENGINE WITH DUAL FORMAT SUPPORT (FINAL STABLE)
    ===================================================== */
 
 let sopFormat = "inspection"; // inspection | beginner
@@ -8,10 +8,6 @@ function toggleFormat() {
   sopFormat = sopFormat === "inspection" ? "beginner" : "inspection";
   renderPreview();
 }
-
-/* =====================================================
-   MAIN RENDER
-   ===================================================== */
 
 function renderPreview() {
   const d = collectData();
@@ -27,7 +23,7 @@ function renderPreview() {
 }
 
 /* =====================================================
-   FORMAT A — INSPECTION / QA FORMAT
+   EXPERT / INSPECTION FORMAT
    ===================================================== */
 
 function renderInspectionFormat(d) {
@@ -56,17 +52,13 @@ function renderInspectionFormat(d) {
     <hr>
   `;
 
-  html += `<h4>${sec}.0 PURPOSE</h4><p>${d.sections.purpose || ""}</p>`;
-  sec++;
-
-  html += `<h4>${sec}.0 SCOPE</h4><p>${d.sections.scope || ""}</p>`;
-  sec++;
+  html += `<h4>${sec}.0 PURPOSE</h4><p>${d.sections.purpose || ""}</p>`; sec++;
+  html += `<h4>${sec}.0 SCOPE</h4><p>${d.sections.scope || ""}</p>`; sec++;
 
   html += `
     <h4>${sec}.0 RESPONSIBILITY</h4>
     <p>Laboratory In-charge, faculty members, and trained users.</p>
-  `;
-  sec++;
+  `; sec++;
 
   html += `<h4>${sec}.0 PROCEDURE</h4>`;
   d.sections.procedure.forEach((step, i) => {
@@ -74,8 +66,7 @@ function renderInspectionFormat(d) {
   });
   sec++;
 
-  html += `<h4>${sec}.0 PRECAUTIONS</h4><p>${d.sections.precautions || ""}</p>`;
-  sec++;
+  html += `<h4>${sec}.0 PRECAUTIONS</h4><p>${d.sections.precautions || ""}</p>`; sec++;
 
   html += `
     <hr>
@@ -94,17 +85,23 @@ function renderInspectionFormat(d) {
 }
 
 /* =====================================================
-   FORMAT B — BEGINNER / TEACHING FORMAT
+   BEGINNER FORMAT (ACADEMICALLY CORRECT)
    ===================================================== */
 
 function renderBeginnerFormat(d) {
   let html = "";
 
+  /* Centered main headings */
   html += `
     <h2>${d.institute.name || "INSTITUTE NAME"}</h2>
-    <h4>${d.institute.dept || "DEPARTMENT"}</h4>
     <h3>STANDARD OPERATING PROCEDURE</h3>
-    <h4>${d.meta.title || "SOP TITLE"}</h4>
+    <hr>
+  `;
+
+  /* Left-aligned department and SOP title */
+  html += `
+    <p><b>Department:</b> ${d.institute.dept || ""}</p>
+    <p><b>SOP Title:</b> ${d.meta.title || ""}</p>
     <hr>
   `;
 
