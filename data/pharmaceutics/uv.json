@@ -3,14 +3,16 @@
     "title": "Operation of UV Spectrophotometer"
   },
   "sections": {
-    "purpose": "To describe the procedure for operating UV Spectrophotometer.",
-    "scope": "Applicable to Pharmaceutics laboratory.",
+    "purpose": "To describe the procedure for safe and correct operation of the UV Spectrophotometer.",
+    "scope": "Applicable to Pharmaceutics teaching laboratories.",
     "procedure": [
-      "Switch ON the instrument",
-      "Allow warm-up",
-      "Set wavelength",
-      "Measure absorbance"
+      "Switch ON the instrument and allow it to warm up as per manufacturer instructions.",
+      "Select the appropriate wavelength.",
+      "Prepare blank and sample solutions.",
+      "Place the blank in the sample holder and set zero absorbance.",
+      "Replace the blank with the sample cuvette.",
+      "Measure and record absorbance."
     ],
-    "precautions": "Avoid touching optical surfaces."
+    "precautions": "Avoid touching optical surfaces. Handle cuvettes carefully and ensure they are clean."
   }
 }
