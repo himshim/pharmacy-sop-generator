@@ -2,23 +2,17 @@ function sopApp() {
   return {
     /* ===== UI STATE ===== */
     format: 'beginner',
-    sopKey: 'uv',
+    department: 'pharmaceutics',
+    sopKey: '',
 
-    /* ===== SOP INDEX (JSON KEYS ONLY) ===== */
-    sopList: [
-      { key: 'uv', label: 'UV Spectrophotometer' }
-      // add more SOPs here later
-    ],
+    /* ===== SOP LIST ===== */
+    sopList: [],
 
     /* ===== INSTITUTE ===== */
-    institute: {
-      name: '',
-      dept: ''
-    },
+    institute: { name: '', dept: '' },
 
     /* ===== SOP DATA ===== */
     title: '',
-
     sections: {
       purpose: '',
       scope: '',
@@ -27,48 +21,51 @@ function sopApp() {
     },
 
     /* ===== AUTHORITIES ===== */
-    authority: {
-      prepared: '',
-      reviewed: '',
-      approved: ''
-    },
+    authority: { prepared: '', reviewed: '', approved: '' },
+    dates: { prepared: '', reviewed: '' },
 
-    dates: {
-      prepared: '',
-      reviewed: ''
-    },
-
-    /* ===== LOAD SOP FROM JSON ===== */
-    async loadSOP(key) {
+    /* ===== LOAD DEPARTMENT INDEX ===== */
+    async loadDepartment() {
       try {
-        const res = await fetch(`data/pharmaceutics/${key}.json`);
-        if (!res.ok) throw new Error('SOP JSON not found');
+        const res = await fetch(`data/${this.department}/index.json`);
+        if (!res.ok) throw new Error('Department index not found');
 
         const data = await res.json();
+        this.sopList = data.instruments || [];
 
-        this.title = data.meta?.title || '';
-
-        this.sections.purpose = data.sections?.purpose || '';
-        this.sections.scope = data.sections?.scope || '';
-        this.sections.procedure = data.sections?.procedure || [];
-        this.sections.precautions = data.sections?.precautions || '';
-
-        this.sopKey = key;
+        if (this.sopList.length > 0) {
+          this.sopKey = this.sopList[0].key;
+          this.loadSOP(this.sopKey);
+        }
       } catch (err) {
-        console.error('Failed to load SOP JSON:', err);
+        console.error(err);
       }
     },
 
-    /* ===== FORMAT TOGGLE ===== */
-    toggleFormat() {
-      this.format = this.format === 'beginner'
-        ? 'inspection'
-        : 'beginner';
+    /* ===== LOAD SOP FILE ===== */
+    async loadSOP(key) {
+      try {
+        const res = await fetch(`data/${this.department}/${key}.json`);
+        if (!res.ok) throw new Error('SOP file not found');
+
+        const data = await res.json();
+        this.title = data.meta?.title || '';
+        this.sections = data.sections || this.sections;
+      } catch (err) {
+        console.error(err);
+      }
     },
 
-    /* ===== PROCEDURE FOR TEMPLATE ===== */
+    toggleFormat() {
+      this.format = this.format === 'beginner' ? 'inspection' : 'beginner';
+    },
+
     get procedure() {
-      return this.sections.procedure;
+      return this.sections.procedure || [];
+    },
+
+    init() {
+      this.loadDepartment();
     }
   };
 }
