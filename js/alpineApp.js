@@ -2,11 +2,24 @@ function sopApp() {
   return {
     /* ===== UI STATE ===== */
     format: 'beginner',
+
+    /* ===== DEPARTMENTS ===== */
+    departments: [
+      { key: 'pharmaceutics', name: 'Pharmaceutics' },
+      { key: 'pharmaceutical-analysis', name: 'Pharmaceutical Analysis' },
+      { key: 'pharmacology', name: 'Pharmacology' },
+      { key: 'pharmacognosy', name: 'Pharmacognosy' },
+      { key: 'pharmaceutical-chemistry', name: 'Pharmaceutical Chemistry' },
+      { key: 'microbiology', name: 'Microbiology' },
+      { key: 'central-instrumentation', name: 'Central Instrumentation Facility' },
+      { key: 'general-procedures', name: 'General Procedures' }
+    ],
+
     department: 'pharmaceutics',
-    sopKey: '',
 
     /* ===== SOP LIST ===== */
     sopList: [],
+    sopKey: '',
 
     /* ===== INSTITUTE ===== */
     institute: { name: '', dept: '' },
@@ -39,10 +52,11 @@ function sopApp() {
         }
       } catch (err) {
         console.error(err);
+        this.sopList = [];
       }
     },
 
-    /* ===== LOAD SOP FILE ===== */
+    /* ===== LOAD SOP ===== */
     async loadSOP(key) {
       try {
         const res = await fetch(`data/${this.department}/${key}.json`);
