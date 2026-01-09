@@ -1,73 +1,94 @@
 let currentSOP = null;
 
-/* ===============================
-   LOAD DEFAULT / PREDEFINED SOP
-   =============================== */
+/* =========================================
+   SOP PATH MAP (SINGLE SOURCE OF TRUTH)
+   ========================================= */
 
-async function loadDefaultSOP() {
+const SOP_MAP = {
+  uv: "data/pharmaceutics/uv.json"
+};
+
+/* =========================================
+   LOAD SOP BY KEY
+   ========================================= */
+
+async function loadSOP(key) {
   try {
-    const res = await fetch("data/pharmaceutics/uv.json");
-    if (!res.ok) throw new Error('Failed to fetch');
+    const path = SOP_MAP[key];
+    if (!path) throw new Error("Unknown SOP key: " + key);
+
+    const res = await fetch(path);
+    if (!res.ok) throw new Error("Fetch failed: " + path);
+
     currentSOP = await res.json();
     fillFromSOP();
     renderPreview();
-  } catch (e) {
-    console.error("Failed to load default SOP", e);
-    alert("Error loading default SOP. Please check the console.");
+  } catch (err) {
+    console.error("SOP load error:", err);
+    currentSOP = null;
+    renderPreview(); // still render user input
   }
 }
 
-async function loadSelectedSOP(sopId) {
-  try {
-    const res = await fetch(`data/pharmaceutics/${sopId}.json`);
-    if (!res.ok) throw new Error('Failed to fetch');
-    currentSOP = await res.json();
-    fillFromSOP();
-    renderPreview();
-  } catch (e) {
-    console.error(`Failed to load SOP: ${sopId}`, e);
-    alert(`Error loading SOP: ${sopId}. Please check the console.`);
-  }
+/* =========================================
+   DEFAULT LOAD
+   ========================================= */
+
+function loadDefaultSOP() {
+  loadSOP("uv");
 }
+
+/* =========================================
+   FILL FORM FROM SOP
+   ========================================= */
 
 function fillFromSOP() {
   if (!currentSOP) return;
 
-  document.getElementById("purpose").value = currentSOP.sections.purpose || "";
-  document.getElementById("scope").value = currentSOP.sections.scope || "";
-  document.getElementById("responsibility").value = currentSOP.sections.responsibility || "Laboratory In-charge, faculty members, and trained users are responsible for implementation of this SOP.";
-  document.getElementById("procedure").value = (currentSOP.sections.procedure || []).join("\n");
-  document.getElementById("precautions").value = currentSOP.sections.precautions || "";
+  document.getElementById("purpose").value =
+    currentSOP.sections?.purpose || "";
+
+  document.getElementById("scope").value =
+    currentSOP.sections?.scope || "";
+
+  document.getElementById("procedure").value =
+    (currentSOP.sections?.procedure || []).join("\n");
+
+  document.getElementById("precautions").value =
+    currentSOP.sections?.precautions || "";
+
+  if (window.M) {
+    M.textareaAutoResize(document.getElementById("purpose"));
+    M.textareaAutoResize(document.getElementById("scope"));
+    M.textareaAutoResize(document.getElementById("procedure"));
+    M.textareaAutoResize(document.getElementById("precautions"));
+  }
 }
 
-/* ===============================
-   COLLECT DATA FOR SOP ENGINE
-   =============================== */
+/* =========================================
+   COLLECT DATA
+   ========================================= */
 
 function collectData() {
   return {
     meta: {
-      title:
-        currentMode === "custom"
-          ? document.getElementById("customTitle")?.value || ""
-          : (currentSOP && currentSOP.meta.title) || ""
+      title: currentSOP?.meta?.title || ""
     },
 
     institute: {
-      name: document.getElementById("instName")?.value || "",
-      dept: document.getElementById("instDept")?.value || ""
+      name: document.getElementById("instName").value,
+      dept: document.getElementById("instDept").value
     },
 
     sections: {
-      purpose: document.getElementById("purpose")?.value || "",
-      scope: document.getElementById("scope")?.value || "",
-      responsibility: document.getElementById("responsibility")?.value || "",
+      purpose: document.getElementById("purpose").value,
+      scope: document.getElementById("scope").value,
       procedure: document
         .getElementById("procedure")
-        ?.value.split("\n")
+        .value.split("\n")
         .map(s => s.trim())
-        .filter(s => s !== "") || [],
-      precautions: document.getElementById("precautions")?.value || ""
+        .filter(Boolean),
+      precautions: document.getElementById("precautions").value
     },
 
     authority: {
@@ -78,59 +99,20 @@ function collectData() {
   };
 }
 
-/* ===============================
-   HELPER: NAME + DESIGNATION
-   =============================== */
+/* =========================================
+   AUTHORITY HELPER
+   ========================================= */
 
 function buildAuthority(type) {
-  const nameEl = document.getElementById(type + "By");
-  const desigEl = document.getElementById(type + "Desig");
-  const name = nameEl ? nameEl.value : "";
-  const desig = desigEl ? desigEl.value : "";
-
-  if (name && desig) return `${name}, ${desig}`;
-  if (name) return name;
-  if (desig) return desig;
-  return "";
+  const name = document.getElementById(type + "By")?.value || "";
+  const desig = document.getElementById(type + "Desig")?.value || "";
+  return name && desig ? `${name}, ${desig}` : name;
 }
 
-/* ===============================
-   POPULATE PREDEFINED SELECT
-   =============================== */
-
-// For now, hardcoded; can fetch from manifest.json later
-const availableSOPs = [
-  { id: "uv", title: "UV Spectrophotometer" }
-  // Add more as JSON files are added
-];
-
-function populateSOPSelect() {
-  const select = document.getElementById("sopSelect");
-  select.innerHTML = ""; // Clear
-  availableSOPs.forEach(sop => {
-    const option = document.createElement("option");
-    option.value = sop.id;
-    option.textContent = sop.title;
-    select.appendChild(option);
-  });
-
-  // Load default on init
-  if (availableSOPs.length > 0) {
-    select.value = availableSOPs[0].id;
-    loadSelectedSOP(select.value);
-  }
-}
-
-/* ===============================
-   INITIALIZATION
-   =============================== */
+/* =========================================
+   INIT
+   ========================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-  populateSOPSelect();
-  loadDefaultSOP();
-
-  // Add listener for SOP select change
-  document.getElementById("sopSelect").addEventListener("change", event => {
-    loadSelectedSOP(event.target.value);
-  });
+  setTimeout(loadDefaultSOP, 200);
 });
