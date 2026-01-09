@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "title": "Operation of Sieve Shaker"
+  },
+  "sections": {
+    "purpose": "To describe the procedure for particle size analysis using a sieve shaker.",
+    "scope": "Applicable to powder analysis in the Pharmacognosy laboratory.",
+    "procedure": [
+      "Ensure sieves are clean and dry.",
+      "Arrange sieves in descending order of mesh size.",
+      "Place the sample powder on the top sieve.",
+      "Fix the sieve stack on the shaker.",
+      "Set the required shaking time.",
+      "Switch ON the sieve shaker.",
+      "After completion, collect and weigh retained powder from each sieve."
+    ],
+    "precautions": "Ensure proper fixing of sieves. Do not overload the sieve stack."
+  }
+}
