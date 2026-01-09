@@ -5,126 +5,82 @@
   <title>Pharmacy SOP Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- MAIN STYLES -->
   <link rel="stylesheet" href="style.css">
-
-  <!-- DOCX EXPORT (WORKING VERSION) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-
-  <!-- PDF EXPORT -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
 <h1>📄 Pharmacy SOP Generator</h1>
 
-<!-- ================= MODE ================= -->
+<!-- MODE -->
 <div class="card">
-  <label>
-    <input type="radio" name="mode" value="beginner" checked>
-    Beginner
-  </label>
-  <label>
-    <input type="radio" name="mode" value="expert">
-    Expert
-  </label>
-  <label>
-    <input type="radio" name="mode" value="custom">
-    Custom
-  </label>
+  <label><input type="radio" name="mode" value="beginner" checked> Beginner</label>
+  <label><input type="radio" name="mode" value="expert"> Expert</label>
+  <label><input type="radio" name="mode" value="custom"> Custom</label>
 </div>
 
-<!-- ================= INSTITUTE ================= -->
+<!-- INSTITUTE -->
 <div class="card">
   <h3>Institute Details</h3>
-
-  <label>Institute / College Name</label>
-  <input id="instName" type="text" placeholder="Enter institute name">
-
-  <label>Department</label>
-  <input id="instDept" type="text" placeholder="Enter department">
+  <input id="instName" placeholder="Institute / College Name">
+  <input id="instDept" placeholder="Department">
 </div>
 
-<!-- ================= PREDEFINED SOP ================= -->
+<!-- SOP -->
 <div id="predefinedBox" class="card">
   <h3>Predefined SOP</h3>
-
-  <label>Select SOP</label>
   <select id="sopSelect"></select>
 </div>
 
-<!-- ================= CUSTOM SOP ================= -->
 <div id="customBox" class="card hidden">
   <h3>Custom SOP</h3>
-
-  <label>SOP Title</label>
-  <input id="customTitle" type="text" placeholder="Enter SOP title">
+  <input id="customTitle" placeholder="SOP Title">
 </div>
 
-<!-- ================= SECTIONS ================= -->
+<!-- SECTIONS -->
 <div class="card">
   <h3>SOP Sections</h3>
 
-  <label>
-    <input type="checkbox" data-sec="purpose" checked>
-    Purpose
-  </label>
-  <textarea id="purpose" placeholder="Enter purpose"></textarea>
+  <label><input type="checkbox" data-sec="purpose" checked> Purpose</label>
+  <textarea id="purpose"></textarea>
 
-  <label>
-    <input type="checkbox" data-sec="scope" checked>
-    Scope
-  </label>
-  <textarea id="scope" placeholder="Enter scope"></textarea>
+  <label><input type="checkbox" data-sec="scope" checked> Scope</label>
+  <textarea id="scope"></textarea>
 
-  <label>
-    <input type="checkbox" data-sec="procedure" checked>
-    Procedure (one step per line)
-  </label>
-  <textarea id="procedure" placeholder="Enter procedure steps"></textarea>
+  <label><input type="checkbox" data-sec="procedure" checked> Procedure</label>
+  <textarea id="procedure"></textarea>
 
-  <label>
-    <input type="checkbox" data-sec="precautions" checked>
-    Precautions
-  </label>
-  <textarea id="precautions" placeholder="Enter precautions"></textarea>
+  <label><input type="checkbox" data-sec="precautions" checked> Precautions</label>
+  <textarea id="precautions"></textarea>
 </div>
 
-<!-- ================= AUTHORITIES ================= -->
+<!-- AUTHORITIES -->
 <div class="card">
-  <h3>Authorities / Approval</h3>
+  <h3>Authorities</h3>
 
-  <label>Prepared By – Name</label>
-  <input id="preparedBy" type="text" placeholder="Name">
-  <label>Prepared By – Designation</label>
-  <input id="preparedDesig" type="text" placeholder="Designation">
+  <input id="preparedBy" placeholder="Prepared By – Name">
+  <input id="preparedDesig" placeholder="Prepared By – Designation">
 
-  <label>Checked By – Name</label>
-  <input id="checkedBy" type="text" placeholder="Name">
-  <label>Checked By – Designation</label>
-  <input id="checkedDesig" type="text" placeholder="Designation">
+  <input id="checkedBy" placeholder="Checked By – Name">
+  <input id="checkedDesig" placeholder="Checked By – Designation">
 
-  <label>Authorized By – Name</label>
-  <input id="approvedBy" type="text" placeholder="Name">
-  <label>Authorized By – Designation</label>
-  <input id="approvedDesig" type="text" placeholder="Designation">
+  <input id="approvedBy" placeholder="Authorized By – Name">
+  <input id="approvedDesig" placeholder="Authorized By – Designation">
 </div>
 
-<!-- ================= EXPORT ================= -->
+<!-- COPY ACTION -->
 <div class="card">
-  <h3>Export SOP</h3>
-  <button type="button" onclick="exportDOCX()">📄 Export as DOCX</button>
-  <button type="button" onclick="exportPDF()">📕 Export as PDF</button>
+  <button onclick="copySOP()">📋 Copy SOP (Word-ready)</button>
+  <p style="font-size:12px; opacity:0.7;">
+    Paste into Word using <b>Ctrl + V</b> (do not paste as plain text)
+  </p>
 </div>
 
-<!-- ================= LIVE PREVIEW ================= -->
+<!-- LIVE PREVIEW -->
 <div class="card preview">
-  <h3>📄 Live SOP Preview</h3>
+  <h3>Live SOP Preview</h3>
   <div id="preview"></div>
 </div>
 
-<!-- ================= SCRIPTS ================= -->
 <script src="js/utils.js"></script>
 <script src="js/modeController.js"></script>
 <script src="js/uiController.js"></script>
