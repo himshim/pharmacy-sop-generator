@@ -2,9 +2,23 @@
    SCREEN STYLES (UI)
    ================================================== */
 
+:root {
+  --primary-color: #000;
+  --background-color: #f4f4f4;
+  --card-background: #ffffff;
+  --shadow-color: rgba(0,0,0,0.15);
+  --font-family: Arial, Helvetica, sans-serif;
+  --padding-small: 6px;
+  --padding-medium: 10px;
+  --padding-large: 15px;
+  --margin-small: 5px;
+  --margin-medium: 12px;
+  --border-radius: 6px;
+}
+
 body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: #f4f4f4;
+  font-family: var(--font-family);
+  background: var(--background-color);
   margin: 0;
   padding: 20px;
 }
@@ -15,21 +29,21 @@ h1 {
 }
 
 h2, h3, h4 {
-  margin: 10px 0;
+  margin: var(--padding-medium) 0;
 }
 
 .card {
-  background: #ffffff;
-  padding: 15px;
-  margin: 12px auto;
+  background: var(--card-background);
+  padding: var(--padding-large);
+  margin: var(--margin-medium) auto;
   max-width: 800px;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  border-radius: var(--border-radius);
+  box-shadow: 0 1px 3px var(--shadow-color);
 }
 
 label {
   display: block;
-  margin-top: 10px;
+  margin-top: var(--padding-medium);
   font-weight: bold;
 }
 
@@ -38,8 +52,8 @@ input[type="file"],
 select,
 textarea {
   width: 100%;
-  padding: 6px;
-  margin-top: 5px;
+  padding: var(--padding-small);
+  margin-top: var(--margin-small);
   font-size: 14px;
   box-sizing: border-box;
 }
@@ -51,13 +65,13 @@ textarea {
 
 input[type="radio"],
 input[type="checkbox"] {
-  margin-right: 6px;
+  margin-right: var(--padding-small);
 }
 
 button {
   width: 100%;
-  padding: 10px;
-  margin-top: 15px;
+  padding: var(--padding-medium);
+  margin-top: var(--padding-large);
   font-size: 16px;
   cursor: pointer;
 }
@@ -66,13 +80,25 @@ button {
   display: none;
 }
 
+.copy-instructions {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .card {
+    padding: var(--padding-medium);
+  }
+}
+
 /* ==================================================
    LIVE SOP PREVIEW (SCREEN)
    ================================================== */
 
 .preview {
   background: #fafafa;
-  border-left: 5px solid #000;
+  border-left: 5px solid var(--primary-color);
   padding: 20px;
 }
 
@@ -88,17 +114,17 @@ button {
 .preview table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
+  margin-top: var(--padding-medium);
 }
 
 .preview td {
-  padding: 6px;
+  padding: var(--padding-small);
   vertical-align: top;
 }
 
 .preview hr {
   border: none;
-  border-top: 1px solid #000;
+  border-top: 1px solid var(--primary-color);
   margin: 14px 0;
 }
 
@@ -140,7 +166,7 @@ button {
     font-family: "Times New Roman", serif;
     font-size: 12pt;
     line-height: 1.5;
-    color: #000;
+    color: var(--primary-color);
   }
 
   /* Headings */
@@ -156,7 +182,7 @@ button {
     font-size: 13pt;
     text-transform: uppercase;
     margin-top: 14px;
-    margin-bottom: 6px;
+    margin-bottom: var(--padding-small);
   }
 
   p {
@@ -168,20 +194,20 @@ button {
   table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-top: var(--padding-medium);
     page-break-inside: avoid;
   }
 
   table td {
-    border: 1px solid #000;
-    padding: 6px;
+    border: 1px solid var(--primary-color);
+    padding: var(--padding-small);
     vertical-align: top;
   }
 
   /* Horizontal rules */
   hr {
     border: none;
-    border-top: 1px solid #000;
+    border-top: 1px solid var(--primary-color);
     margin: 14px 0;
   }
 
