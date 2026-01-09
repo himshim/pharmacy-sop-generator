@@ -1,10 +1,9 @@
 function sopApp() {
   return {
-    /* ========== MODE ========== */
-    sopMode: 'predefined', // predefined | custom
-    format: 'beginner',
+    /* ================== STATE ================== */
+    sopMode: 'predefined',        // predefined | custom
+    format: 'inspection',         // inspection | beginner
 
-    /* ========== DEPARTMENTS ========== */
     departments: [
       { key: 'pharmaceutics', name: 'Pharmaceutics' },
       { key: 'pharmaceutical-analysis', name: 'Pharmaceutical Analysis' },
@@ -16,35 +15,46 @@ function sopApp() {
       { key: 'general-procedures', name: 'General Procedures' }
     ],
 
-    department: 'pharmaceutics',
+    department: '',
     sopList: [],
     sopKey: '',
 
-    /* ========== INSTITUTE ========== */
-    institute: { name: '', dept: '' },
+    institute: {
+      name: '',
+      dept: ''
+    },
 
-    /* ========== SOP DATA ========== */
     title: '',
     sections: {
       purpose: '',
       scope: '',
-      procedure: [],   // IMPORTANT: ARRAY
+      procedure: '',
       precautions: ''
     },
 
-    /* ========== AUTHORITIES ========== */
-    authority: { prepared: '', reviewed: '', approved: '' },
-    dates: { prepared: '', reviewed: '' },
+    authority: {
+      prepared: '',
+      preparedDesig: '',
+      reviewed: '',
+      reviewedDesig: '',
+      approved: '',
+      approvedDesig: ''
+    },
 
-    /* ========== INIT ========== */
+    dates: {
+      prepared: '',
+      reviewed: ''
+    },
+
+    /* ================== INIT ================== */
     init() {
+      this.department = this.departments[0].key;
       this.loadDepartment();
     },
 
-    /* ========== MODE SWITCH ========== */
+    /* ================== MODE ================== */
     switchMode(mode) {
       this.sopMode = mode;
-
       if (mode === 'custom') {
         this.clearSOP();
       } else {
@@ -52,74 +62,64 @@ function sopApp() {
       }
     },
 
-    clearSOP() {
-      this.title = '';
-      this.sections = {
-        purpose: '',
-        scope: '',
-        procedure: [],
-        precautions: ''
-      };
+    toggleFormat() {
+      this.format = this.format === 'inspection' ? 'beginner' : 'inspection';
     },
 
-    /* ========== LOAD DEPARTMENT INDEX ========== */
+    /* ================== LOADERS ================== */
     async loadDepartment() {
-      if (this.sopMode !== 'predefined') return;
+      this.sopList = [];
+      this.sopKey = '';
+      this.clearSOP();
 
       try {
         const res = await fetch(`data/${this.department}/index.json`);
         const data = await res.json();
-
-        this.sopList = data.instruments || [];
+        this.sopList = data.instruments;
 
         if (this.sopList.length > 0) {
           this.sopKey = this.sopList[0].key;
           this.loadSOP(this.sopKey);
         }
       } catch (e) {
-        console.error('Failed to load department index', e);
-        this.sopList = [];
+        console.error('Error loading department:', e);
       }
     },
 
-    /* ========== LOAD SOP FILE ========== */
     async loadSOP(key) {
-      if (this.sopMode !== 'predefined') return;
+      if (!key) return;
 
       try {
         const res = await fetch(`data/${this.department}/${key}.json`);
         const data = await res.json();
 
-        this.title = data.meta?.title || '';
-        this.sections = {
-          purpose: data.sections?.purpose || '',
-          scope: data.sections?.scope || '',
-          procedure: Array.isArray(data.sections?.procedure)
-            ? data.sections.procedure
-            : [],
-          precautions: data.sections?.precautions || ''
-        };
+        this.title = data.meta.title;
+        this.sections.purpose = data.sections.purpose;
+        this.sections.scope = data.sections.scope;
+        this.sections.procedure = data.sections.procedure.join('\n');
+        this.sections.precautions = data.sections.precautions;
       } catch (e) {
-        console.error('Failed to load SOP', e);
+        console.error('Error loading SOP:', e);
       }
     },
 
-    /* ========== FORMAT ========== */
-    toggleFormat() {
-      this.format = this.format === 'beginner' ? 'inspection' : 'beginner';
+    /* ================== HELPERS ================== */
+    clearSOP() {
+      this.title = '';
+      this.sections = {
+        purpose: '',
+        scope: '',
+        procedure: '',
+        precautions: ''
+      };
     },
 
-    /* ========== RENDER PROCEDURE ========== */
     get procedureList() {
-      // predefined SOP → array
-      if (Array.isArray(this.sections.procedure)) {
-        return this.sections.procedure;
-      }
-
-      // custom SOP → textarea
+      if (!this.sections.procedure) return [];
       return this.sections.procedure
-        ? this.sections.procedure.split('\n').filter(l => l.trim())
-        : [];
+        .split('\n')
+        .map(p => p.trim())
+        .filter(Boolean);
     }
   };
 }
