@@ -1,30 +1,94 @@
-body {
-  font-family: Arial;
-  background: #f4f4f4;
-  padding: 20px;
+/* =========================
+   PRINT OPTIMIZED SOP STYLE
+   ========================= */
+
+@media print {
+
+  /* Hide everything except SOP preview */
+  body * {
+    visibility: hidden;
+  }
+
+  .preview, .preview * {
+    visibility: visible;
+  }
+
+  .preview {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: #fff;
+    padding: 0;
+    margin: 0;
+    border: none;
+  }
+
+  /* Page setup */
+  @page {
+    size: A4;
+    margin: 20mm;
+  }
+
+  /* Typography */
+  body {
+    font-family: "Times New Roman", serif;
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #000;
+  }
+
+  h2 {
+    font-size: 16pt;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  h4 {
+    font-size: 13pt;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+  }
+
+  p {
+    margin: 4px 0;
+  }
+
+  /* Tables (header + signatures) */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    page-break-inside: avoid;
+  }
+
+  td {
+    padding: 6px 4px;
+    vertical-align: top;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid #000;
+    margin: 12px 0;
+  }
+
+  /* Procedure numbering alignment */
+  ol {
+    margin-left: 18px;
+  }
+
+  li {
+    margin-bottom: 4px;
+  }
+
+  /* Signature block */
+  .preview table:last-of-type td {
+    padding-top: 25px;
+  }
+
+  /* Avoid breaking signature block across pages */
+  .preview table:last-of-type {
+    page-break-inside: avoid;
+  }
 }
-
-h1 { text-align: center; }
-
-.card {
-  background: #fff;
-  padding: 15px;
-  margin: 12px auto;
-  max-width: 700px;
-  border-radius: 6px;
-}
-
-textarea, input, select {
-  width: 100%;
-  padding: 6px;
-  margin-top: 5px;
-}
-
-textarea { min-height: 60px; }
-
-.preview {
-  background: #fafafa;
-  border-left: 4px solid #333;
-}
-
-.hidden { display: none; }
