@@ -4,13 +4,19 @@ function sopApp() {
     format: 'beginner',
     sopKey: 'uv',
 
+    /* ===== SOP INDEX (JSON KEYS ONLY) ===== */
+    sopList: [
+      { key: 'uv', label: 'UV Spectrophotometer' }
+      // add more SOPs here later
+    ],
+
     /* ===== INSTITUTE ===== */
     institute: {
       name: '',
       dept: ''
     },
 
-    /* ===== SOP DATA (BOUND TO HTML) ===== */
+    /* ===== SOP DATA ===== */
     title: '',
 
     sections: {
@@ -40,7 +46,6 @@ function sopApp() {
 
         const data = await res.json();
 
-        /* MAP JSON → UI STATE */
         this.title = data.meta?.title || '';
 
         this.sections.purpose = data.sections?.purpose || '';
