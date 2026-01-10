@@ -66,3 +66,16 @@
     margin: 25mm;
   }
 }
+/* Existing styles remain unchanged */
+
+#preview.inspection {
+  font-family: "Times New Roman", Times, serif;
+}
+
+#preview.beginner {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#preview ol, #preview ul {
+  margin-left: 20px;
+}
