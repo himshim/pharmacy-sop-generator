@@ -76,15 +76,16 @@
       <div class="row">
         <!-- LEFT COLUMN -->
         <div class="col s12 m6">
-          <!-- INSTITUTE -->
+          <!-- INSTITUTE & METADATA -->
           <div class="card">
             <div class="card-content">
-              <span class="card-title">Institute</span>
-              <input
-                placeholder="Institute / College Name"
-                x-model="institute.name"
-              />
+              <span class="card-title">Institute & Metadata</span>
+              <input placeholder="Institute / College Name" x-model="institute.name" />
               <input placeholder="Department" x-model="institute.dept" />
+              
+              <input placeholder="SOP Number" x-model="metadata.sopNumber" />
+              <input type="date" label="Effective Date" x-model="metadata.effectiveDate" />
+              <input type="date" label="To Be Reviewed On" x-model="metadata.nextReviewDate" />
             </div>
           </div>
 
@@ -209,20 +210,35 @@
     <!-- PRINT ZONE -->
     <div id="print-zone">
       <div id="preview">
-        <h2 x-text="institute.name"></h2>
-        <h3>
-          STANDARD OPERATING PROCEDURE –
-          <span x-text="format.toUpperCase()"></span>
-        </h3>
+        <!-- Institute Name (Normal Description) -->
+        <p style="text-align: center; font-weight: bold; font-size: 14pt; margin-top: 0;">
+          <span x-text="institute.name"></span>
+        </p>
 
+        <!-- SOP Heading (No Format Suffix) -->
+        <h3>STANDARD OPERATING PROCEDURE</h3>
+
+        <!-- Updated Header Table -->
         <table>
+          <!-- Row 1: SOP Number & Effective Date -->
+          <tr>
+            <td width="20%"><b>SOP No.</b></td>
+            <td width="30%" x-text="metadata.sopNumber"></td>
+            <td width="20%"><b>Effective Date</b></td>
+            <td width="30%" x-text="metadata.effectiveDate"></td>
+          </tr>
+
+          <!-- Row 2: Department & To Be Reviewed On -->
           <tr>
             <td><b>Department</b></td>
             <td x-text="institute.dept"></td>
+            <td><b>To Be Reviewed On</b></td>
+            <td x-text="metadata.nextReviewDate"></td>
           </tr>
+
+          <!-- Row 3: SOP Title (Spans full width) -->
           <tr>
-            <td><b>SOP Title</b></td>
-            <td x-text="title"></td>
+            <td colspan="4"><b>SOP Title:</b> <span x-text="title"></span></td>
           </tr>
         </table>
 
