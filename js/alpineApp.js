@@ -38,20 +38,29 @@ function sopApp() {
 
     init() {
       this.department = this.departments[0].key;
+      this.$nextTick(() => {
+        document.getElementById('dept-select').value = this.department;
+        M.FormSelect.init(document.querySelectorAll('select'));
+      });
       this.loadDepartment();
     },
 
     switchMode(mode) {
       this.sopMode = mode;
-      if (mode === 'custom') this.clearSOP();
-      else this.loadDepartment();
+      if (mode === 'custom') {
+        this.clearSOP();
+      } else {
+        this.$nextTick(() => {
+          this.loadDepartment();
+        });
+      }
     },
 
     toggleFormat() {
       this.format = this.format === 'inspection' ? 'beginner' : 'inspection';
     },
 
-    /* ========= DROPDOWN HANDLERS (FIX) ========= */
+    /* ========= DROPDOWN HANDLERS ========= */
 
     departmentChanged(event) {
       this.department = event.target.value;
@@ -76,7 +85,12 @@ function sopApp() {
         this.sopList = data.instruments || [];
 
         this.$nextTick(() => {
-          M.FormSelect.init(document.querySelectorAll('select'));
+          let sopSelect = document.getElementById('sop-select');
+          if (sopSelect) {
+            let instance = M.FormSelect.getInstance(sopSelect);
+            if (instance) instance.destroy();
+            M.FormSelect.init(sopSelect);
+          }
         });
       } catch (e) {
         console.error('Department load error:', e);
@@ -87,7 +101,7 @@ function sopApp() {
       if (!key) return;
 
       try {
-        const res = await fetch(`data/${this.department}/${key}.json`);
+        const res = await fetch(`data/\( {this.department}/ \){key}.json`);
         const data = await res.json();
 
         this.title = data.meta.title;
