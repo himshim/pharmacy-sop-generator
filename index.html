@@ -68,34 +68,34 @@
       </div>
 
       <!-- SOP SELECTION -->
-      <template x-if="sopMode === 'predefined'">
-        <div class="card">
-          <div class="card-content">
-            <span class="card-title">SOP Selection</span>
+      <div x-show="sopMode === 'predefined'">
+  <div class="card">
+    <div class="card-content">
+      <span class="card-title">SOP Selection</span>
 
-            <div class="input-field">
-              <select class="browser-default" id="dept-select" @change="departmentChanged($event)">
-                <option value="" disabled selected>Select Department</option>
-                <template x-for="d in departments" :key="d.key">
-                  <option :value="d.key" x-text="d.name"></option>
-                </template>
-              </select>
-              <label class="active">Department</label>
-            </div>
+      <div class="input-field">
+        <select class="browser-default" @change="departmentChanged($event)">
+          <option value="" disabled selected>Select Department</option>
+          <template x-for="d in departments" :key="d.key">
+            <option :value="d.key" x-text="d.name"></option>
+          </template>
+        </select>
+        <label class="active">Department</label>
+      </div>
 
-            <div class="input-field">
-              <select class="browser-default" id="sop-select" @change="sopChanged($event)">
-                <option value="" disabled selected>Select SOP</option>
-                <template x-for="s in sopList" :key="s.key">
-                  <option :value="s.key" x-text="s.name"></option>
-                </template>
-              </select>
-              <label class="active">SOP</label>
-            </div>
+      <div class="input-field">
+        <select class="browser-default" @change="sopChanged($event)">
+          <option value="" disabled selected>Select SOP</option>
+          <template x-for="s in sopList" :key="s.key">
+            <option :value="s.key" x-text="s.name"></option>
+          </template>
+        </select>
+        <label class="active">SOP</label>
+      </div>
 
-          </div>
-        </div>
-      </template>
+    </div>
+  </div>
+</div>
 
       <!-- SOP CONTENT -->
       <div class="card">

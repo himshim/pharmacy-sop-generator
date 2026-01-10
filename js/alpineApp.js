@@ -3,7 +3,11 @@ function sopApp() {
     sopMode: 'predefined',
     format: 'inspection',
 
-    institute: { name: '', dept: '' },
+    // ✅ REQUIRED (WAS MISSING)
+    institute: {
+      name: '',
+      dept: ''
+    },
 
     departments: [
       { key: 'pharmaceutics', name: 'Pharmaceutics' },
