@@ -1,24 +1,14 @@
-/* ===============================
-   GLOBAL RESET
-================================ */
 * {
   box-sizing: border-box;
 }
 
-/* Disable Materialize influence on print */
-.no-print {
-  display: block;
-}
-
+/* Hide UI during print */
 @media print {
   .no-print {
     display: none !important;
   }
 }
 
-/* ===============================
-   A4 PAGE SETUP (WORD STYLE)
-================================ */
 @page {
   size: A4;
   margin: 25mm;
@@ -27,32 +17,29 @@
 body {
   background: #e0e0e0;
   margin: 0;
-  padding: 0;
 }
 
-/* ===============================
-   PREVIEW WRAPPER
-================================ */
+/* Preview wrapper */
 #print-zone {
   display: flex;
   justify-content: center;
   padding: 20px;
 }
 
-/* A4 SHEET */
+/* A4 sheet */
 #preview {
   width: 210mm;
   min-height: 297mm;
-  background: #ffffff;
+  background: #fff;
   padding: 25mm;
-  color: #000;
   font-family: "Times New Roman", Times, serif;
   font-size: 12pt;
   line-height: 1.5;
+  color: #000;
   box-shadow: 0 0 10px rgba(0,0,0,0.25);
 }
 
-/* Mobile scaling (DO NOT reflow) */
+/* Mobile scale */
 @media screen and (max-width: 768px) {
   #preview {
     transform: scale(0.85);
@@ -60,14 +47,11 @@ body {
   }
 }
 
-/* ===============================
-   HEADINGS (WORD STYLE)
-================================ */
+/* Headings */
 #preview h2 {
   text-align: center;
   font-size: 16pt;
   font-weight: bold;
-  margin-bottom: 5mm;
 }
 
 #preview h3 {
@@ -75,74 +59,33 @@ body {
   font-size: 14pt;
   font-weight: bold;
   margin-bottom: 10mm;
-  text-transform: uppercase;
 }
 
 #preview h4 {
   font-size: 12pt;
   font-weight: bold;
   margin-top: 8mm;
-  margin-bottom: 3mm;
 }
 
-/* ===============================
-   TABLES (WORD STYLE)
-================================ */
+/* Tables */
 #preview table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 5mm;
-  margin-bottom: 5mm;
+  margin: 6mm 0;
 }
 
-#preview table td,
-#preview table th {
+#preview td {
   border: 1px solid #000;
-  padding: 6px 8px;
-  vertical-align: top;
-  font-size: 12pt;
+  padding: 6px;
 }
 
-/* Signature block spacing */
-.signature-designation {
-  margin-top: 15mm;
-  font-size: 11pt;
-}
-
-.signature-date {
-  display: inline-block;
-  margin-top: 2mm;
-}
-
-/* ===============================
-   LISTS (PROCEDURE & PRECAUTIONS)
-================================ */
-#preview ol {
-  padding-left: 20px;
-  margin-top: 2mm;
-}
-
-#preview ol li {
-  margin-bottom: 2mm;
-}
-
+/* Lists */
+#preview ol,
 #preview ul {
   padding-left: 20px;
-  margin-top: 2mm;
 }
 
-#preview ul li {
-  margin-bottom: 2mm;
-}
-
-/* ===============================
-   PRINT OVERRIDES
-================================ */
 @media print {
-  body {
-    background: #fff;
-  }
-
   #preview {
     box-shadow: none;
     transform: none !important;
