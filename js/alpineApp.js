@@ -14,12 +14,6 @@ function sopApp() {
       { key: 'general-procedures', name: 'General Procedures' }
     ],
 
-    department: '',
-    sopList: [],
-    sopKey: '',
-
-    institute: { name: '', dept: '' },
-
     title: '',
     sections: {
       purpose: '',
@@ -50,17 +44,13 @@ function sopApp() {
       if (mode === 'custom') {
         this.clearSOP();
       } else {
-        this.$nextTick(() => {
-          this.loadDepartment();
-        });
+        this.loadDepartment();
       }
     },
 
     toggleFormat() {
       this.format = this.format === 'inspection' ? 'beginner' : 'inspection';
     },
-
-    /* ========= DROPDOWN HANDLERS ========= */
 
     departmentChanged(event) {
       this.department = event.target.value;
@@ -81,6 +71,11 @@ function sopApp() {
 
       try {
         const res = await fetch(`data/${this.department}/index.json`);
+        if (!res.ok) {
+          console.error(`Department load error: ${res.status}`);
+          alert(`Failed to load SOP list for department ${this.department}.`);
+          return;
+        }
         const data = await res.json();
         this.sopList = data.instruments || [];
 
@@ -101,7 +96,12 @@ function sopApp() {
       if (!key) return;
 
       try {
-        const res = await fetch(`data/\( {this.department}/ \){key}.json`);
+        const res = await fetch(`data/${this.department}/${key}.json`);
+        if (!res.ok) {
+          console.error(`SOP load error: ${res.status}`);
+          alert(`Failed to load SOP "${key}".`);
+          return;
+        }
         const data = await res.json();
 
         this.title = data.meta.title;
