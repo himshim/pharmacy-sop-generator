@@ -158,11 +158,21 @@ body {
    PRINT OVERRIDES
 ================================ */
 @media print {
-  body {
-    background: #fff;
+  html, body {
+    width: 210mm;
+    height: 297mm;
+    margin: 0;
+    padding: 0;
+  }
+
+  #print-zone {
+    padding: 0;
   }
 
   #preview {
+    width: 210mm;
+    height: 297mm;
+    padding: 25mm;
     box-shadow: none;
     transform: none !important;
   }
