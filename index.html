@@ -149,11 +149,20 @@
   <div id="preview">
 
     <h2 x-text="institute.name"></h2>
-    <h3 x-text="'STANDARD OPERATING PROCEDURE - ' + format.toUpperCase()"></h3>
+    <h3>
+      STANDARD OPERATING PROCEDURE – 
+      <span x-text="format.toUpperCase()"></span>
+    </h3>
 
     <table>
-      <tr><td><b>Department</b></td><td x-text="institute.dept"></td></tr>
-      <tr><td><b>SOP Title</b></td><td x-text="title"></td></tr>
+      <tr>
+        <td><b>Department</b></td>
+        <td x-text="institute.dept"></td>
+      </tr>
+      <tr>
+        <td><b>SOP Title</b></td>
+        <td x-text="title"></td>
+      </tr>
     </table>
 
     <h4>1.0 Purpose</h4>
@@ -163,48 +172,40 @@
     <p x-text="sections.scope"></p>
 
     <h4>3.0 Procedure</h4>
-    <template x-if="format === 'inspection'">
-      <p x-text="sections.procedure"></p>
-    </template>
-    <template x-else>
-      <ol>
-        <template x-for="p in procedureList" :key="p">
-          <li x-text="p"></li>
-        </template>
-      </ol>
-    </template>
+    <ol>
+      <template x-for="step in procedureList" :key="step">
+        <li x-text="step"></li>
+      </template>
+    </ol>
 
     <h4>4.0 Precautions</h4>
-    <template x-if="format === 'inspection'">
-      <p x-text="sections.precautions"></p>
-    </template>
-    <template x-else>
-      <ul>
-        <template x-for="p in precautionsList" :key="p">
-          <li x-text="p + '.'"></li>
-        </template>
-      </ul>
-    </template>
+    <ul>
+      <template x-for="p in precautionsList" :key="p">
+        <li x-text="p"></li>
+      </template>
+    </ul>
 
-    <table style="margin-top:40px;">
+    <table style="margin-top:20mm;">
       <tr>
         <td>
           <b>Prepared By</b><br>
-          <span x-text="authority.prepared"></span>
-          <div class="signature-designation" x-text="authority.preparedDesig"></div>
-          Date: <span class="signature-date" x-text="dates.prepared || ''"></span>
+          <span x-text="authority.prepared"></span><br>
+          <span class="signature-designation" x-text="authority.preparedDesig"></span><br>
+          Date: <span class="signature-date" x-text="dates.prepared"></span>
         </td>
+
         <td>
           <b>Reviewed By</b><br>
-          <span x-text="authority.reviewed"></span>
-          <div class="signature-designation" x-text="authority.reviewedDesig"></div>
-          Date: <span class="signature-date" x-text="dates.reviewed || ''"></span>
+          <span x-text="authority.reviewed"></span><br>
+          <span class="signature-designation" x-text="authority.reviewedDesig"></span><br>
+          Date: <span class="signature-date" x-text="dates.reviewed"></span>
         </td>
+
         <td>
           <b>Approved By</b><br>
-          <span x-text="authority.approved"></span>
-          <div class="signature-designation" x-text="authority.approvedDesig"></div>
-          Date: <span class="signature-date" x-text="dates.approved || ''"></span>
+          <span x-text="authority.approved"></span><br>
+          <span class="signature-designation" x-text="authority.approvedDesig"></span><br>
+          Date: <span class="signature-date" x-text="dates.approved"></span>
         </td>
       </tr>
     </table>
