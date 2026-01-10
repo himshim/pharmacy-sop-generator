@@ -120,10 +120,13 @@ function sopApp() {
     },
 
     get procedureList() {
-      return this.sections.procedure
-        ? this.sections.procedure.split('\n').map(p => p.trim()).filter(Boolean)
-        : [];
-    },
+  return this.sections.procedure
+    ? this.sections.procedure
+        .split('\n')
+        .map(p => p.trim())
+        .filter(Boolean)
+    : [];
+}
 
     get precautionsList() {
       return this.sections.precautions
