@@ -1,221 +1,292 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Pharmacy SOP Generator</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Pharmacy SOP Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Materialize CSS -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Materialize CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
 
-  <!-- Alpine.js -->
-  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- Alpine.js -->
+    <script
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
 
-  <!-- Custom Styles -->
-  <link rel="stylesheet" href="styles.css">
-</head>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-<body class="grey lighten-4" x-data="sopApp()" x-init="init()">
+  <body class="grey lighten-4" x-data="sopApp()" x-init="init()">
+    <nav class="blue darken-2 no-print">
+      <div class="nav-wrapper container">
+        <span class="brand-logo">Pharmacy SOP Generator</span>
+      </div>
+    </nav>
 
-<nav class="blue darken-2 no-print">
-  <div class="nav-wrapper container">
-    <span class="brand-logo">Pharmacy SOP Generator</span>
-  </div>
-</nav>
-
-<div class="container section no-print">
-
-  <!-- SOP MODE -->
-  <div class="card">
-    <div class="card-content">
-      <span class="card-title">SOP Mode</span>
-      <label>
-        <input type="radio" name="mode" value="predefined" checked @change="switchMode('predefined')">
-        <span>Predefined SOP</span>
-      </label>
-      &nbsp;&nbsp;
-      <label>
-        <input type="radio" name="mode" value="custom" @change="switchMode('custom')">
-        <span>Custom SOP</span>
-      </label>
-    </div>
-  </div>
-
-  <!-- SOP FORMAT -->
-  <div class="card">
-    <div class="card-content">
-      <span class="card-title">SOP Format</span>
-      <button class="btn blue" @click="toggleFormat()">
-        Switch to
-        <span x-text="format === 'inspection' ? 'Beginner' : 'Inspection'"></span>
-      </button>
-    </div>
-  </div>
-
-  <div class="row">
-
-    <!-- LEFT COLUMN -->
-    <div class="col s12 m6">
-
-      <!-- INSTITUTE -->
+    <div class="container section no-print">
+      <!-- SOP MODE -->
       <div class="card">
         <div class="card-content">
-          <span class="card-title">Institute</span>
-          <input placeholder="Institute / College Name" x-model="institute.name">
-          <input placeholder="Department" x-model="institute.dept">
+          <span class="card-title">SOP Mode</span>
+          <label>
+            <input
+              type="radio"
+              name="mode"
+              value="predefined"
+              checked
+              @change="switchMode('predefined')"
+            />
+            <span>Predefined SOP</span>
+          </label>
+          &nbsp;&nbsp;
+          <label>
+            <input
+              type="radio"
+              name="mode"
+              value="custom"
+              @change="switchMode('custom')"
+            />
+            <span>Custom SOP</span>
+          </label>
         </div>
       </div>
 
-      <!-- SOP SELECTION -->
-      <div x-show="sopMode === 'predefined'">
-  <div class="card">
-    <div class="card-content">
-      <span class="card-title">SOP Selection</span>
+      <!-- SOP FORMAT -->
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">SOP Format</span>
+          <button class="btn blue" @click="toggleFormat()">
+            Switch to
+            <span
+              x-text="format === 'inspection' ? 'Beginner' : 'Inspection'"
+            ></span>
+          </button>
+        </div>
+      </div>
 
-      <div class="input-field">
-        <select class="browser-default" @change="departmentChanged($event)">
-          <option value="" disabled selected>Select Department</option>
-          <template x-for="d in departments" :key="d.key">
-            <option :value="d.key" x-text="d.name"></option>
+      <div class="row">
+        <!-- LEFT COLUMN -->
+        <div class="col s12 m6">
+          <!-- INSTITUTE -->
+          <div class="card">
+            <div class="card-content">
+              <span class="card-title">Institute</span>
+              <input
+                placeholder="Institute / College Name"
+                x-model="institute.name"
+              />
+              <input placeholder="Department" x-model="institute.dept" />
+            </div>
+          </div>
+
+          <!-- SOP SELECTION -->
+          <div x-show="sopMode === 'predefined'">
+            <div class="card">
+              <div class="card-content">
+                <span class="card-title">SOP Selection</span>
+
+                <div class="input-field">
+                  <select
+                    class="browser-default"
+                    @change="departmentChanged($event)"
+                  >
+                    <option value="" disabled selected>
+                      Select Department
+                    </option>
+                    <template x-for="d in departments" :key="d.key">
+                      <option :value="d.key" x-text="d.name"></option>
+                    </template>
+                  </select>
+                  <label class="active">Department</label>
+                </div>
+
+                <div class="input-field">
+                  <select class="browser-default" @change="sopChanged($event)">
+                    <option value="" disabled selected>Select SOP</option>
+                    <template x-for="s in sopList" :key="s.key">
+                      <option :value="s.key" x-text="s.name"></option>
+                    </template>
+                  </select>
+                  <label class="active">SOP</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SOP CONTENT -->
+          <div class="card">
+            <div class="card-content">
+              <span class="card-title">SOP Content</span>
+              <input placeholder="SOP Title" x-model="title" />
+              <textarea
+                class="materialize-textarea"
+                placeholder="Purpose"
+                x-model="sections.purpose"
+              ></textarea>
+              <textarea
+                class="materialize-textarea"
+                placeholder="Scope"
+                x-model="sections.scope"
+              ></textarea>
+              <textarea
+                class="materialize-textarea"
+                placeholder="Procedure (one step per line)"
+                x-model="sections.procedure"
+              ></textarea>
+              <textarea
+                class="materialize-textarea"
+                placeholder="Precautions"
+                x-model="sections.precautions"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="col s12 m6">
+          <!-- AUTHORITIES -->
+          <div class="card">
+            <div class="card-content">
+              <span class="card-title">Authorities</span>
+
+              <input
+                placeholder="Prepared By – Name"
+                x-model="authority.prepared"
+              />
+              <input
+                placeholder="Prepared By – Designation"
+                x-model="authority.preparedDesig"
+              />
+
+              <input
+                placeholder="Reviewed By – Name"
+                x-model="authority.reviewed"
+              />
+              <input
+                placeholder="Reviewed By – Designation"
+                x-model="authority.reviewedDesig"
+              />
+
+              <input
+                placeholder="Approved By – Name"
+                x-model="authority.approved"
+              />
+              <input
+                placeholder="Approved By – Designation"
+                x-model="authority.approvedDesig"
+              />
+
+              <input type="date" x-model="dates.prepared" />
+              <input type="date" x-model="dates.reviewed" />
+              <input type="date" x-model="dates.approved" />
+            </div>
+          </div>
+
+          <div class="card center-align">
+            <div class="card-content">
+              <button
+                class="btn green"
+                @click="window.print()"
+                :disabled="!title"
+              >
+                Print SOP
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRINT ZONE -->
+    <div id="print-zone">
+      <div id="preview">
+        <h2 x-text="institute.name"></h2>
+        <h3>
+          STANDARD OPERATING PROCEDURE –
+          <span x-text="format.toUpperCase()"></span>
+        </h3>
+
+        <table>
+          <tr>
+            <td><b>Department</b></td>
+            <td x-text="institute.dept"></td>
+          </tr>
+          <tr>
+            <td><b>SOP Title</b></td>
+            <td x-text="title"></td>
+          </tr>
+        </table>
+
+        <h4>1.0 Purpose</h4>
+        <p x-text="sections.purpose"></p>
+
+        <h4>2.0 Scope</h4>
+        <p x-text="sections.scope"></p>
+
+        <h4>3.0 Procedure</h4>
+        <ol>
+          <template x-for="step in procedureList" :key="step">
+            <li x-text="step"></li>
           </template>
-        </select>
-        <label class="active">Department</label>
-      </div>
+        </ol>
 
-      <div class="input-field">
-        <select class="browser-default" @change="sopChanged($event)">
-          <option value="" disabled selected>Select SOP</option>
-          <template x-for="s in sopList" :key="s.key">
-            <option :value="s.key" x-text="s.name"></option>
+        <h4>4.0 Precautions</h4>
+        <ul>
+          <template x-for="p in precautionsList" :key="p">
+            <li x-text="p"></li>
           </template>
-        </select>
-        <label class="active">SOP</label>
-      </div>
+        </ul>
 
+        <table style="margin-top: 20mm">
+          <tr>
+            <td>
+              <b>Prepared By</b><br />
+              <span x-text="authority.prepared"></span><br />
+              <span
+                class="signature-designation"
+                x-text="authority.preparedDesig"
+              ></span
+              ><br />
+              Date: <span class="signature-date" x-text="dates.prepared"></span>
+            </td>
+
+            <td>
+              <b>Reviewed By</b><br />
+              <span x-text="authority.reviewed"></span><br />
+              <span
+                class="signature-designation"
+                x-text="authority.reviewedDesig"
+              ></span
+              ><br />
+              Date: <span class="signature-date" x-text="dates.reviewed"></span>
+            </td>
+
+            <td>
+              <b>Approved By</b><br />
+              <span x-text="authority.approved"></span><br />
+              <span
+                class="signature-designation"
+                x-text="authority.approvedDesig"
+              ></span
+              ><br />
+              Date: <span class="signature-date" x-text="dates.approved"></span>
+            </td>
+          </tr>
+        </table>
+      </div>
     </div>
-  </div>
-</div>
 
-      <!-- SOP CONTENT -->
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title">SOP Content</span>
-          <input placeholder="SOP Title" x-model="title">
-          <textarea class="materialize-textarea" placeholder="Purpose" x-model="sections.purpose"></textarea>
-          <textarea class="materialize-textarea" placeholder="Scope" x-model="sections.scope"></textarea>
-          <textarea class="materialize-textarea" placeholder="Procedure (one step per line)" x-model="sections.procedure"></textarea>
-          <textarea class="materialize-textarea" placeholder="Precautions" x-model="sections.precautions"></textarea>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- RIGHT COLUMN -->
-    <div class="col s12 m6">
-
-      <!-- AUTHORITIES -->
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title">Authorities</span>
-
-          <input placeholder="Prepared By – Name" x-model="authority.prepared">
-          <input placeholder="Prepared By – Designation" x-model="authority.preparedDesig">
-
-          <input placeholder="Reviewed By – Name" x-model="authority.reviewed">
-          <input placeholder="Reviewed By – Designation" x-model="authority.reviewedDesig">
-
-          <input placeholder="Approved By – Name" x-model="authority.approved">
-          <input placeholder="Approved By – Designation" x-model="authority.approvedDesig">
-
-          <input type="date" x-model="dates.prepared">
-          <input type="date" x-model="dates.reviewed">
-          <input type="date" x-model="dates.approved">
-        </div>
-      </div>
-
-      <div class="card center-align">
-        <div class="card-content">
-          <button class="btn green" @click="window.print()" :disabled="!title">Print SOP</button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- PRINT ZONE -->
-<div id="print-zone">
-  <div id="preview">
-
-    <h2 x-text="institute.name"></h2>
-    <h3>
-      STANDARD OPERATING PROCEDURE – 
-      <span x-text="format.toUpperCase()"></span>
-    </h3>
-
-    <table>
-      <tr>
-        <td><b>Department</b></td>
-        <td x-text="institute.dept"></td>
-      </tr>
-      <tr>
-        <td><b>SOP Title</b></td>
-        <td x-text="title"></td>
-      </tr>
-    </table>
-
-    <h4>1.0 Purpose</h4>
-    <p x-text="sections.purpose"></p>
-
-    <h4>2.0 Scope</h4>
-    <p x-text="sections.scope"></p>
-
-    <h4>3.0 Procedure</h4>
-    <ol>
-      <template x-for="step in procedureList" :key="step">
-        <li x-text="step"></li>
-      </template>
-    </ol>
-
-    <h4>4.0 Precautions</h4>
-    <ul>
-      <template x-for="p in precautionsList" :key="p">
-        <li x-text="p"></li>
-      </template>
-    </ul>
-
-    <table style="margin-top:20mm;">
-      <tr>
-        <td>
-          <b>Prepared By</b><br>
-          <span x-text="authority.prepared"></span><br>
-          <span class="signature-designation" x-text="authority.preparedDesig"></span><br>
-          Date: <span class="signature-date" x-text="dates.prepared"></span>
-        </td>
-
-        <td>
-          <b>Reviewed By</b><br>
-          <span x-text="authority.reviewed"></span><br>
-          <span class="signature-designation" x-text="authority.reviewedDesig"></span><br>
-          Date: <span class="signature-date" x-text="dates.reviewed"></span>
-        </td>
-
-        <td>
-          <b>Approved By</b><br>
-          <span x-text="authority.approved"></span><br>
-          <span class="signature-designation" x-text="authority.approvedDesig"></span><br>
-          Date: <span class="signature-date" x-text="dates.approved"></span>
-        </td>
-      </tr>
-    </table>
-
-  </div>
-</div>
-
-<!-- Scripts -->
-<script src="js/alpineApp.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
-</body>
+    <!-- Scripts -->
+    <script src="js/alpineApp.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  </body>
 </html>

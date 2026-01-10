@@ -1,44 +1,50 @@
 function sopApp() {
   return {
-    sopMode: 'predefined',
-    format: 'inspection',
+    sopMode: "predefined",
+    format: "inspection",
 
     // ✅ REQUIRED (WAS MISSING)
     institute: {
-      name: '',
-      dept: ''
+      name: "",
+      dept: "",
     },
 
     departments: [
-      { key: 'pharmaceutics', name: 'Pharmaceutics' },
-      { key: 'pharmaceutical-analysis', name: 'Pharmaceutical Analysis' },
-      { key: 'pharmacology', name: 'Pharmacology' },
-      { key: 'pharmacognosy', name: 'Pharmacognosy' },
-      { key: 'pharmaceutical-chemistry', name: 'Pharmaceutical Chemistry' },
-      { key: 'microbiology', name: 'Microbiology' },
-      { key: 'central-instrumentation', name: 'Central Instrumentation Facility' },
-      { key: 'general-procedures', name: 'General Procedures' }
+      { key: "pharmaceutics", name: "Pharmaceutics" },
+      { key: "pharmaceutical-analysis", name: "Pharmaceutical Analysis" },
+      { key: "pharmacology", name: "Pharmacology" },
+      { key: "pharmacognosy", name: "Pharmacognosy" },
+      { key: "pharmaceutical-chemistry", name: "Pharmaceutical Chemistry" },
+      { key: "microbiology", name: "Microbiology" },
+      {
+        key: "central-instrumentation",
+        name: "Central Instrumentation Facility",
+      },
+      { key: "general-procedures", name: "General Procedures" },
     ],
 
     sopList: [],
-    department: '',
-    sopKey: '',
+    department: "",
+    sopKey: "",
 
-    title: '',
+    title: "",
     sections: {
-      purpose: '',
-      scope: '',
-      procedure: '',
-      precautions: ''
+      purpose: "",
+      scope: "",
+      procedure: "",
+      precautions: "",
     },
 
     authority: {
-      prepared: '', preparedDesig: '',
-      reviewed: '', reviewedDesig: '',
-      approved: '', approvedDesig: ''
+      prepared: "",
+      preparedDesig: "",
+      reviewed: "",
+      reviewedDesig: "",
+      approved: "",
+      approvedDesig: "",
     },
 
-    dates: { prepared: '', reviewed: '', approved: '' },
+    dates: { prepared: "", reviewed: "", approved: "" },
 
     init() {
       this.department = this.departments[0].key;
@@ -47,12 +53,12 @@ function sopApp() {
 
     switchMode(mode) {
       this.sopMode = mode;
-      if (mode === 'custom') this.clearSOP();
+      if (mode === "custom") this.clearSOP();
       else this.loadDepartment();
     },
 
     toggleFormat() {
-      this.format = this.format === 'inspection' ? 'beginner' : 'inspection';
+      this.format = this.format === "inspection" ? "beginner" : "inspection";
     },
 
     departmentChanged(e) {
@@ -86,25 +92,36 @@ function sopApp() {
       this.title = data.meta.title;
       this.sections.purpose = data.sections.purpose;
       this.sections.scope = data.sections.scope;
-      this.sections.procedure = data.sections.procedure.join('\n');
+      this.sections.procedure = data.sections.procedure.join("\n");
       this.sections.precautions = data.sections.precautions;
     },
 
     clearSOP() {
-      this.title = '';
-      this.sections = { purpose: '', scope: '', procedure: '', precautions: '' };
+      this.title = "";
+      this.sections = {
+        purpose: "",
+        scope: "",
+        procedure: "",
+        precautions: "",
+      };
     },
 
     get procedureList() {
       return this.sections.procedure
-        ? this.sections.procedure.split('\n').map(p => p.trim()).filter(Boolean)
+        ? this.sections.procedure
+            .split("\n")
+            .map((p) => p.trim())
+            .filter(Boolean)
         : [];
     },
 
     get precautionsList() {
       return this.sections.precautions
-        ? this.sections.precautions.split(/\.\s+/).map(p => p.trim()).filter(Boolean)
+        ? this.sections.precautions
+            .split(/\.\s+/)
+            .map((p) => p.trim())
+            .filter(Boolean)
         : [];
-    }
+    },
   };
 }

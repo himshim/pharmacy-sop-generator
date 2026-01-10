@@ -12,6 +12,7 @@
 Built with vanilla HTML, CSS, and JavaScript, this static app runs entirely in the browser—no server required! Deploy it easily on GitHub Pages or any static host.
 
 Key highlights:
+
 - **Customizable SOPs**: Generate tailored documents with institute details, sections, and authorities.
 - **Dual Formats**: Switch between "Inspection" (formal QA-style) and "Beginner" (teaching-friendly) formats.
 - **Predefined Templates**: Load ready-made SOPs for common pharmacy instruments (e.g., UV Spectrophotometer).
@@ -22,15 +23,18 @@ Live Demo: [himshim.github.io/pharmacy-sop-generator](https://himshim.github.io/
 ## 🚀 Features
 
 - **Modes for Flexibility**:
+
   - **Beginner Mode**: Simplified for students and new users.
   - **Expert Mode**: Formal structure for inspections and audits.
   - **Custom Mode**: Fully editable for unique procedures.
 
 - **Core Sections**:
+
   - Purpose, Scope, Responsibility, Procedure (step-by-step), Precautions.
   - Toggle sections on/off as needed.
 
 - **Institute & Authority Customization**:
+
   - Add institute name, department, and sign-off details (Prepared/Checked/Authorized By).
 
 - **Live Preview**: Real-time rendering of the SOP as you edit.
@@ -40,15 +44,16 @@ Live Demo: [himshim.github.io/pharmacy-sop-generator](https://himshim.github.io/
 - **Responsive Design**: Works on desktop and mobile.
 - **No Dependencies**: Pure vanilla JS—fast and lightweight.
 
-
 ## 🛠️ Installation
 
 1. **Clone the Repository**:
+
    ```
    git clone https://github.com/himshim/pharmacy-sop-generator.git
    ```
 
 2. **Navigate to the Project Directory**:
+
    ```
    cd pharmacy-sop-generator
    ```
@@ -57,19 +62,23 @@ Live Demo: [himshim.github.io/pharmacy-sop-generator](https://himshim.github.io/
    Simply open `index.html` in your favorite web browser. No build steps required!
 
 For production deployment:
+
 - Use GitHub Pages (already configured via `.github/workflows/deploy.yml`).
 - Or host on any static server like Vercel, Netlify, or AWS S3.
 
 ## 📖 Usage
 
 1. **Select Mode**:
+
    - Choose Beginner, Expert, or Custom via radio buttons.
 
 2. **Fill Details**:
+
    - Enter institute info, SOP sections, and authorities.
    - For predefined SOPs, select from the dropdown (add more by creating JSON files in `/data/pharmaceutics/`).
 
 3. **Preview & Edit**:
+
    - See real-time updates in the "Live SOP Preview" section.
    - Toggle formats with the "Switch SOP Format" button.
 
@@ -79,6 +88,7 @@ For production deployment:
    - Print directly from the browser for PDFs.
 
 **Example JSON for Predefined SOP** (e.g., `data/pharmaceutics/uv.json`):
+
 ```json
 {
   "meta": {
@@ -112,6 +122,7 @@ Contributions are welcome! Help make this tool better for pharmacy education.
 5. Open a Pull Request.
 
 Please follow these guidelines:
+
 - Add tests if possible.
 - Update documentation.
 - Ensure code is linted (use ESLint if set up).
