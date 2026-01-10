@@ -3,10 +3,17 @@ function sopApp() {
     sopMode: "predefined",
     format: "inspection",
 
-    // ✅ REQUIRED (WAS MISSING)
+    // Institute Details
     institute: {
       name: "",
       dept: "",
+    },
+
+    // Metadata (New Fields)
+    metadata: {
+      sopNumber: "",
+      effectiveDate: "",
+      nextReviewDate: ""
     },
 
     departments: [
