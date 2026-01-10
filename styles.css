@@ -1,91 +1,167 @@
+/* ===============================
+   GLOBAL RESET
+================================ */
 * {
   box-sizing: border-box;
 }
 
-/* Hide UI during print */
+/* ===============================
+   PAGE SETUP (WORD STANDARD)
+================================ */
+@page {
+  size: A4;
+  margin: 25mm;
+}
+
+/* App background */
+body {
+  margin: 0;
+  background: #d6d6d6;
+  font-family: Arial, sans-serif;
+}
+
+/* Hide UI when printing */
 @media print {
   .no-print {
     display: none !important;
   }
 }
 
-@page {
-  size: A4;
-  margin: 25mm;
-}
-
-body {
-  background: #e0e0e0;
-  margin: 0;
-}
-
-/* Preview wrapper */
+/* ===============================
+   PREVIEW WRAPPER
+================================ */
 #print-zone {
   display: flex;
   justify-content: center;
   padding: 20px;
 }
 
-/* A4 sheet */
+/* ===============================
+   A4 PAGE (LOCKED)
+================================ */
 #preview {
   width: 210mm;
-  min-height: 297mm;
-  background: #fff;
+  height: 297mm;
+  background: #ffffff;
+
+  /* Word margins */
   padding: 25mm;
+
+  /* Word font */
   font-family: "Times New Roman", Times, serif;
   font-size: 12pt;
   line-height: 1.5;
   color: #000;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+
+  /* Visual */
+  box-shadow: 0 0 12px rgba(0,0,0,0.25);
+
+  /* IMPORTANT: Prevent responsive behavior */
+  overflow: hidden;
 }
 
-/* Mobile scale */
+/* ===============================
+   MOBILE VIEW (SCALE ONLY)
+================================ */
 @media screen and (max-width: 768px) {
   #preview {
-    transform: scale(0.85);
+    transform: scale(0.78);
     transform-origin: top center;
   }
 }
 
-/* Headings */
+/* ===============================
+   HEADINGS (WORD PRECISE SIZES)
+================================ */
 #preview h2 {
-  text-align: center;
-  font-size: 16pt;
+  font-size: 16pt;   /* Main heading */
   font-weight: bold;
+  text-align: center;
+  margin: 0 0 6mm 0;
 }
 
 #preview h3 {
-  text-align: center;
-  font-size: 14pt;
+  font-size: 14pt;   /* Sub heading */
   font-weight: bold;
-  margin-bottom: 10mm;
+  text-align: center;
+  margin: 0 0 10mm 0;
+  text-transform: uppercase;
 }
 
 #preview h4 {
-  font-size: 12pt;
+  font-size: 12pt;   /* Section heading */
   font-weight: bold;
-  margin-top: 8mm;
+  margin: 8mm 0 3mm 0;
 }
 
-/* Tables */
+/* ===============================
+   PARAGRAPHS
+================================ */
+#preview p {
+  margin: 0 0 3mm 0;
+  text-align: justify;
+}
+
+/* ===============================
+   TABLES (WORD STYLE)
+================================ */
 #preview table {
   width: 100%;
   border-collapse: collapse;
-  margin: 6mm 0;
+  margin: 5mm 0;
+  font-size: 12pt;
 }
 
-#preview td {
+#preview td,
+#preview th {
   border: 1px solid #000;
-  padding: 6px;
+  padding: 6px 8px;
+  vertical-align: top;
 }
 
-/* Lists */
-#preview ol,
+/* ===============================
+   LISTS (PROCEDURE / PRECAUTIONS)
+================================ */
+#preview ol {
+  padding-left: 18px;
+  margin: 0;
+}
+
+#preview ol li {
+  margin-bottom: 2mm;
+}
+
 #preview ul {
-  padding-left: 20px;
+  padding-left: 18px;
+  margin: 0;
 }
 
+#preview ul li {
+  margin-bottom: 2mm;
+}
+
+/* ===============================
+   SIGNATURE BLOCK
+================================ */
+.signature-designation {
+  margin-top: 15mm;
+  font-size: 11pt;
+}
+
+.signature-date {
+  display: inline-block;
+  margin-top: 2mm;
+  font-size: 11pt;
+}
+
+/* ===============================
+   PRINT OVERRIDES
+================================ */
 @media print {
+  body {
+    background: #fff;
+  }
+
   #preview {
     box-shadow: none;
     transform: none !important;
