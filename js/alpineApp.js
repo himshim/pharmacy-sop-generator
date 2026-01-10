@@ -34,7 +34,7 @@ function sopApp() {
       approved: '', approvedDesig: ''
     },
 
-    dates: { prepared: '', reviewed: '' },
+    dates: { prepared: '', reviewed: '', approved: '' },
 
     init() {
       this.department = this.departments[0].key;
@@ -122,6 +122,12 @@ function sopApp() {
     get procedureList() {
       return this.sections.procedure
         ? this.sections.procedure.split('\n').map(p => p.trim()).filter(Boolean)
+        : [];
+    },
+
+    get precautionsList() {
+      return this.sections.precautions
+        ? this.sections.precautions.split(/\.\s+/).map(p => p.trim()).filter(Boolean)
         : [];
     }
   };
