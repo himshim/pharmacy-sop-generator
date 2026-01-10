@@ -3,6 +3,8 @@ function sopApp() {
     sopMode: 'predefined',
     format: 'inspection',
 
+    institute: { name: '', dept: '' },
+
     departments: [
       { key: 'pharmaceutics', name: 'Pharmaceutics' },
       { key: 'pharmaceutical-analysis', name: 'Pharmaceutical Analysis' },
@@ -13,6 +15,10 @@ function sopApp() {
       { key: 'central-instrumentation', name: 'Central Instrumentation Facility' },
       { key: 'general-procedures', name: 'General Procedures' }
     ],
+
+    sopList: [],
+    department: '',
+    sopKey: '',
 
     title: '',
     sections: {
@@ -32,86 +38,52 @@ function sopApp() {
 
     init() {
       this.department = this.departments[0].key;
-      this.$nextTick(() => {
-        document.getElementById('dept-select').value = this.department;
-        M.FormSelect.init(document.querySelectorAll('select'));
-      });
       this.loadDepartment();
     },
 
     switchMode(mode) {
       this.sopMode = mode;
-      if (mode === 'custom') {
-        this.clearSOP();
-      } else {
-        this.loadDepartment();
-      }
+      if (mode === 'custom') this.clearSOP();
+      else this.loadDepartment();
     },
 
     toggleFormat() {
       this.format = this.format === 'inspection' ? 'beginner' : 'inspection';
     },
 
-    departmentChanged(event) {
-      this.department = event.target.value;
+    departmentChanged(e) {
+      this.department = e.target.value;
       this.loadDepartment();
     },
 
-    sopChanged(event) {
-      this.sopKey = event.target.value;
+    sopChanged(e) {
+      this.sopKey = e.target.value;
       this.loadSOP(this.sopKey);
     },
 
-    /* ========= LOADERS ========= */
-
     async loadDepartment() {
       this.sopList = [];
-      this.sopKey = '';
       this.clearSOP();
 
-      try {
-        const res = await fetch(`data/${this.department}/index.json`);
-        if (!res.ok) {
-          console.error(`Department load error: ${res.status}`);
-          alert(`Failed to load SOP list for department ${this.department}.`);
-          return;
-        }
-        const data = await res.json();
-        this.sopList = data.instruments || [];
+      const res = await fetch(`data/${this.department}/index.json`);
+      if (!res.ok) return;
 
-        this.$nextTick(() => {
-          let sopSelect = document.getElementById('sop-select');
-          if (sopSelect) {
-            let instance = M.FormSelect.getInstance(sopSelect);
-            if (instance) instance.destroy();
-            M.FormSelect.init(sopSelect);
-          }
-        });
-      } catch (e) {
-        console.error('Department load error:', e);
-      }
+      const data = await res.json();
+      this.sopList = data.instruments || [];
     },
 
     async loadSOP(key) {
       if (!key) return;
 
-      try {
-        const res = await fetch(`data/${this.department}/${key}.json`);
-        if (!res.ok) {
-          console.error(`SOP load error: ${res.status}`);
-          alert(`Failed to load SOP "${key}".`);
-          return;
-        }
-        const data = await res.json();
+      const res = await fetch(`data/${this.department}/${key}.json`);
+      if (!res.ok) return;
 
-        this.title = data.meta.title;
-        this.sections.purpose = data.sections.purpose;
-        this.sections.scope = data.sections.scope;
-        this.sections.procedure = data.sections.procedure.join('\n');
-        this.sections.precautions = data.sections.precautions;
-      } catch (e) {
-        console.error('SOP load error:', e);
-      }
+      const data = await res.json();
+      this.title = data.meta.title;
+      this.sections.purpose = data.sections.purpose;
+      this.sections.scope = data.sections.scope;
+      this.sections.procedure = data.sections.procedure.join('\n');
+      this.sections.precautions = data.sections.precautions;
     },
 
     clearSOP() {
@@ -120,13 +92,10 @@ function sopApp() {
     },
 
     get procedureList() {
-  return this.sections.procedure
-    ? this.sections.procedure
-        .split('\n')
-        .map(p => p.trim())
-        .filter(Boolean)
-    : [];
-}
+      return this.sections.procedure
+        ? this.sections.procedure.split('\n').map(p => p.trim()).filter(Boolean)
+        : [];
+    },
 
     get precautionsList() {
       return this.sections.precautions
