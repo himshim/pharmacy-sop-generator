@@ -150,6 +150,11 @@
     <table>
       <tr><td><b>Department</b></td><td x-text="institute.dept"></td></tr>
       <tr><td><b>SOP Title</b></td><td x-text="title"></td></tr>
+      <template x-if="format === 'inspection'">
+        <tr><td><b>SOP No</b></td><td x-text="`SOP/\( {(department || institute.dept).toUpperCase()}/ \){(sopKey || 'CUSTOM').toUpperCase()}/01`"></td></tr>
+        <tr><td><b>Revision</b></td><td>00</td></tr>
+        <tr><td><b>Effective Date</b></td><td x-text="dates.prepared || new Date().toLocaleDateString()"></td></tr>
+      </template>
     </table>
 
     <h4>1.0 Purpose</h4>
