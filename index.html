@@ -46,7 +46,7 @@
   <div class="card">
     <div class="card-content">
       <span class="card-title">SOP Format</span>
-      <button class="btn blue" @click="toggleFormat()">Switch Format</button>
+      <button class="btn blue" @click="toggleFormat()">Switch to <span x-text="format === 'inspection' ? 'Beginner' : 'Inspection'"></span></button>
     </div>
   </div>
 
@@ -127,6 +127,7 @@
 
           <input type="date" x-model="dates.prepared">
           <input type="date" x-model="dates.reviewed">
+          <input type="date" x-model="dates.approved">
         </div>
       </div>
 
@@ -145,16 +146,11 @@
   <div id="preview">
 
     <h2 x-text="institute.name"></h2>
-    <h3>STANDARD OPERATING PROCEDURE</h3>
+    <h3 x-text="'STANDARD OPERATING PROCEDURE - ' + format.toUpperCase()"></h3>
 
     <table>
       <tr><td><b>Department</b></td><td x-text="institute.dept"></td></tr>
       <tr><td><b>SOP Title</b></td><td x-text="title"></td></tr>
-      <template x-if="format === 'inspection'">
-        <tr><td><b>SOP No</b></td><td x-text="`SOP/\( {(department || institute.dept).toUpperCase()}/ \){(sopKey || 'CUSTOM').toUpperCase()}/01`"></td></tr>
-        <tr><td><b>Revision</b></td><td>00</td></tr>
-        <tr><td><b>Effective Date</b></td><td x-text="dates.prepared || new Date().toLocaleDateString()"></td></tr>
-      </template>
     </table>
 
     <h4>1.0 Purpose</h4>
@@ -164,12 +160,30 @@
     <p x-text="sections.scope"></p>
 
     <h4>3.0 Procedure</h4>
-    <template x-for="(p,i) in procedureList" :key="i">
-      <p x-text="'3.'+(i+1)+' '+p"></p>
+    <template x-if="format === 'inspection'">
+      <template x-for="(p,i) in procedureList" :key="i">
+        <p x-text="'3.'+(i+1)+' '+p"></p>
+      </template>
+    </template>
+    <template x-else>
+      <ol>
+        <template x-for="p in procedureList" :key="p">
+          <li x-text="p"></li>
+        </template>
+      </ol>
     </template>
 
     <h4>4.0 Precautions</h4>
-    <p x-text="sections.precautions"></p>
+    <template x-if="format === 'inspection'">
+      <p x-text="sections.precautions"></p>
+    </template>
+    <template x-else>
+      <ul>
+        <template x-for="p in precautionsList" :key="p">
+          <li x-text="p + '.'"></li>
+        </template>
+      </ul>
+    </template>
 
     <table style="margin-top:40px;">
       <tr>
@@ -189,6 +203,7 @@
           <b>Approved By</b><br>
           <span x-text="authority.approved"></span>
           <div class="signature-designation" x-text="authority.approvedDesig"></div>
+          Date: <span class="signature-date" x-text="dates.approved || ''"></span>
         </td>
       </tr>
     </table>
