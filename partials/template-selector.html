@@ -1,0 +1,31 @@
+<div class="section" x-show="sopMode === 'predefined'">
+  <h5><i class="material-icons">folder</i> Select Template</h5>
+
+  <div class="input-field">
+    <label class="active">Department</label>
+    <select class="browser-default"
+            x-model="department"
+            @change="departmentChanged">
+      <template x-for="d in CONFIG.DEPARTMENTS" :key="d.key">
+        <option :value="d.key" x-text="d.name"></option>
+      </template>
+    </select>
+  </div>
+
+  <div class="input-field">
+    <label class="active">SOP Template</label>
+    <select class="browser-default"
+            x-model="sopKey"
+            @change="sopChanged"
+            :disabled="sopList.length === 0">
+      <option value="">Choose SOP</option>
+      <template x-for="s in sopList" :key="s.key">
+        <option :value="s.key" x-text="s.name"></option>
+      </template>
+    </select>
+  </div>
+
+  <div x-show="isLoading" class="progress">
+    <div class="indeterminate"></div>
+  </div>
+</div>
