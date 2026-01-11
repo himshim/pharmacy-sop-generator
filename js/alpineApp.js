@@ -1,249 +1,224 @@
 /**
- * Pharmacy SOP Generator - Alpine.js App
- * Fixed with: Validation, Error Handling, Auto-save, XSS Protection
+ * Pharmacy SOP Generator - Main Application
+ * Refactored modular version with improved architecture
+ * @version 2.0.0
+ * 
+ * Dependencies: config.js, validation.js, storage.js, sopLoader.js, utils.js
  */
 
 function sopApp() {
   return {
-    sopMode: "predefined",
-    format: "inspection",
-
+    // ========== STATE ==========
+    sopMode: 'predefined',
+    format: 'inspection',
+    
     // Institute Details
     institute: {
-      name: "",
-      dept: "",
+      name: '',
+      dept: ''
     },
-
+    
     // Metadata
     metadata: {
-      sopNumber: "",
-      effectiveDate: "",
-      nextReviewDate: ""
+      sopNumber: '',
+      effectiveDate: '',
+      nextReviewDate: ''
     },
-
-    departments: [
-      { key: "pharmaceutics", name: "Pharmaceutics" },
-      { key: "pharmaceutical-analysis", name: "Pharmaceutical Analysis" },
-      { key: "pharmacology", name: "Pharmacology" },
-      { key: "pharmacognosy", name: "Pharmacognosy" },
-      { key: "pharmaceutical-chemistry", name: "Pharmaceutical Chemistry" },
-      { key: "microbiology", name: "Microbiology" },
-      {
-        key: "central-instrumentation",
-        name: "Central Instrumentation Facility",
-      },
-      { key: "general-procedures", name: "General Procedures" },
-    ],
-
-    sopList: [],
-    department: "",
-    sopKey: "",
-
-    title: "",
+    
+    // SOP Content
+    title: '',
     sections: {
-      purpose: "",
-      scope: "",
-      procedure: "",
-      precautions: "",
+      purpose: '',
+      scope: '',
+      procedure: '',
+      precautions: ''
     },
-
+    
+    // Authority
     authority: {
-      prepared: "",
-      preparedDesig: "",
-      reviewed: "",
-      reviewedDesig: "",
-      approved: "",
-      approvedDesig: "",
+      prepared: '',
+      preparedDesig: '',
+      reviewed: '',
+      reviewedDesig: '',
+      approved: '',
+      approvedDesig: ''
     },
-
-    dates: { prepared: "", reviewed: "", approved: "" },
-
-    // New: Loading state
+    
+    dates: {
+      prepared: '',
+      reviewed: '',
+      approved: ''
+    },
+    
+    // UI State
+    sopList: [],
+    department: '',
+    sopKey: '',
     isLoading: false,
-
-    // New: Auto-save timer
     autoSaveTimer: null,
 
+    // ========== INITIALIZATION ==========
+    
     /**
-     * Initialize the app
+     * Initialize the application
      */
     init() {
-      console.log('SOP Generator initialized');
+      console.log(`${CONFIG.APP_NAME} v${CONFIG.VERSION} initialized`);
       
-      this.department = this.departments[0].key;
+      // Set default department
+      this.department = CONFIG.DEPARTMENTS[0].key;
+      
+      // Load department data
       this.loadDepartment();
       
-      // Start auto-save
+      // Setup auto-save
       this.startAutoSave();
       
-      // Check for saved data
+      // Check for auto-saved data
       this.checkAutoSave();
       
       // Setup error handlers
       this.setupErrorHandlers();
       
-      // Set default effective date to today
-      this.metadata.effectiveDate = this.getTodayDate();
+      // Set default effective date
+      this.metadata.effectiveDate = today();
     },
 
+    // ========== MODE & FORMAT ==========
+    
     /**
      * Switch between predefined and custom mode
+     * @param {string} mode - Mode to switch to
      */
     switchMode(mode) {
       this.sopMode = mode;
-      if (mode === "custom") {
+      
+      if (mode === 'custom') {
         this.clearSOP();
+        showToast('Switched to Custom Mode', 'info');
       } else {
         this.loadDepartment();
+        showToast('Switched to Predefined Mode', 'info');
       }
     },
-
+    
     /**
      * Toggle between inspection and beginner format
      */
     toggleFormat() {
-      this.format = this.format === "inspection" ? "beginner" : "inspection";
-      this.showMessage(`Switched to ${this.format === 'inspection' ? 'Inspection' : 'Beginner'} format`, 'info');
+      this.format = this.format === 'inspection' ? 'beginner' : 'inspection';
+      const formatName = this.format === 'inspection' ? 'Inspection' : 'Beginner';
+      showToast(`Switched to ${formatName} format`, 'info');
     },
 
+    // ========== EVENT HANDLERS ==========
+    
     /**
      * Handle department selection change
+     * @param {Event} e - Change event
      */
     departmentChanged(e) {
       this.department = e.target.value;
       this.loadDepartment();
     },
-
+    
     /**
      * Handle SOP selection change
+     * @param {Event} e - Change event
      */
     sopChanged(e) {
       this.sopKey = e.target.value;
-      this.loadSOP(this.sopKey);
+      if (this.sopKey) {
+        this.loadSOP(this.sopKey);
+      }
     },
 
+    // ========== DATA LOADING ==========
+    
     /**
-     * Load department SOPs with error handling
+     * Load department SOPs
      */
     async loadDepartment() {
       this.sopList = [];
       this.clearSOP();
       this.isLoading = true;
-
+      
       try {
-        const res = await fetch(`data/${this.department}/index.json`);
-        
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        const data = await res.json();
-        this.sopList = data.instruments || [];
-        
+        this.sopList = await SOPLoader.loadDepartment(this.department);
         console.log(`Loaded ${this.sopList.length} SOPs for ${this.department}`);
       } catch (error) {
-        console.error('Failed to load department:', error);
-        this.showMessage('Failed to load SOPs for this department. Please try again.', 'error');
+        showToast('Failed to load SOPs for this department. Please try again.', 'error');
         this.sopList = [];
       } finally {
         this.isLoading = false;
       }
     },
-
+    
     /**
-     * Load specific SOP with error handling
+     * Load specific SOP
+     * @param {string} key - SOP key
      */
     async loadSOP(key) {
       if (!key) return;
-
+      
       this.isLoading = true;
-
+      
       try {
-        const res = await fetch(`data/${this.department}/${key}.json`);
+        const sopData = await SOPLoader.loadSOP(this.department, key);
+        const parsed = SOPLoader.parseSOP(sopData);
         
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        const data = await res.json();
+        // Update state
+        this.title = parsed.title;
+        this.sections.purpose = parsed.purpose;
+        this.sections.scope = parsed.scope;
+        this.sections.procedure = parsed.procedure;
+        this.sections.precautions = parsed.precautions;
         
-        // Validate data structure
-        if (!data.meta || !data.sections) {
-          throw new Error('Invalid SOP data structure');
-        }
-
-        this.title = data.meta.title || '';
-        this.sections.purpose = data.sections.purpose || '';
-        this.sections.scope = data.sections.scope || '';
-        this.sections.procedure = Array.isArray(data.sections.procedure) 
-          ? data.sections.procedure.join("\n") 
-          : data.sections.procedure || '';
-        this.sections.precautions = data.sections.precautions || '';
-        
-        this.showMessage('SOP loaded successfully!', 'success');
+        showToast('SOP loaded successfully!', 'success');
       } catch (error) {
-        console.error('Failed to load SOP:', error);
-        this.showMessage('Failed to load SOP template. Please try again.', 'error');
+        showToast('Failed to load SOP template. Please try again.', 'error');
         this.clearSOP();
       } finally {
         this.isLoading = false;
       }
     },
-
+    
     /**
      * Clear SOP content
      */
     clearSOP() {
-      this.title = "";
+      this.title = '';
       this.sections = {
-        purpose: "",
-        scope: "",
-        procedure: "",
-        precautions: "",
+        purpose: '',
+        scope: '',
+        procedure: '',
+        precautions: ''
       };
     },
 
+    // ========== VALIDATION & PRINTING ==========
+    
     /**
      * Validate SOP data before printing
+     * @returns {boolean}
      */
     validateBeforePrint() {
-      const errors = [];
-
-      if (!this.title || this.title.trim().length < 5) {
-        errors.push('SOP Title is required (minimum 5 characters)');
-      }
-
-      if (!this.metadata.sopNumber || this.metadata.sopNumber.trim().length < 3) {
-        errors.push('SOP Number is required');
-      }
-
-      if (!this.metadata.effectiveDate) {
-        errors.push('Effective Date is required');
-      }
-
-      if (!this.sections.purpose || this.sections.purpose.trim().length < 20) {
-        errors.push('Purpose is required (minimum 20 characters)');
-      }
-
-      if (!this.sections.scope || this.sections.scope.trim().length < 20) {
-        errors.push('Scope is required (minimum 20 characters)');
-      }
-
-      if (!this.sections.procedure || this.sections.procedure.trim().length < 30) {
-        errors.push('Procedure is required (minimum 30 characters)');
-      }
-
-      if (errors.length > 0) {
-        this.showMessage(
-          'Please fix the following errors:\n• ' + errors.join('\n• '), 
+      const data = this.captureState();
+      const validation = ValidationModule.validateSOP(data);
+      
+      if (!validation.isValid) {
+        showToast(
+          'Please fix the following errors:
+• ' + validation.errors.join('
+• '),
           'error'
         );
         return false;
       }
-
+      
       return true;
     },
-
+    
     /**
      * Print SOP with validation
      */
@@ -251,98 +226,43 @@ function sopApp() {
       if (!this.validateBeforePrint()) {
         return;
       }
-
+      
       // Small delay to ensure DOM is updated
       setTimeout(() => {
         window.print();
       }, 100);
     },
 
+    // ========== COMPUTED PROPERTIES ==========
+    
     /**
      * Get procedure list (split by newline)
      */
     get procedureList() {
       if (!this.sections.procedure) return [];
-      
       return this.sections.procedure
-        .split("\n")
-        .map((p) => this.sanitizeText(p.trim()))
+        .split('
+')
+        .map(p => sanitizeText(p.trim()))
         .filter(Boolean);
     },
-
+    
     /**
      * Get precautions list (split by period + space)
      */
     get precautionsList() {
       if (!this.sections.precautions) return [];
-      
       return this.sections.precautions
-        .split(/\.\s+/)
-        .map((p) => this.sanitizeText(p.trim()))
+        .split(/.s+/)
+        .map(p => sanitizeText(p.trim()))
         .filter(Boolean);
     },
 
-    /**
-     * Sanitize text to prevent XSS (basic sanitization)
-     */
-    sanitizeText(text) {
-      if (!text) return '';
-      
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    },
-
-    /**
-     * Show message to user (using Materialize toast)
-     */
-    showMessage(message, type = 'info') {
-      const colors = {
-        success: 'green',
-        error: 'red',
-        warning: 'orange',
-        info: 'blue'
-      };
-
-      if (typeof M !== 'undefined' && M.toast) {
-        M.toast({
-          html: message,
-          classes: colors[type] || 'blue',
-          displayLength: 4000
-        });
-      } else {
-        // Fallback to alert if Materialize not loaded
-        alert(message);
-      }
-    },
-
-    /**
-     * Get today's date in YYYY-MM-DD format
-     */
-    getTodayDate() {
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const day = String(today.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    },
-
-    /**
-     * Check localStorage availability
-     */
-    isStorageAvailable() {
-      try {
-        const test = '__storage_test__';
-        localStorage.setItem(test, test);
-        localStorage.removeItem(test);
-        return true;
-      } catch (e) {
-        return false;
-      }
-    },
-
+    // ========== STORAGE & AUTO-SAVE ==========
+    
     /**
      * Capture current state for saving
+     * @returns {Object}
      */
     captureState() {
       return {
@@ -355,79 +275,50 @@ function sopApp() {
         title: this.title,
         sections: { ...this.sections },
         authority: { ...this.authority },
-        dates: { ...this.dates },
-        savedAt: new Date().toISOString()
+        dates: { ...this.dates }
       };
     },
-
+    
     /**
      * Restore state from saved data
+     * @param {Object} data - Saved state data
      */
     restoreState(data) {
       if (!data) return;
-
+      
       this.sopMode = data.sopMode || 'predefined';
       this.format = data.format || 'inspection';
       this.institute = data.institute || { name: '', dept: '' };
       this.metadata = data.metadata || { sopNumber: '', effectiveDate: '', nextReviewDate: '' };
-      this.department = data.department || this.departments[0].key;
+      this.department = data.department || CONFIG.DEPARTMENTS[0].key;
       this.sopKey = data.sopKey || '';
       this.title = data.title || '';
       this.sections = data.sections || { purpose: '', scope: '', procedure: '', precautions: '' };
       this.authority = data.authority || { prepared: '', preparedDesig: '', reviewed: '', reviewedDesig: '', approved: '', approvedDesig: '' };
       this.dates = data.dates || { prepared: '', reviewed: '', approved: '' };
     },
-
+    
     /**
-     * Save to localStorage
-     */
-    saveToStorage() {
-      if (!this.isStorageAvailable()) return;
-
-      try {
-        const state = this.captureState();
-        localStorage.setItem('pharmacy_sop_autosave', JSON.stringify(state));
-        console.log('Auto-saved at:', state.savedAt);
-      } catch (e) {
-        console.error('Auto-save failed:', e);
-      }
-    },
-
-    /**
-     * Load from localStorage
-     */
-    loadFromStorage() {
-      if (!this.isStorageAvailable()) return null;
-
-      try {
-        const data = localStorage.getItem('pharmacy_sop_autosave');
-        return data ? JSON.parse(data) : null;
-      } catch (e) {
-        console.error('Failed to load auto-save:', e);
-        return null;
-      }
-    },
-
-    /**
-     * Start auto-save (every 30 seconds)
+     * Start auto-save timer
      */
     startAutoSave() {
       if (this.autoSaveTimer) {
         clearInterval(this.autoSaveTimer);
       }
-
+      
       this.autoSaveTimer = setInterval(() => {
         // Only save if there's meaningful content
         if (this.title || this.sections.purpose || this.sections.procedure) {
-          this.saveToStorage();
+          const state = this.captureState();
+          StorageModule.save(state);
         }
-      }, 30000); // 30 seconds
-
-      console.log('Auto-save started (every 30 seconds)');
+      }, CONFIG.AUTO_SAVE_INTERVAL);
+      
+      console.log(`Auto-save started (every ${CONFIG.AUTO_SAVE_INTERVAL / 1000} seconds)`);
     },
-
+    
     /**
-     * Stop auto-save
+     * Stop auto-save timer
      */
     stopAutoSave() {
       if (this.autoSaveTimer) {
@@ -435,67 +326,48 @@ function sopApp() {
         this.autoSaveTimer = null;
       }
     },
-
+    
     /**
      * Check for auto-saved data on init
      */
     checkAutoSave() {
-      const saved = this.loadFromStorage();
+      const saved = StorageModule.load();
       
-      if (saved && saved.savedAt) {
-        const savedDate = new Date(saved.savedAt);
-        const now = new Date();
-        const hoursDiff = (now - savedDate) / (1000 * 60 * 60);
-
-        // Only prompt if saved within last 24 hours
-        if (hoursDiff < 24) {
-          const message = `Found auto-saved SOP from ${this.formatTimeAgo(savedDate)}. Restore it?`;
-          
-          if (confirm(message)) {
-            this.restoreState(saved);
-            this.showMessage('Previous work restored!', 'success');
-          } else {
-            // User declined, clear old data
-            localStorage.removeItem('pharmacy_sop_autosave');
-          }
+      if (saved && StorageModule.isRecent(saved)) {
+        const message = `Found auto-saved SOP from ${StorageModule.formatTimeAgo(saved.savedAt)}. Restore it?`;
+        
+        if (confirm(message)) {
+          this.restoreState(saved);
+          showToast('Previous work restored!', 'success');
+        } else {
+          StorageModule.clear();
         }
       }
     },
 
-    /**
-     * Format time difference for display
-     */
-    formatTimeAgo(date) {
-      const now = new Date();
-      const diff = now - date;
-      const minutes = Math.floor(diff / 60000);
-      const hours = Math.floor(minutes / 60);
-      const days = Math.floor(hours / 24);
-
-      if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
-      if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-      if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-      return 'just now';
-    },
-
+    // ========== ERROR HANDLING ==========
+    
     /**
      * Setup global error handlers
      */
     setupErrorHandlers() {
+      // Global error handler
       window.addEventListener('error', (e) => {
         console.error('Application error:', e.error);
-        this.showMessage('An unexpected error occurred. Please refresh the page.', 'error');
+        showToast('An unexpected error occurred. Please refresh the page.', 'error');
       });
-
+      
+      // Unhandled promise rejection handler
       window.addEventListener('unhandledrejection', (e) => {
         console.error('Unhandled promise rejection:', e.reason);
-        this.showMessage('Failed to load data. Please check your connection.', 'error');
+        showToast('Failed to load data. Please check your connection.', 'error');
       });
-
-      // Prevent accidental page close with unsaved data
+      
+      // Before unload handler (save data before leaving)
       window.addEventListener('beforeunload', (e) => {
         if (this.title || this.sections.purpose || this.sections.procedure) {
-          this.saveToStorage();
+          const state = this.captureState();
+          StorageModule.save(state);
           e.preventDefault();
           e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
           return e.returnValue;
@@ -503,31 +375,27 @@ function sopApp() {
       });
     },
 
+    // ========== EXPORT & RESET ==========
+    
     /**
      * Export SOP data as JSON
      */
     exportData() {
       try {
         const state = this.captureState();
-        const dataStr = JSON.stringify(state, null, 2);
-        const blob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
+        const filename = `sop-${this.metadata.sopNumber || 'export'}.json`;
         
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `sop-${this.metadata.sopNumber || 'export'}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        
-        this.showMessage('SOP data exported successfully!', 'success');
+        if (downloadJSON(state, filename)) {
+          showToast('SOP data exported successfully!', 'success');
+        } else {
+          showToast('Failed to export data', 'error');
+        }
       } catch (e) {
         console.error('Export failed:', e);
-        this.showMessage('Failed to export data', 'error');
+        showToast('Failed to export data', 'error');
       }
     },
-
+    
     /**
      * Clear all data and reset form
      */
@@ -535,13 +403,13 @@ function sopApp() {
       if (!confirm('Are you sure you want to reset the form? All data will be lost.')) {
         return;
       }
-
+      
       this.clearSOP();
       this.institute = { name: '', dept: '' };
-      this.metadata = { 
-        sopNumber: '', 
-        effectiveDate: this.getTodayDate(), 
-        nextReviewDate: '' 
+      this.metadata = {
+        sopNumber: '',
+        effectiveDate: today(),
+        nextReviewDate: ''
       };
       this.authority = {
         prepared: '',
@@ -549,13 +417,12 @@ function sopApp() {
         reviewed: '',
         reviewedDesig: '',
         approved: '',
-        approvedDesig: '',
+        approvedDesig: ''
       };
       this.dates = { prepared: '', reviewed: '', approved: '' };
       
-      localStorage.removeItem('pharmacy_sop_autosave');
-      
-      this.showMessage('Form reset successfully', 'info');
+      StorageModule.clear();
+      showToast('Form reset successfully', 'info');
     }
   };
 }
