@@ -1,7 +1,8 @@
 <div class="card" x-show="sopMode === 'predefined'">
   <div class="card-content">
     <span class="card-title">
-      <i class="material-icons">folder</i> Predefined SOP Templates
+      <i class="material-icons">folder</i>
+      Predefined SOP Templates
     </span>
 
     <div class="input-field">
@@ -9,8 +10,8 @@
       <select class="browser-default"
               x-model="department"
               @change="departmentChanged">
-        <template x-for="dept in CONFIG.DEPARTMENTS" :key="dept.key">
-          <option :value="dept.key" x-text="dept.name"></option>
+        <template x-for="d in CONFIG.DEPARTMENTS" :key="d.key">
+          <option :value="d.key" x-text="d.name"></option>
         </template>
       </select>
     </div>
@@ -22,14 +23,10 @@
               @change="sopChanged"
               :disabled="sopList.length === 0">
         <option value="">Choose SOP</option>
-        <template x-for="sop in sopList" :key="sop.key">
-          <option :value="sop.key" x-text="sop.name"></option>
+        <template x-for="s in sopList" :key="s.key">
+          <option :value="s.key" x-text="s.name"></option>
         </template>
       </select>
-    </div>
-
-    <div x-show="isLoading" class="progress">
-      <div class="indeterminate"></div>
     </div>
   </div>
 </div>
