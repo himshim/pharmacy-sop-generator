@@ -843,9 +843,8 @@
       document.addEventListener("DOMContentLoaded", function () {
         console.log("DOM loaded, initializing Materialize...");
 
-        // Initialize select dropdowns
-        var selects = document.querySelectorAll("select");
-        M.FormSelect.init(selects);
+ // ❌ DO NOT initialize Materialize selects
+// Alpine controls <select> via x-model
 
         // Initialize modals (if any)
         var modals = document.querySelectorAll(".modal");
