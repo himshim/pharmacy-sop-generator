@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,568 +27,598 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 
-    <!-- Alpine.js -->
-    <script
-      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
-      defer
-    ></script>
+<body class="grey lighten-4" x-data="sopApp()" x-init="init()">
+  <!-- Enhanced Navbar -->
+  <nav class="blue darken-2 no-print">
+    <div class="nav-wrapper container">
+      <a href="#" class="brand-logo">
+        <i class="material-icons left hide-on-small-only">science</i>
+        Pharmacy SOP Generator
+      </a>
+      <ul class="right">
+        <li>
+          <a href="#" @click.prevent="resetForm()" title="Reset Form">
+            <i class="material-icons">refresh</i>
+          </a>
+        </li>
+        <li>
+          <a href="#" @click.prevent="exportData()" title="Export Data">
+            <i class="material-icons">save_alt</i>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/himshim/pharmacy-sop-generator" 
+             target="_blank" 
+             rel="noopener noreferrer" 
+             title="View on GitHub">
+            <i class="material-icons">code</i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
 
-    <!-- Custom Styles -->
-    <link rel="stylesheet" href="styles.css" />
-  </head>
+  <!-- Loading Indicator -->
+  <div x-show="isLoading" class="progress blue lighten-4 no-print" style="margin: 0;">
+    <div class="indeterminate blue"></div>
+  </div>
 
-  <body class="grey lighten-4" x-data="sopApp()" x-init="init()">
-    <!-- Enhanced Navbar -->
-    <nav class="blue darken-2 no-print">
-      <div class="nav-wrapper container">
-        <a href="#" class="brand-logo">
-          <i class="material-icons left hide-on-small-only">science</i>
-          Pharmacy SOP Generator
-        </a>
-        <ul class="right">
-          <li>
-            <a href="#" @click.prevent="resetForm()" title="Reset Form">
-              <i class="material-icons">refresh</i>
-            </a>
-          </li>
-          <li>
-            <a href="#" @click.prevent="exportData()" title="Export Data">
-              <i class="material-icons">save_alt</i>
-            </a>
-          </li>
-          <li>
+  <div class="container section no-print">
+    <!-- SOP MODE -->
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title">
+          <i class="material-icons">settings</i>
+          SOP Mode
+        </span>
+        <div>
+          <label>
+            <input
+              type="radio"
+              name="mode"
+              value="predefined"
+              :checked="sopMode === 'predefined'"
+              @change="switchMode('predefined')"
+            />
+            <span>Predefined SOP Templates</span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="mode"
+              value="custom"
+              :checked="sopMode === 'custom'"
+              @change="switchMode('custom')"
+            />
+            <span>Custom SOP</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOP FORMAT -->
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title">
+          <i class="material-icons">view_quilt</i>
+          SOP Format
+        </span>
+        <button class="btn blue waves-effect waves-light" @click="toggleFormat()">
+          <i class="material-icons left">swap_horiz</i>
+          Switch to
+          <span x-text="format === 'inspection' ? 'Beginner' : 'Inspection'"></span>
+        </button>
+        <span class="grey-text text-darken-2" style="margin-left: 20px;">
+          <i class="material-icons tiny">check_circle</i>
+          Current: <strong x-text="format === 'inspection' ? 'Inspection Mode' : 'Beginner Mode'"></strong>
+        </span>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- LEFT COLUMN -->
+      <div class="col s12 l6">
+        <!-- INSTITUTE & METADATA -->
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">
+              <i class="material-icons">business</i>
+              Institute & Metadata
+            </span>
+
+            <div class="input-field">
+              <i class="material-icons prefix">account_balance</i>
+              <input 
+                id="institute-name"
+                type="text" 
+                placeholder="Institute / College Name" 
+                x-model="institute.name"
+                maxlength="200" />
+              <label for="institute-name" class="active">Institute Name <span class="red-text">*</span></label>
+            </div>
+
+            <div class="input-field">
+              <i class="material-icons prefix">domain</i>
+              <input 
+                id="department"
+                type="text"
+                placeholder="Department" 
+                x-model="institute.dept"
+                maxlength="100" />
+              <label for="department" class="active">Department <span class="red-text">*</span></label>
+            </div>
+
+            <div class="input-field">
+              <i class="material-icons prefix">confirmation_number</i>
+              <input 
+                id="sop-number"
+                type="text"
+                placeholder="SOP Number" 
+                x-model="metadata.sopNumber"
+                maxlength="50" />
+              <label for="sop-number" class="active">SOP Number <span class="red-text">*</span></label>
+              <span class="helper-text">Format: DEPT-XXX-YYYY</span>
+            </div>
+
+            <div class="input-field">
+              <i class="material-icons prefix">event</i>
+              <input 
+                id="effective-date"
+                type="date" 
+                x-model="metadata.effectiveDate" />
+              <label for="effective-date" class="active">Effective Date <span class="red-text">*</span></label>
+            </div>
+
+            <div class="input-field">
+              <i class="material-icons prefix">event_available</i>
+              <input 
+                id="review-date"
+                type="date" 
+                x-model="metadata.nextReviewDate" />
+              <label for="review-date" class="active">To Be Reviewed On</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- SOP SELECTION -->
+        <div x-show="sopMode === 'predefined'" x-transition>
+          <div class="card">
+            <div class="card-content">
+              <span class="card-title">
+                <i class="material-icons">folder_special</i>
+                SOP Selection
+              </span>
+
+              <div class="input-field">
+                <select
+                  class="browser-default"
+                  @change="departmentChanged($event)"
+                >
+                  <option value="" disabled selected>
+                    Select Department
+                  </option>
+                  <template x-for="d in departments" :key="d.key">
+                    <option :value="d.key" x-text="d.name"></option>
+                  </template>
+                </select>
+                <label class="active">Department</label>
+              </div>
+
+              <div class="input-field">
+                <select class="browser-default" @change="sopChanged($event)" :disabled="sopList.length === 0">
+                  <option value="" disabled selected>Select SOP Template</option>
+                  <template x-for="s in sopList" :key="s.key">
+                    <option :value="s.key" x-text="s.name"></option>
+                  </template>
+                </select>
+                <label class="active">SOP Template</label>
+                <span class="helper-text orange-text" x-show="sopList.length === 0">
+                  <i class="material-icons tiny">info</i>
+                  No SOPs available for this department
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SOP CONTENT -->
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">
+              <i class="material-icons">description</i>
+              SOP Content
+            </span>
+
+            <div class="input-field">
+              <i class="material-icons prefix">title</i>
+              <input 
+                id="sop-title"
+                type="text"
+                placeholder="SOP Title" 
+                x-model="title"
+                maxlength="200" />
+              <label for="sop-title" class="active">SOP Title <span class="red-text">*</span></label>
+            </div>
+
+            <div class="input-field">
+              <i class="material-icons prefix">flag</i>
+              <textarea
+                id="purpose"
+                class="materialize-textarea"
+                placeholder="Describe the purpose of this SOP..."
+                x-model="sections.purpose"
+                maxlength="1000"
+              ></textarea>
+              <label for="purpose" class="active">1.0 Purpose <span class="red-text">*</span></label>
+              <span class="helper-text">Minimum 20 characters</span>
+            </div>
+
+            <div class="input-field">
+              <i class="material-icons prefix">adjust</i>
+              <textarea
+                id="scope"
+                class="materialize-textarea"
+                placeholder="Define the scope of application..."
+                x-model="sections.scope"
+                maxlength="1000"
+              ></textarea>
+              <label for="scope" class="active">2.0 Scope <span class="red-text">*</span></label>
+              <span class="helper-text">Minimum 20 characters</span>
+            </div>
+
+            <div class="input-field">
+              <i class="material-icons prefix">list</i>
+              <textarea
+                id="procedure"
+                class="materialize-textarea"
+                placeholder="Enter procedure steps (one per line)..."
+                x-model="sections.procedure"
+                maxlength="5000"
+                rows="8"
+              ></textarea>
+              <label for="procedure" class="active">3.0 Procedure <span class="red-text">*</span></label>
+              <span class="helper-text">Enter each step on a new line</span>
+            </div>
+
+            <div class="input-field">
+              <i class="material-icons prefix">warning</i>
+              <textarea
+                id="precautions"
+                class="materialize-textarea"
+                placeholder="Safety precautions and warnings..."
+                x-model="sections.precautions"
+                maxlength="2000"
+                rows="5"
+              ></textarea>
+              <label for="precautions" class="active">4.0 Precautions</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="col s12 l6">
+        <!-- AUTHORITIES -->
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">
+              <i class="material-icons">people</i>
+              Authorities & Signatures
+            </span>
+
+            <h6 class="grey-text text-darken-2">
+              <i class="material-icons tiny">edit</i>
+              Prepared By
+            </h6>
+            <div class="input-field">
+              <input
+                id="prepared-name"
+                type="text"
+                placeholder="Full Name"
+                x-model="authority.prepared"
+                maxlength="100"
+              />
+              <label for="prepared-name" class="active">Name</label>
+            </div>
+
+            <div class="input-field">
+              <input
+                id="prepared-desig"
+                type="text"
+                placeholder="Designation"
+                x-model="authority.preparedDesig"
+                maxlength="100"
+              />
+              <label for="prepared-desig" class="active">Designation</label>
+            </div>
+
+            <div class="input-field">
+              <input 
+                id="date-prepared"
+                type="date" 
+                x-model="dates.prepared" />
+              <label for="date-prepared" class="active">Date</label>
+            </div>
+
+            <div class="divider" style="margin: 20px 0;"></div>
+
+            <h6 class="grey-text text-darken-2">
+              <i class="material-icons tiny">rate_review</i>
+              Reviewed By
+            </h6>
+            <div class="input-field">
+              <input
+                id="reviewed-name"
+                type="text"
+                placeholder="Full Name"
+                x-model="authority.reviewed"
+                maxlength="100"
+              />
+              <label for="reviewed-name" class="active">Name</label>
+            </div>
+
+            <div class="input-field">
+              <input
+                id="reviewed-desig"
+                type="text"
+                placeholder="Designation"
+                x-model="authority.reviewedDesig"
+                maxlength="100"
+              />
+              <label for="reviewed-desig" class="active">Designation</label>
+            </div>
+
+            <div class="input-field">
+              <input 
+                id="date-reviewed"
+                type="date" 
+                x-model="dates.reviewed" />
+              <label for="date-reviewed" class="active">Date</label>
+            </div>
+
+            <div class="divider" style="margin: 20px 0;"></div>
+
+            <h6 class="grey-text text-darken-2">
+              <i class="material-icons tiny">verified</i>
+              Approved By
+            </h6>
+            <div class="input-field">
+              <input
+                id="approved-name"
+                type="text"
+                placeholder="Full Name"
+                x-model="authority.approved"
+                maxlength="100"
+              />
+              <label for="approved-name" class="active">Name</label>
+            </div>
+
+            <div class="input-field">
+              <input
+                id="approved-desig"
+                type="text"
+                placeholder="Designation"
+                x-model="authority.approvedDesig"
+                maxlength="100"
+              />
+              <label for="approved-desig" class="active">Designation</label>
+            </div>
+
+            <div class="input-field">
+              <input 
+                id="date-approved"
+                type="date" 
+                x-model="dates.approved" />
+              <label for="date-approved" class="active">Date</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRINT BUTTON CARD -->
+        <div class="card green lighten-5">
+          <div class="card-content center-align">
+            <button
+              class="btn-large green darken-1 waves-effect waves-light"
+              @click="printSOP()"
+              :disabled="!title"
+            >
+              <i class="material-icons left">print</i>
+              Generate & Print SOP
+            </button>
+            <p class="grey-text text-darken-2" x-show="!title" style="margin-top: 15px;">
+              <i class="material-icons tiny">info_outline</i>
+              Fill in the required fields to enable printing
+            </p>
+            <p class="green-text text-darken-3" x-show="title" style="margin-top: 15px;">
+              <i class="material-icons tiny">check_circle</i>
+              Ready to print! Preview below
+            </p>
+          </div>
+        </div>
+
+        <!-- COPY TO WORD BUTTON -->
+        <div class="card blue lighten-5">
+          <div class="card-content center-align">
+            <button
+              class="btn-large blue darken-1 waves-effect waves-light"
+              onclick="copySOP()"
+              :disabled="!title"
+            >
+              <i class="material-icons left">content_copy</i>
+              Copy for MS Word
+            </button>
+            <p class="grey-text text-darken-2" style="margin-top: 10px; font-size: 0.9rem;">
+              <i class="material-icons tiny">info</i>
+              Copies SOP in Word-compatible format
+            </p>
+          </div>
+        </div>
+
+        <!-- INFO CARD -->
+        <div class="card orange lighten-5">
+          <div class="card-content">
+            <span class="card-title orange-text text-darken-2">
+              <i class="material-icons">info</i>
+              Quick Tips
+            </span>
+            <ul class="browser-default">
+              <li><i class="material-icons tiny">save</i> Auto-saves every 60 seconds</li>
+              <li><i class="material-icons tiny">restore</i> Restores work on page reload</li>
+              <li><i class="material-icons tiny">print</i> Preview shows actual print layout</li>
+              <li><i class="material-icons tiny">devices</i> Works on all devices</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREVIEW SECTION WITH FIXED ASPECT RATIO -->
+  <div class="no-print" style="background-color: #e0e0e0; padding: 40px 0;">
+    <div class="container">
+      <h4 class="center-align grey-text text-darken-3" style="margin-bottom: 30px;">
+        <i class="material-icons" style="vertical-align: middle;">visibility</i>
+        Live Preview (A4 Format)
+      </h4>
+
+      <div id="print-zone">
+        <div id="preview-container">
+          <div id="preview">
+            <!-- Institute Name -->
+            <p style="text-align: center; font-weight: bold; font-size: 14pt; margin-top: 0;">
+              <span x-text="institute.name || 'Institute Name'"></span>
+            </p>
+
+            <!-- SOP Heading -->
+            <h3>STANDARD OPERATING PROCEDURE</h3>
+
+            <!-- Header Table -->
+            <table>
+              <tr>
+                <td width="20%"><b>SOP No.</b></td>
+                <td width="30%" x-text="metadata.sopNumber"></td>
+                <td width="20%"><b>Effective Date</b></td>
+                <td width="30%" x-text="metadata.effectiveDate"></td>
+              </tr>
+              <tr>
+                <td><b>Department</b></td>
+                <td x-text="institute.dept"></td>
+                <td><b>To Be Reviewed On</b></td>
+                <td x-text="metadata.nextReviewDate"></td>
+              </tr>
+              <tr>
+                <td colspan="4"><b>SOP Title:</b> <span x-text="title || 'SOP Title'"></span></td>
+              </tr>
+            </table>
+
+            <h4>1.0 Purpose</h4>
+            <p x-text="sections.purpose || 'Purpose will appear here...'"></p>
+
+            <h4>2.0 Scope</h4>
+            <p x-text="sections.scope || 'Scope will appear here...'"></p>
+
+            <h4>3.0 Procedure</h4>
+            <ol>
+              <template x-if="procedureList.length === 0">
+                <li>Procedure steps will appear here...</li>
+              </template>
+              <template x-for="step in procedureList" :key="step">
+                <li x-text="step"></li>
+              </template>
+            </ol>
+
+            <h4>4.0 Precautions</h4>
+            <ul>
+              <template x-if="precautionsList.length === 0">
+                <li>Precautions will appear here...</li>
+              </template>
+              <template x-for="p in precautionsList" :key="p">
+                <li x-text="p"></li>
+              </template>
+            </ul>
+
+            <!-- Signatures Table -->
+            <table style="margin-top: 20mm">
+              <tr>
+                <td width="33%">
+                  <b>Prepared By</b><br />
+                  <span x-text="authority.prepared || '_______________'"></span>
+                  <span class="signature-designation" x-text="authority.preparedDesig"></span>
+                  <span class="signature-date">Date: <span x-text="dates.prepared || '___________'"></span></span>
+                </td>
+                <td width="33%">
+                  <b>Checked By</b><br />
+                  <span x-text="authority.reviewed || '_______________'"></span>
+                  <span class="signature-designation" x-text="authority.reviewedDesig"></span>
+                  <span class="signature-date">Date: <span x-text="dates.reviewed || '___________'"></span></span>
+                </td>
+                <td width="33%">
+                  <b>Authorized By</b><br />
+                  <span x-text="authority.approved || '_______________'"></span>
+                  <span class="signature-designation" x-text="authority.approvedDesig"></span>
+                  <span class="signature-date">Date: <span x-text="dates.approved || '___________'"></span></span>
+                </td>
+              </tr>
+            </table>
+
+            <p style="text-align: center; margin-top: 15mm; font-size: 10pt;">
+              — End of SOP —
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="page-footer blue darken-3 no-print">
+    <div class="container">
+      <div class="footer-content">
+        <div>
+          <p>
+            <i class="material-icons tiny">copyright</i>
+            2025 Pharmacy SOP Generator v2.0 | 
             <a href="https://github.com/himshim/pharmacy-sop-generator" 
                target="_blank" 
-               rel="noopener noreferrer" 
-               title="View on GitHub">
-              <i class="material-icons">code</i>
+               rel="noopener noreferrer"
+               style="color: white; text-decoration: underline;">
+              Open Source
             </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
-    <!-- Loading Indicator -->
-    <div x-show="isLoading" class="progress blue lighten-4 no-print" style="margin: 0;">
-      <div class="indeterminate blue"></div>
-    </div>
-
-    <div class="container section no-print">
-      <!-- SOP MODE -->
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title">
-            <i class="material-icons">settings</i>
-            SOP Mode
-          </span>
-          <div>
-            <label>
-              <input
-                type="radio"
-                name="mode"
-                value="predefined"
-                :checked="sopMode === 'predefined'"
-                @change="switchMode('predefined')"
-              />
-              <span>Predefined SOP Templates</span>
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="mode"
-                value="custom"
-                :checked="sopMode === 'custom'"
-                @change="switchMode('custom')"
-              />
-              <span>Custom SOP</span>
-            </label>
-          </div>
+          </p>
         </div>
-      </div>
-
-      <!-- SOP FORMAT -->
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title">
-            <i class="material-icons">view_quilt</i>
-            SOP Format
-          </span>
-          <button class="btn blue waves-effect waves-light" @click="toggleFormat()">
-            <i class="material-icons left">swap_horiz</i>
-            Switch to
-            <span x-text="format === 'inspection' ? 'Beginner' : 'Inspection'"></span>
-          </button>
-          <span class="grey-text text-darken-2" style="margin-left: 20px;">
-            <i class="material-icons tiny">check_circle</i>
-            Current: <strong x-text="format === 'inspection' ? 'Inspection Mode' : 'Beginner Mode'"></strong>
-          </span>
-        </div>
-      </div>
-
-      <div class="row">
-        <!-- LEFT COLUMN -->
-        <div class="col s12 l6">
-          <!-- INSTITUTE & METADATA -->
-          <div class="card">
-            <div class="card-content">
-              <span class="card-title">
-                <i class="material-icons">business</i>
-                Institute & Metadata
-              </span>
-              
-              <div class="input-field">
-                <i class="material-icons prefix">account_balance</i>
-                <input 
-                  id="institute-name"
-                  type="text" 
-                  placeholder="Institute / College Name" 
-                  x-model="institute.name"
-                  maxlength="200" />
-                <label for="institute-name" class="active">Institute Name <span class="red-text">*</span></label>
-              </div>
-              
-              <div class="input-field">
-                <i class="material-icons prefix">domain</i>
-                <input 
-                  id="department"
-                  type="text"
-                  placeholder="Department" 
-                  x-model="institute.dept"
-                  maxlength="100" />
-                <label for="department" class="active">Department <span class="red-text">*</span></label>
-              </div>
-              
-              <div class="input-field">
-                <i class="material-icons prefix">confirmation_number</i>
-                <input 
-                  id="sop-number"
-                  type="text"
-                  placeholder="SOP Number" 
-                  x-model="metadata.sopNumber"
-                  maxlength="50" />
-                <label for="sop-number" class="active">SOP Number <span class="red-text">*</span></label>
-                <span class="helper-text">Format: DEPT-XXX-YYYY</span>
-              </div>
-              
-              <div class="input-field">
-                <i class="material-icons prefix">event</i>
-                <input 
-                  id="effective-date"
-                  type="date" 
-                  x-model="metadata.effectiveDate" />
-                <label for="effective-date" class="active">Effective Date <span class="red-text">*</span></label>
-              </div>
-              
-              <div class="input-field">
-                <i class="material-icons prefix">event_available</i>
-                <input 
-                  id="review-date"
-                  type="date" 
-                  x-model="metadata.nextReviewDate" />
-                <label for="review-date" class="active">To Be Reviewed On</label>
-              </div>
-            </div>
-          </div>
-
-          <!-- SOP SELECTION -->
-          <div x-show="sopMode === 'predefined'" x-transition>
-            <div class="card">
-              <div class="card-content">
-                <span class="card-title">
-                  <i class="material-icons">folder_special</i>
-                  SOP Selection
-                </span>
-
-                <div class="input-field">
-                  <select
-                    class="browser-default"
-                    @change="departmentChanged($event)"
-                  >
-                    <option value="" disabled selected>
-                      Select Department
-                    </option>
-                    <template x-for="d in departments" :key="d.key">
-                      <option :value="d.key" x-text="d.name"></option>
-                    </template>
-                  </select>
-                  <label class="active">Department</label>
-                </div>
-
-                <div class="input-field">
-                  <select class="browser-default" @change="sopChanged($event)" :disabled="sopList.length === 0">
-                    <option value="" disabled selected>Select SOP Template</option>
-                    <template x-for="s in sopList" :key="s.key">
-                      <option :value="s.key" x-text="s.name"></option>
-                    </template>
-                  </select>
-                  <label class="active">SOP Template</label>
-                  <span class="helper-text orange-text" x-show="sopList.length === 0">
-                    <i class="material-icons tiny">info</i>
-                    No SOPs available for this department
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- SOP CONTENT -->
-          <div class="card">
-            <div class="card-content">
-              <span class="card-title">
-                <i class="material-icons">description</i>
-                SOP Content
-              </span>
-              
-              <div class="input-field">
-                <i class="material-icons prefix">title</i>
-                <input 
-                  id="sop-title"
-                  type="text"
-                  placeholder="SOP Title" 
-                  x-model="title"
-                  maxlength="200" />
-                <label for="sop-title" class="active">SOP Title <span class="red-text">*</span></label>
-              </div>
-              
-              <div class="input-field">
-                <i class="material-icons prefix">flag</i>
-                <textarea
-                  id="purpose"
-                  class="materialize-textarea"
-                  placeholder="Describe the purpose of this SOP..."
-                  x-model="sections.purpose"
-                  maxlength="1000"
-                ></textarea>
-                <label for="purpose" class="active">1.0 Purpose <span class="red-text">*</span></label>
-                <span class="helper-text">Minimum 20 characters</span>
-              </div>
-              
-              <div class="input-field">
-                <i class="material-icons prefix">adjust</i>
-                <textarea
-                  id="scope"
-                  class="materialize-textarea"
-                  placeholder="Define the scope of application..."
-                  x-model="sections.scope"
-                  maxlength="1000"
-                ></textarea>
-                <label for="scope" class="active">2.0 Scope <span class="red-text">*</span></label>
-                <span class="helper-text">Minimum 20 characters</span>
-              </div>
-              
-              <div class="input-field">
-                <i class="material-icons prefix">list</i>
-                <textarea
-                  id="procedure"
-                  class="materialize-textarea"
-                  placeholder="Enter procedure steps (one per line)..."
-                  x-model="sections.procedure"
-                  maxlength="5000"
-                  rows="8"
-                ></textarea>
-                <label for="procedure" class="active">3.0 Procedure <span class="red-text">*</span></label>
-                <span class="helper-text">Enter each step on a new line</span>
-              </div>
-              
-              <div class="input-field">
-                <i class="material-icons prefix">warning</i>
-                <textarea
-                  id="precautions"
-                  class="materialize-textarea"
-                  placeholder="Safety precautions and warnings..."
-                  x-model="sections.precautions"
-                  maxlength="2000"
-                  rows="5"
-                ></textarea>
-                <label for="precautions" class="active">4.0 Precautions</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- RIGHT COLUMN -->
-        <div class="col s12 l6">
-          <!-- AUTHORITIES -->
-          <div class="card">
-            <div class="card-content">
-              <span class="card-title">
-                <i class="material-icons">people</i>
-                Authorities & Signatures
-              </span>
-
-              <h6 class="grey-text text-darken-2">
-                <i class="material-icons tiny">edit</i>
-                Prepared By
-              </h6>
-              <div class="input-field">
-                <input
-                  id="prepared-name"
-                  type="text"
-                  placeholder="Full Name"
-                  x-model="authority.prepared"
-                  maxlength="100"
-                />
-                <label for="prepared-name" class="active">Name</label>
-              </div>
-              
-              <div class="input-field">
-                <input
-                  id="prepared-desig"
-                  type="text"
-                  placeholder="Designation"
-                  x-model="authority.preparedDesig"
-                  maxlength="100"
-                />
-                <label for="prepared-desig" class="active">Designation</label>
-              </div>
-
-              <div class="input-field">
-                <input 
-                  id="date-prepared"
-                  type="date" 
-                  x-model="dates.prepared" />
-                <label for="date-prepared" class="active">Date</label>
-              </div>
-
-              <div class="divider" style="margin: 20px 0;"></div>
-
-              <h6 class="grey-text text-darken-2">
-                <i class="material-icons tiny">rate_review</i>
-                Reviewed By
-              </h6>
-              <div class="input-field">
-                <input
-                  id="reviewed-name"
-                  type="text"
-                  placeholder="Full Name"
-                  x-model="authority.reviewed"
-                  maxlength="100"
-                />
-                <label for="reviewed-name" class="active">Name</label>
-              </div>
-              
-              <div class="input-field">
-                <input
-                  id="reviewed-desig"
-                  type="text"
-                  placeholder="Designation"
-                  x-model="authority.reviewedDesig"
-                  maxlength="100"
-                />
-                <label for="reviewed-desig" class="active">Designation</label>
-              </div>
-
-              <div class="input-field">
-                <input 
-                  id="date-reviewed"
-                  type="date" 
-                  x-model="dates.reviewed" />
-                <label for="date-reviewed" class="active">Date</label>
-              </div>
-
-              <div class="divider" style="margin: 20px 0;"></div>
-
-              <h6 class="grey-text text-darken-2">
-                <i class="material-icons tiny">verified</i>
-                Approved By
-              </h6>
-              <div class="input-field">
-                <input
-                  id="approved-name"
-                  type="text"
-                  placeholder="Full Name"
-                  x-model="authority.approved"
-                  maxlength="100"
-                />
-                <label for="approved-name" class="active">Name</label>
-              </div>
-              
-              <div class="input-field">
-                <input
-                  id="approved-desig"
-                  type="text"
-                  placeholder="Designation"
-                  x-model="authority.approvedDesig"
-                  maxlength="100"
-                />
-                <label for="approved-desig" class="active">Designation</label>
-              </div>
-
-              <div class="input-field">
-                <input 
-                  id="date-approved"
-                  type="date" 
-                  x-model="dates.approved" />
-                <label for="date-approved" class="active">Date</label>
-              </div>
-            </div>
-          </div>
-
-          <!-- PRINT BUTTON CARD -->
-          <div class="card green lighten-5">
-            <div class="card-content center-align">
-              <button
-                class="btn-large green darken-1 waves-effect waves-light"
-                @click="printSOP()"
-                :disabled="!title"
-              >
-                <i class="material-icons left">print</i>
-                Generate & Print SOP
-              </button>
-              <p class="grey-text text-darken-2" x-show="!title" style="margin-top: 15px;">
-                <i class="material-icons tiny">info_outline</i>
-                Fill in the required fields to enable printing
-              </p>
-              <p class="green-text text-darken-3" x-show="title" style="margin-top: 15px;">
-                <i class="material-icons tiny">check_circle</i>
-                Ready to print! Preview below
-              </p>
-            </div>
-          </div>
-
-          <!-- INFO CARD -->
-          <div class="card blue lighten-5">
-            <div class="card-content">
-              <span class="card-title blue-text text-darken-2">
-                <i class="material-icons">info</i>
-                Quick Tips
-              </span>
-              <ul class="browser-default">
-                <li><i class="material-icons tiny">save</i> Auto-saves every 30 seconds</li>
-                <li><i class="material-icons tiny">restore</i> Restores work on page reload</li>
-                <li><i class="material-icons tiny">print</i> Preview shows actual print layout</li>
-                <li><i class="material-icons tiny">devices</i> Works on all devices</li>
-              </ul>
-            </div>
-          </div>
+        <div class="footer-links">
+          <a href="#" @click.prevent="resetForm()">
+            <i class="material-icons tiny">refresh</i>
+            Reset
+          </a>
+          <a href="#" @click.prevent="exportData()">
+            <i class="material-icons tiny">save_alt</i>
+            Export
+          </a>
         </div>
       </div>
     </div>
+  </footer>
 
-    <!-- PREVIEW SECTION WITH FIXED ASPECT RATIO -->
-    <div class="no-print" style="background-color: #e0e0e0; padding: 40px 0;">
-      <div class="container">
-        <h4 class="center-align grey-text text-darken-3" style="margin-bottom: 30px;">
-          <i class="material-icons" style="vertical-align: middle;">visibility</i>
-          Live Preview (A4 Format)
-        </h4>
-        
-        <div id="print-zone">
-          <div id="preview-container">
-            <div id="preview">
-              <!-- Institute Name -->
-              <p style="text-align: center; font-weight: bold; font-size: 14pt; margin-top: 0;">
-                <span x-text="institute.name || 'Institute Name'"></span>
-              </p>
+  <!-- External Dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-              <!-- SOP Heading -->
-              <h3>STANDARD OPERATING PROCEDURE</h3>
+  <!-- Configuration (load first) -->
+  <script src="config.js"></script>
 
-              <!-- Header Table -->
-              <table>
-                <tr>
-                  <td width="20%"><b>SOP No.</b></td>
-                  <td width="30%" x-text="metadata.sopNumber"></td>
-                  <td width="20%"><b>Effective Date</b></td>
-                  <td width="30%" x-text="metadata.effectiveDate"></td>
-                </tr>
-                <tr>
-                  <td><b>Department</b></td>
-                  <td x-text="institute.dept"></td>
-                  <td><b>To Be Reviewed On</b></td>
-                  <td x-text="metadata.nextReviewDate"></td>
-                </tr>
-                <tr>
-                  <td colspan="4"><b>SOP Title:</b> <span x-text="title || 'SOP Title'"></span></td>
-                </tr>
-              </table>
+  <!-- Utilities -->
+  <script src="js/utils.js"></script>
 
-              <h4>1.0 Purpose</h4>
-              <p x-text="sections.purpose || 'Purpose will appear here...'"></p>
+  <!-- Modules (load in dependency order) -->
+  <script src="js/modules/validation.js"></script>
+  <script src="js/modules/storage.js"></script>
+  <script src="js/modules/sopLoader.js"></script>
 
-              <h4>2.0 Scope</h4>
-              <p x-text="sections.scope || 'Scope will appear here...'"></p>
+  <!-- Main App -->
+  <script src="js/alpineApp.js"></script>
 
-              <h4>3.0 Procedure</h4>
-              <ol>
-                <template x-if="procedureList.length === 0">
-                  <li>Procedure steps will appear here...</li>
-                </template>
-                <template x-for="step in procedureList" :key="step">
-                  <li x-text="step"></li>
-                </template>
-              </ol>
-
-              <h4>4.0 Precautions</h4>
-              <ul>
-                <template x-if="precautionsList.length === 0">
-                  <li>Precautions will appear here...</li>
-                </template>
-                <template x-for="p in precautionsList" :key="p">
-                  <li x-text="p"></li>
-                </template>
-              </ul>
-
-              <!-- Signatures Table -->
-              <table style="margin-top: 20mm">
-                <tr>
-                  <td>
-                    <b>Prepared By</b><br />
-                    <span x-text="authority.prepared || '______________'"></span><br />
-                    <span class="signature-designation" x-text="authority.preparedDesig"></span><br />
-                    Date: <span class="signature-date" x-text="dates.prepared || '__________'"></span>
-                  </td>
-
-                  <td>
-                    <b>Reviewed By</b><br />
-                    <span x-text="authority.reviewed || '______________'"></span><br />
-                    <span class="signature-designation" x-text="authority.reviewedDesig"></span><br />
-                    Date: <span class="signature-date" x-text="dates.reviewed || '__________'"></span>
-                  </td>
-
-                  <td>
-                    <b>Approved By</b><br />
-                    <span x-text="authority.approved || '______________'"></span><br />
-                    <span class="signature-designation" x-text="authority.approvedDesig"></span><br />
-                    Date: <span class="signature-date" x-text="dates.approved || '__________'"></span>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- FOOTER WITH CREDITS -->
-    <footer class="page-footer no-print">
-      <div class="container">
-        <div class="footer-content">
-          <div>
-            <i class="material-icons" style="vertical-align: middle;">copyright</i>
-            2025 Pharmacy SOP Generator
-            <span class="hide-on-small-only">| NAAC, NBA & ISO Compliant</span>
-          </div>
-          <div class="footer-links">
-            <a href="https://github.com/himshim" target="_blank" rel="noopener noreferrer">
-              <i class="material-icons tiny">person</i>
-              Developer: himshim
-            </a>
-            <a href="https://github.com/himshim/pharmacy-sop-generator" target="_blank" rel="noopener noreferrer">
-              <i class="material-icons tiny">code</i>
-              Source Code
-            </a>
-            <a href="https://github.com/himshim/pharmacy-sop-generator/issues" target="_blank" rel="noopener noreferrer">
-              <i class="material-icons tiny">bug_report</i>
-              Report Issue
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
-
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="js/alpineApp.js"></script>
-  </body>
+  <!-- Export Functionality -->
+  <script src="js/export.js"></script>
+</body>
 </html>
