@@ -9,7 +9,7 @@
  * @returns {string}
  */
 function today() {
-  return new Date().toISOString().split('T')[0];
+  return new Date().toISOString().split("T")[0];
 }
 
 /**
@@ -19,17 +19,17 @@ function today() {
  * @returns {string}
  */
 function escapeHTML(str) {
-  if (!str) return '';
-  
+  if (!str) return "";
+
   const htmlEscapeMap = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#x27;',
-    '/': '&#x2F;'
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#x27;",
+    "/": "&#x2F;",
   };
-  
+
   return String(str).replace(/[&<>"'/]/g, (char) => htmlEscapeMap[char]);
 }
 
@@ -39,8 +39,8 @@ function escapeHTML(str) {
  * @returns {string}
  */
 function sanitizeText(text) {
-  if (!text) return '';
-  const div = document.createElement('div');
+  if (!text) return "";
+  const div = document.createElement("div");
   div.textContent = text;
   return div.innerHTML;
 }
@@ -64,14 +64,14 @@ function debounce(func, delay = 300) {
  * @param {string} message - Message to display
  * @param {string} type - Type of message (success, error, warning, info)
  */
-function showToast(message, type = 'info') {
+function showToast(message, type = "info") {
   const color = CONFIG.TOAST_COLORS[type] || CONFIG.TOAST_COLORS.info;
-  
-  if (typeof M !== 'undefined' && M.toast) {
+
+  if (typeof M !== "undefined" && M.toast) {
     M.toast({
       html: escapeHTML(message),
       classes: color,
-      displayLength: CONFIG.TOAST_DURATION
+      displayLength: CONFIG.TOAST_DURATION,
     });
   } else {
     // Fallback for development
@@ -88,22 +88,22 @@ function showToast(message, type = 'info') {
 function downloadJSON(data, filename) {
   try {
     const dataStr = JSON.stringify(data, null, 2);
-    const blob = new Blob([dataStr], { type: 'application/json' });
+    const blob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    
+    const link = document.createElement("a");
+
     link.href = url;
     link.download = filename;
-    link.style.display = 'none';
-    
+    link.style.display = "none";
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     URL.revokeObjectURL(url);
     return true;
   } catch (e) {
-    console.error('Download failed:', e);
+    console.error("Download failed:", e);
     return false;
   }
 }
