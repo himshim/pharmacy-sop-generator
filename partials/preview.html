@@ -1,5 +1,124 @@
-<div class="section">
-  <h5><i class="material-icons">visibility</i> Preview</h5>
-  <h6 x-text="title"></h6>
-  <p x-text="sections.purpose"></p>
+<div class="preview-section">
+
+  <div class="preview-header">
+    <h5>
+      <i class="material-icons">visibility</i>
+      Live Preview
+    </h5>
+    <span class="chip">A4 • Word Layout</span>
+  </div>
+
+  <div id="preview-container">
+    <div id="preview" class="a4-page">
+
+      <!-- TITLE -->
+      <div class="doc-center">
+        <h1 class="doc-title">STANDARD OPERATING PROCEDURE</h1>
+      </div>
+
+      <!-- HEADER TABLE -->
+      <table class="doc-table">
+        <tr>
+          <td class="label">Institution</td>
+          <td x-text="institute.name || '________________'"></td>
+        </tr>
+        <tr>
+          <td class="label">Department</td>
+          <td x-text="institute.dept || '________________'"></td>
+        </tr>
+        <tr>
+          <td class="label">SOP Title</td>
+          <td x-text="title || '________________'"></td>
+        </tr>
+      </table>
+
+      <!-- META TABLE -->
+      <table class="doc-table">
+        <tr>
+          <td class="label">SOP No.</td>
+          <td x-text="metadata.sopNumber || '________'"></td>
+          <td class="label">Effective Date</td>
+          <td x-text="metadata.effectiveDate || '________'"></td>
+        </tr>
+        <tr>
+          <td class="label">Revision No.</td>
+          <td>____</td>
+          <td class="label">Review Date</td>
+          <td x-text="metadata.nextReviewDate || '________'"></td>
+        </tr>
+      </table>
+
+      <!-- PURPOSE -->
+      <template x-if="sections.purpose">
+        <div class="doc-section">
+          <h2>1.0 PURPOSE</h2>
+          <p x-text="sections.purpose"></p>
+        </div>
+      </template>
+
+      <!-- SCOPE -->
+      <template x-if="sections.scope">
+        <div class="doc-section">
+          <h2>2.0 SCOPE</h2>
+          <p x-text="sections.scope"></p>
+        </div>
+      </template>
+
+      <!-- RESPONSIBILITY -->
+      <div class="doc-section">
+        <h2>3.0 RESPONSIBILITY</h2>
+        <p>
+          Laboratory In-charge, faculty members and trained users are
+          responsible for implementation of this SOP.
+        </p>
+      </div>
+
+      <!-- PROCEDURE -->
+      <template x-if="procedureList.length">
+        <div class="doc-section">
+          <h2>4.0 PROCEDURE</h2>
+          <ol>
+            <template x-for="(step, i) in procedureList" :key="i">
+              <li x-text="step"></li>
+            </template>
+          </ol>
+        </div>
+      </template>
+
+      <!-- PRECAUTIONS -->
+      <template x-if="sections.precautions">
+        <div class="doc-section">
+          <h2>5.0 PRECAUTIONS</h2>
+          <p x-text="sections.precautions"></p>
+        </div>
+      </template>
+
+      <!-- SIGNATURES -->
+      <table class="signature-table">
+        <tr>
+          <td>
+            <strong>Prepared By</strong><br>
+            <span x-text="authority.prepared || '________'"></span><br>
+            <span x-text="authority.preparedDesig"></span><br>
+            Date: <span x-text="dates.prepared || '____'"></span>
+          </td>
+          <td>
+            <strong>Checked By</strong><br>
+            <span x-text="authority.reviewed || '________'"></span><br>
+            <span x-text="authority.reviewedDesig"></span><br>
+            Date: <span x-text="dates.reviewed || '____'"></span>
+          </td>
+          <td>
+            <strong>Approved By</strong><br>
+            <span x-text="authority.approved || '________'"></span><br>
+            <span x-text="authority.approvedDesig"></span><br>
+            Date: <span x-text="dates.approved || '____'"></span>
+          </td>
+        </tr>
+      </table>
+
+      <div class="doc-footer">— End of SOP —</div>
+
+    </div>
+  </div>
 </div>
