@@ -5,28 +5,59 @@
       Predefined SOP Templates
     </span>
 
+    <!-- Department Selector -->
     <div class="input-field">
       <label class="active">Department</label>
-      <select class="browser-default"
-              x-model="department"
-              @change="departmentChanged">
-        <template x-for="d in CONFIG.DEPARTMENTS" :key="d.key">
-          <option :value="d.key" x-text="d.name"></option>
+      <select
+        class="browser-default"
+        x-model="department"
+        @change="departmentChanged"
+      >
+        <!-- Placeholder -->
+        <option value="" disabled>Select Department</option>
+
+        <!-- Departments -->
+        <template x-for="dept in CONFIG.DEPARTMENTS" :key="dept.key">
+          <option
+            :value="dept.key"
+            x-text="dept.name"
+          ></option>
         </template>
       </select>
     </div>
 
+    <!-- SOP Template Selector -->
     <div class="input-field">
       <label class="active">SOP Template</label>
-      <select class="browser-default"
-              x-model="sopKey"
-              @change="sopChanged"
-              :disabled="sopList.length === 0">
-        <option value="">Choose SOP</option>
-        <template x-for="s in sopList" :key="s.key">
-          <option :value="s.key" x-text="s.name"></option>
+      <select
+        class="browser-default"
+        x-model="sopKey"
+        @change="sopChanged"
+        :disabled="sopList.length === 0"
+      >
+        <!-- Placeholder -->
+        <option value="" disabled>Select SOP Template</option>
+
+        <!-- SOPs -->
+        <template x-for="sop in sopList" :key="sop.key">
+          <option
+            :value="sop.key"
+            x-text="sop.name"
+          ></option>
         </template>
       </select>
     </div>
+
+    <!-- Loading Indicator -->
+    <div x-show="isLoading" class="progress">
+      <div class="indeterminate"></div>
+    </div>
+
+    <!-- Empty State -->
+    <template x-if="!isLoading && department && sopList.length === 0">
+      <p class="grey-text">
+        No SOP templates available for this department.
+      </p>
+    </template>
   </div>
 </div>
