@@ -31,7 +31,7 @@
     />
 
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=2.1.0" />
 
     <!-- Print-specific styles -->
     <style>
@@ -780,34 +780,69 @@
     <!-- Toast Container for Notifications -->
     <div id="toast-container" role="alert" aria-live="assertive"></div>
 
-    <!-- Scripts - CRITICAL LOADING ORDER -->
+    <!-- Scripts - FIXED: Removed defer from Alpine, added cache busting -->
 
-    <!-- 1. External Libraries -->
+    <!-- 1. Materialize CSS Framework -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script
-      defer
-      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
-    ></script>
 
-    <!-- 2. Configuration (must load before modules) -->
-    <script src="config.js"></script>
+    <!-- 2. Alpine.js - CRITICAL FIX: Removed defer attribute -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <!-- 3. Utility Functions -->
-    <script src="js/utils.js"></script>
+    <!-- 3. Application Configuration -->
+    <script src="config.js?v=2.1.0"></script>
 
-    <!-- 4. Core Modules (in dependency order) -->
-    <script src="js/modules/validation.js"></script>
-    <script src="js/modules/storage.js"></script>
-    <script src="js/modules/sopLoader.js"></script>
+    <!-- 4. Utility Functions -->
+    <script src="js/utils.js?v=2.1.0"></script>
 
-    <!-- 5. Application Logic -->
-    <script src="js/alpineApp.js"></script>
-    <script src="js/export.js"></script>
+    <!-- 5. Core Modules (in dependency order) -->
+    <script src="js/modules/validation.js?v=2.1.0"></script>
+    <script src="js/modules/storage.js?v=2.1.0"></script>
+    <script src="js/modules/sopLoader.js?v=2.1.0"></script>
 
-    <!-- 6. Initialize Materialize Components -->
+    <!-- 6. Application Logic -->
+    <script src="js/alpineApp.js?v=2.1.0"></script>
+    <script src="js/export.js?v=2.1.0"></script>
+
+    <!-- 7. Debug & Initialization -->
     <script>
+      // Comprehensive debug logging
+      console.log(
+        "%c=== Pharmacy SOP Generator v2.1.0 ===",
+        "color: #1976d2; font-size: 16px; font-weight: bold"
+      );
+      console.log(
+        "Alpine.js:",
+        typeof Alpine !== "undefined" ? "✅ Loaded" : "❌ FAILED"
+      );
+      console.log(
+        "CONFIG:",
+        typeof CONFIG !== "undefined" ? "✅ Loaded" : "❌ FAILED"
+      );
+      console.log(
+        "ValidationModule:",
+        typeof ValidationModule !== "undefined" ? "✅ Loaded" : "❌ FAILED"
+      );
+      console.log(
+        "StorageModule:",
+        typeof StorageModule !== "undefined" ? "✅ Loaded" : "❌ FAILED"
+      );
+      console.log(
+        "SOPLoader:",
+        typeof SOPLoader !== "undefined" ? "✅ Loaded" : "❌ FAILED"
+      );
+      console.log(
+        "sopApp:",
+        typeof sopApp !== "undefined" ? "✅ Loaded" : "❌ FAILED"
+      );
+      console.log(
+        "copySOP:",
+        typeof copySOP !== "undefined" ? "✅ Loaded" : "❌ FAILED"
+      );
+
       // Initialize Materialize components after DOM load
       document.addEventListener("DOMContentLoaded", function () {
+        console.log("DOM loaded, initializing Materialize...");
+
         // Initialize select dropdowns
         var selects = document.querySelectorAll("select");
         M.FormSelect.init(selects);
@@ -820,7 +855,11 @@
         var tooltips = document.querySelectorAll(".tooltipped");
         M.Tooltip.init(tooltips);
 
-        console.log("Materialize components initialized");
+        console.log("Materialize initialized ✅");
+        console.log(
+          "%cIf you see all ✅ green checkmarks above, the app is working correctly!",
+          "color: green; font-weight: bold"
+        );
       });
     </script>
   </body>
