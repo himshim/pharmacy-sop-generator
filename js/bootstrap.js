@@ -26,8 +26,22 @@ async function loadPart(name) {
 
   app.innerHTML = html;
 
-  // 🔥 CRITICAL: re-init Alpine on injected DOM
+  // 🔥 Re-initialize Alpine
   if (window.Alpine) {
     Alpine.initTree(app);
   }
+
+  // 🔥 FORCE DEFAULT MODE AFTER PARTIALS EXIST
+  queueMicrotask(() => {
+    const root = Alpine.$data(app);
+    if (root) {
+      root.sopMode = "predefined";
+
+      // also set default department safely
+      if (!root.department && window.CONFIG?.DEPARTMENTS?.length) {
+        root.department = CONFIG.DEPARTMENTS[0].key;
+        root.loadDepartment();
+      }
+    }
+  });
 })();
