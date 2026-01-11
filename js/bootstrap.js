@@ -1,47 +1,40 @@
 const app = document.getElementById("app");
 
-const PARTS = [
-  "header",
-  "mode-selector",
-  "template-selector",
-  "institution",
-  "metadata",
-  "content",
-  "authority",
-  "actions",
-  "preview",
-  "footer"
-];
-
-async function loadPart(name) {
-  const res = await fetch(`partials/${name}.html`);
-  return res.text();
+async function load(name) {
+  const r = await fetch(`partials/${name}.html`);
+  return r.text();
 }
 
 (async () => {
-  let html = "";
-  for (const part of PARTS) {
-    html += await loadPart(part);
-  }
+  // 1. Load header + layout + footer
+  app.innerHTML =
+    await load("header") +
+    await load("layout") +
+    await load("footer");
 
-  app.innerHTML = html;
+  // 2. Inject FORM PARTIALS into LEFT column
+  const form = document.getElementById("form-column");
+  form.innerHTML =
+    await load("mode-selector") +
+    await load("template-selector") +   // ✅ HERE IT APPEARS
+    await load("institution") +
+    await load("metadata") +
+    await load("content") +
+    await load("authority") +
+    await load("actions");
 
-  // 🔥 Re-initialize Alpine
-  if (window.Alpine) {
-    Alpine.initTree(app);
-  }
+  // 3. Inject PREVIEW into RIGHT column
+  const preview = document.getElementById("preview-column");
+  preview.innerHTML = await load("preview");
 
-  // 🔥 FORCE DEFAULT MODE AFTER PARTIALS EXIST
+  // 4. Re-initialize Alpine
+  if (window.Alpine) Alpine.initTree(app);
+
+  // 5. Force default mode
   queueMicrotask(() => {
-    const root = Alpine.$data(app);
-    if (root) {
-      root.sopMode = "predefined";
-
-      // also set default department safely
-      if (!root.department && window.CONFIG?.DEPARTMENTS?.length) {
-        root.department = CONFIG.DEPARTMENTS[0].key;
-        root.loadDepartment();
-      }
+    const state = Alpine.$data(app);
+    if (state) {
+      state.sopMode = "predefined";
     }
   });
 })();
