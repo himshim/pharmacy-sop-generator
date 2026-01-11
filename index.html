@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>Pharmacy SOP Generator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
     <!-- Materialize CSS -->
     <link
@@ -29,8 +30,17 @@
     <nav class="blue darken-2 no-print">
       <div class="nav-wrapper container">
         <span class="brand-logo">Pharmacy SOP Generator</span>
+        <ul class="right">
+          <li><a href="#" @click.prevent="resetForm()" title="Reset Form"><i class="material-icons">refresh</i></a></li>
+          <li><a href="#" @click.prevent="exportData()" title="Export Data"><i class="material-icons">save_alt</i></a></li>
+        </ul>
       </div>
     </nav>
+
+    <!-- Loading Indicator -->
+    <div x-show="isLoading" class="progress blue lighten-4 no-print" style="margin: 0;">
+      <div class="indeterminate blue"></div>
+    </div>
 
     <div class="container section no-print">
       <!-- SOP MODE -->
@@ -42,7 +52,7 @@
               type="radio"
               name="mode"
               value="predefined"
-              checked
+              :checked="sopMode === 'predefined'"
               @change="switchMode('predefined')"
             />
             <span>Predefined SOP</span>
@@ -53,6 +63,7 @@
               type="radio"
               name="mode"
               value="custom"
+              :checked="sopMode === 'custom'"
               @change="switchMode('custom')"
             />
             <span>Custom SOP</span>
@@ -70,6 +81,9 @@
               x-text="format === 'inspection' ? 'Beginner' : 'Inspection'"
             ></span>
           </button>
+          <span class="grey-text text-darken-2" style="margin-left: 20px;">
+            Current: <strong x-text="format === 'inspection' ? 'Inspection' : 'Beginner'"></strong>
+          </span>
         </div>
       </div>
 
@@ -80,12 +94,52 @@
           <div class="card">
             <div class="card-content">
               <span class="card-title">Institute & Metadata</span>
-              <input placeholder="Institute / College Name" x-model="institute.name" />
-              <input placeholder="Department" x-model="institute.dept" />
+              <div class="input-field">
+                <input 
+                  id="institute-name"
+                  type="text" 
+                  placeholder="Institute / College Name" 
+                  x-model="institute.name"
+                  maxlength="200" />
+                <label for="institute-name" class="active">Institute Name <span class="red-text">*</span></label>
+              </div>
               
-              <input placeholder="SOP Number" x-model="metadata.sopNumber" />
-              <input type="date" label="Effective Date" x-model="metadata.effectiveDate" />
-              <input type="date" label="To Be Reviewed On" x-model="metadata.nextReviewDate" />
+              <div class="input-field">
+                <input 
+                  id="department"
+                  type="text"
+                  placeholder="Department" 
+                  x-model="institute.dept"
+                  maxlength="100" />
+                <label for="department" class="active">Department <span class="red-text">*</span></label>
+              </div>
+              
+              <div class="input-field">
+                <input 
+                  id="sop-number"
+                  type="text"
+                  placeholder="SOP Number" 
+                  x-model="metadata.sopNumber"
+                  maxlength="50" />
+                <label for="sop-number" class="active">SOP Number <span class="red-text">*</span></label>
+                <span class="helper-text">Format: DEPT-XXX-YYYY</span>
+              </div>
+              
+              <div class="input-field">
+                <input 
+                  id="effective-date"
+                  type="date" 
+                  x-model="metadata.effectiveDate" />
+                <label for="effective-date" class="active">Effective Date <span class="red-text">*</span></label>
+              </div>
+              
+              <div class="input-field">
+                <input 
+                  id="review-date"
+                  type="date" 
+                  x-model="metadata.nextReviewDate" />
+                <label for="review-date" class="active">To Be Reviewed On</label>
+              </div>
             </div>
           </div>
 
@@ -111,13 +165,14 @@
                 </div>
 
                 <div class="input-field">
-                  <select class="browser-default" @change="sopChanged($event)">
+                  <select class="browser-default" @change="sopChanged($event)" :disabled="sopList.length === 0">
                     <option value="" disabled selected>Select SOP</option>
                     <template x-for="s in sopList" :key="s.key">
                       <option :value="s.key" x-text="s.name"></option>
                     </template>
                   </select>
                   <label class="active">SOP</label>
+                  <span class="helper-text" x-show="sopList.length === 0">No SOPs available for this department</span>
                 </div>
               </div>
             </div>
@@ -127,27 +182,63 @@
           <div class="card">
             <div class="card-content">
               <span class="card-title">SOP Content</span>
-              <input placeholder="SOP Title" x-model="title" />
-              <textarea
-                class="materialize-textarea"
-                placeholder="Purpose"
-                x-model="sections.purpose"
-              ></textarea>
-              <textarea
-                class="materialize-textarea"
-                placeholder="Scope"
-                x-model="sections.scope"
-              ></textarea>
-              <textarea
-                class="materialize-textarea"
-                placeholder="Procedure (one step per line)"
-                x-model="sections.procedure"
-              ></textarea>
-              <textarea
-                class="materialize-textarea"
-                placeholder="Precautions"
-                x-model="sections.precautions"
-              ></textarea>
+              
+              <div class="input-field">
+                <input 
+                  id="sop-title"
+                  type="text"
+                  placeholder="SOP Title" 
+                  x-model="title"
+                  maxlength="200" />
+                <label for="sop-title" class="active">SOP Title <span class="red-text">*</span></label>
+              </div>
+              
+              <div class="input-field">
+                <textarea
+                  id="purpose"
+                  class="materialize-textarea"
+                  placeholder="Purpose"
+                  x-model="sections.purpose"
+                  maxlength="1000"
+                ></textarea>
+                <label for="purpose" class="active">Purpose <span class="red-text">*</span></label>
+                <span class="helper-text">Minimum 20 characters</span>
+              </div>
+              
+              <div class="input-field">
+                <textarea
+                  id="scope"
+                  class="materialize-textarea"
+                  placeholder="Scope"
+                  x-model="sections.scope"
+                  maxlength="1000"
+                ></textarea>
+                <label for="scope" class="active">Scope <span class="red-text">*</span></label>
+                <span class="helper-text">Minimum 20 characters</span>
+              </div>
+              
+              <div class="input-field">
+                <textarea
+                  id="procedure"
+                  class="materialize-textarea"
+                  placeholder="Procedure (one step per line)"
+                  x-model="sections.procedure"
+                  maxlength="5000"
+                ></textarea>
+                <label for="procedure" class="active">Procedure <span class="red-text">*</span></label>
+                <span class="helper-text">Enter each step on a new line</span>
+              </div>
+              
+              <div class="input-field">
+                <textarea
+                  id="precautions"
+                  class="materialize-textarea"
+                  placeholder="Precautions"
+                  x-model="sections.precautions"
+                  maxlength="2000"
+                ></textarea>
+                <label for="precautions" class="active">Precautions</label>
+              </div>
             </div>
           </div>
         </div>
@@ -159,48 +250,111 @@
             <div class="card-content">
               <span class="card-title">Authorities</span>
 
-              <input
-                placeholder="Prepared By – Name"
-                x-model="authority.prepared"
-              />
-              <input
-                placeholder="Prepared By – Designation"
-                x-model="authority.preparedDesig"
-              />
+              <div class="input-field">
+                <input
+                  id="prepared-name"
+                  type="text"
+                  placeholder="Prepared By – Name"
+                  x-model="authority.prepared"
+                  maxlength="100"
+                />
+                <label for="prepared-name" class="active">Prepared By - Name</label>
+              </div>
+              
+              <div class="input-field">
+                <input
+                  id="prepared-desig"
+                  type="text"
+                  placeholder="Prepared By – Designation"
+                  x-model="authority.preparedDesig"
+                  maxlength="100"
+                />
+                <label for="prepared-desig" class="active">Prepared By - Designation</label>
+              </div>
 
-              <input
-                placeholder="Reviewed By – Name"
-                x-model="authority.reviewed"
-              />
-              <input
-                placeholder="Reviewed By – Designation"
-                x-model="authority.reviewedDesig"
-              />
+              <div class="input-field">
+                <input
+                  id="reviewed-name"
+                  type="text"
+                  placeholder="Reviewed By – Name"
+                  x-model="authority.reviewed"
+                  maxlength="100"
+                />
+                <label for="reviewed-name" class="active">Reviewed By - Name</label>
+              </div>
+              
+              <div class="input-field">
+                <input
+                  id="reviewed-desig"
+                  type="text"
+                  placeholder="Reviewed By – Designation"
+                  x-model="authority.reviewedDesig"
+                  maxlength="100"
+                />
+                <label for="reviewed-desig" class="active">Reviewed By - Designation</label>
+              </div>
 
-              <input
-                placeholder="Approved By – Name"
-                x-model="authority.approved"
-              />
-              <input
-                placeholder="Approved By – Designation"
-                x-model="authority.approvedDesig"
-              />
+              <div class="input-field">
+                <input
+                  id="approved-name"
+                  type="text"
+                  placeholder="Approved By – Name"
+                  x-model="authority.approved"
+                  maxlength="100"
+                />
+                <label for="approved-name" class="active">Approved By - Name</label>
+              </div>
+              
+              <div class="input-field">
+                <input
+                  id="approved-desig"
+                  type="text"
+                  placeholder="Approved By – Designation"
+                  x-model="authority.approvedDesig"
+                  maxlength="100"
+                />
+                <label for="approved-desig" class="active">Approved By - Designation</label>
+              </div>
 
-              <input type="date" x-model="dates.prepared" />
-              <input type="date" x-model="dates.reviewed" />
-              <input type="date" x-model="dates.approved" />
+              <div class="input-field">
+                <input 
+                  id="date-prepared"
+                  type="date" 
+                  x-model="dates.prepared" />
+                <label for="date-prepared" class="active">Date Prepared</label>
+              </div>
+              
+              <div class="input-field">
+                <input 
+                  id="date-reviewed"
+                  type="date" 
+                  x-model="dates.reviewed" />
+                <label for="date-reviewed" class="active">Date Reviewed</label>
+              </div>
+              
+              <div class="input-field">
+                <input 
+                  id="date-approved"
+                  type="date" 
+                  x-model="dates.approved" />
+                <label for="date-approved" class="active">Date Approved</label>
+              </div>
             </div>
           </div>
 
           <div class="card center-align">
             <div class="card-content">
               <button
-                class="btn green"
-                @click="window.print()"
+                class="btn-large green waves-effect waves-light"
+                @click="printSOP()"
                 :disabled="!title"
               >
+                <i class="material-icons left">print</i>
                 Print SOP
               </button>
+              <p class="grey-text" x-show="!title" style="margin-top: 10px;">
+                Please fill in the SOP Title to enable printing
+              </p>
             </div>
           </div>
         </div>
@@ -302,7 +456,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/alpineApp.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="js/alpineApp.js"></script>
   </body>
 </html>
