@@ -23,5 +23,11 @@ async function loadPart(name) {
   for (const part of PARTS) {
     html += await loadPart(part);
   }
+
   app.innerHTML = html;
+
+  // 🔥 CRITICAL: re-init Alpine on injected DOM
+  if (window.Alpine) {
+    Alpine.initTree(app);
+  }
 })();
