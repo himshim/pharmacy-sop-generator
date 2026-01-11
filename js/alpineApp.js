@@ -1,35 +1,38 @@
 /**
- * Pharmacy SOP Generator - Main Application
- * Alpine.js reactive component
- * @version 2.1.0
- *
- * Dependencies: config.js, validation.js, storage.js, sopLoader.js, utils.js
+ * Pharmacy SOP Generator – Stable Alpine App
+ * Designed for dynamic / modular HTML
+ * Version: 2.2.0 (stable)
  */
 
-/* ===============================
-   MAKE COMPONENT GLOBAL (CRITICAL)
-=============================== */
 window.sopApp = function () {
   return {
-    // ========== STATE ==========
-    sopMode: 'predefined', // ✅ DEFAULT MODE (FIX OPTION 1)
+    /* =========================
+       CORE STATE
+    ========================= */
+    sopMode: 'predefined',
     format: 'inspection',
 
-    // Institute Details
+    department: '',
+    sopKey: '',
+    sopList: [],
+    isLoading: false,
+
+    /* =========================
+       FORM DATA
+    ========================= */
     institute: {
       name: '',
       dept: ''
     },
 
-    // Metadata
     metadata: {
       sopNumber: '',
       effectiveDate: '',
       nextReviewDate: ''
     },
 
-    // SOP Content
     title: '',
+
     sections: {
       purpose: '',
       scope: '',
@@ -37,7 +40,6 @@ window.sopApp = function () {
       precautions: ''
     },
 
-    // Authority
     authority: {
       prepared: '',
       preparedDesig: '',
@@ -53,78 +55,65 @@ window.sopApp = function () {
       approved: ''
     },
 
-    // UI State
-    sopList: [],
-    department: '',
-    sopKey: '',
-    isLoading: false,
+    /* =========================
+       SYSTEM
+    ========================= */
+    isDirty: false,
     autoSaveTimer: null,
 
-    // Dirty tracking
-    isDirty: false,
-    lastSavedState: null,
-
-    // ========== INITIALIZATION ==========
+    /* =========================
+       INIT (DOM SAFE)
+    ========================= */
     init() {
-      console.log(`${CONFIG.APP_NAME} v${CONFIG.VERSION} initialized`);
+      console.log('SOP App initialized');
 
-      // ✅ FORCE MODE ON INIT (CRITICAL)
-      this.switchMode('predefined');
-
-      // Set default department
-      this.department = CONFIG.DEPARTMENTS[0].key;
-
-      // Load department data
-      this.loadDepartment();
-
-      // Setup auto-save
-      this.startAutoSave();
-
-      // Check for auto-saved data
-      this.checkAutoSave();
-
-      // Setup error handlers
-      this.setupErrorHandlers();
-
-      // Set default effective date
+      // Defaults (SAFE – no side effects)
+      this.sopMode = 'predefined';
       this.metadata.effectiveDate = today();
 
-      // Dirty tracking
-      this.$watch('title', () => this.markDirty());
-      this.$watch('sections', () => this.markDirty(), { deep: true });
-      this.$watch('institute', () => this.markDirty(), { deep: true });
-      this.$watch('metadata', () => this.markDirty(), { deep: true });
+      if (CONFIG?.DEPARTMENTS?.length) {
+        this.department = CONFIG.DEPARTMENTS[0].key;
+      }
+
+      // Delay side-effects until DOM + Alpine is fully ready
+      this.$nextTick(() => {
+        if (this.department) {
+          this.loadDepartment();
+        }
+        this.startAutoSave();
+        this.setupWatchers();
+        this.setupErrorHandlers();
+      });
     },
 
-    // ========== DIRTY TRACKING ==========
-    markDirty() {
-      this.isDirty = true;
+    /* =========================
+       WATCHERS
+    ========================= */
+    setupWatchers() {
+      this.$watch('title', () => this.isDirty = true);
+      this.$watch('sections', () => this.isDirty = true, { deep: true });
+      this.$watch('institute', () => this.isDirty = true, { deep: true });
+      this.$watch('metadata', () => this.isDirty = true, { deep: true });
     },
 
-    markClean() {
-      this.isDirty = false;
-      this.lastSavedState = this.captureState();
-    },
-
-    // ========== MODE & FORMAT ==========
+    /* =========================
+       MODE HANDLING
+    ========================= */
     switchMode(mode) {
       this.sopMode = mode;
 
       if (mode === 'custom') {
         this.clearSOP();
-        showToast('Switched to Custom Mode', 'info');
-      } else {
+      }
+
+      if (mode === 'predefined' && this.department) {
         this.loadDepartment();
-        showToast('Switched to Predefined Mode', 'info');
       }
     },
 
-    toggleFormat() {
-      this.format = this.format === 'inspection' ? 'beginner' : 'inspection';
-      showToast(`Switched to ${this.format} format`, 'info');
-    },
-
-    // ========== EVENT HANDLERS ==========
+    /* =========================
+       EVENTS
+    ========================= */
     departmentChanged(e) {
       this.department = e.target.value;
       this.loadDepartment();
@@ -132,48 +121,54 @@ window.sopApp = function () {
 
     sopChanged(e) {
       this.sopKey = e.target.value;
-      if (this.sopKey) this.loadSOP(this.sopKey);
+      if (this.sopKey) {
+        this.loadSOP(this.sopKey);
+      }
     },
 
-    // ========== DATA LOADING ==========
+    /* =========================
+       DATA LOADING
+    ========================= */
     async loadDepartment() {
-      this.sopList = [];
-      this.clearSOP();
       this.isLoading = true;
+      this.sopList = [];
+      this.sopKey = '';
 
       try {
         this.sopList = await SOPLoader.loadDepartment(this.department);
-      } catch {
-        showToast('Failed to load SOPs for this department.', 'error');
-        this.sopList = [];
+      } catch (err) {
+        console.error(err);
+        showToast('Failed to load SOP list', 'error');
       } finally {
         this.isLoading = false;
       }
     },
 
     async loadSOP(key) {
-      if (!key) return;
       this.isLoading = true;
 
       try {
-        const sopData = await SOPLoader.loadSOP(this.department, key);
-        const parsed = SOPLoader.parseSOP(sopData);
+        const raw = await SOPLoader.loadSOP(this.department, key);
+        const sop = SOPLoader.parseSOP(raw);
 
-        this.title = parsed.title;
-        this.sections.purpose = parsed.purpose;
-        this.sections.scope = parsed.scope;
-        this.sections.procedure = parsed.procedure;
-        this.sections.precautions = parsed.precautions;
+        this.title = sop.title || '';
+        this.sections.purpose = sop.purpose || '';
+        this.sections.scope = sop.scope || '';
+        this.sections.procedure = sop.procedure || '';
+        this.sections.precautions = sop.precautions || '';
 
-        showToast('SOP loaded successfully!', 'success');
-      } catch {
-        showToast('Failed to load SOP template.', 'error');
-        this.clearSOP();
+        showToast('SOP loaded', 'success');
+      } catch (err) {
+        console.error(err);
+        showToast('Failed to load SOP', 'error');
       } finally {
         this.isLoading = false;
       }
     },
 
+    /* =========================
+       HELPERS
+    ========================= */
     clearSOP() {
       this.title = '';
       this.sections = {
@@ -185,47 +180,43 @@ window.sopApp = function () {
       this.sopKey = '';
     },
 
-    // ========== VALIDATION & PRINT ==========
-    validateBeforePrint() {
-      const validation = ValidationModule.validateSOP(this.captureState());
-
-      if (!validation.isValid) {
-        showToast(
-          'Please fix:\n• ' + validation.errors.join('\n• '),
-          'error'
-        );
-        return false;
-      }
-      return true;
-    },
-
-    printSOP() {
-      if (!this.validateBeforePrint()) return;
-      setTimeout(() => window.print(), 100);
-    },
-
-    // ========== COMPUTED ==========
     get procedureList() {
       return this.sections.procedure
-        ? this.sections.procedure.split('\n').map(p => sanitizeText(p.trim())).filter(Boolean)
+        ? this.sections.procedure.split('\n').map(v => v.trim()).filter(Boolean)
         : [];
     },
 
-    get precautionsList() {
-      return this.sections.precautions
-        ? this.sections.precautions.split(/\.\s+/).map(p => sanitizeText(p.trim())).filter(Boolean)
-        : [];
+    /* =========================
+       PRINT / EXPORT
+    ========================= */
+    printSOP() {
+      window.print();
     },
 
-    // ========== STORAGE ==========
+    exportData() {
+      downloadJSON(
+        this.captureState(),
+        `sop-${this.metadata.sopNumber || 'export'}.json`
+      );
+    },
+
+    resetForm() {
+      if (!confirm('Reset all data?')) return;
+      this.clearSOP();
+      this.isDirty = false;
+      StorageModule.clear();
+    },
+
+    /* =========================
+       STORAGE
+    ========================= */
     captureState() {
       return {
         sopMode: this.sopMode,
-        format: this.format,
-        institute: { ...this.institute },
-        metadata: { ...this.metadata },
         department: this.department,
         sopKey: this.sopKey,
+        institute: { ...this.institute },
+        metadata: { ...this.metadata },
         title: this.title,
         sections: { ...this.sections },
         authority: { ...this.authority },
@@ -233,49 +224,26 @@ window.sopApp = function () {
       };
     },
 
-    restoreState(data) {
-      if (!data) return;
-      Object.assign(this, data);
-    },
-
     startAutoSave() {
       this.autoSaveTimer = setInterval(() => {
-        if (this.isDirty && (this.title || this.sections.procedure)) {
-          if (StorageModule.save(this.captureState())) this.markClean();
+        if (this.isDirty) {
+          StorageModule.save(this.captureState());
+          this.isDirty = false;
         }
       }, CONFIG.AUTO_SAVE_INTERVAL);
     },
 
-    checkAutoSave() {
-      const saved = StorageModule.load();
-      if (saved && StorageModule.isRecent(saved) && confirm('Restore previous work?')) {
-        this.restoreState(saved);
-        showToast('Work restored', 'success');
-      }
-    },
-
-    // ========== ERROR HANDLING ==========
+    /* =========================
+       ERRORS
+    ========================= */
     setupErrorHandlers() {
       window.addEventListener('error', () =>
-        showToast('Unexpected error occurred.', 'error')
+        showToast('Unexpected error', 'error')
       );
 
       window.addEventListener('unhandledrejection', () =>
-        showToast('Failed to load data.', 'error')
+        showToast('Network or data error', 'error')
       );
-    },
-
-    // ========== EXPORT & RESET ==========
-    exportData() {
-      downloadJSON(this.captureState(), `sop-${this.metadata.sopNumber || 'export'}.json`);
-    },
-
-    resetForm() {
-      if (!confirm('Reset all data?')) return;
-      this.clearSOP();
-      this.markClean();
-      StorageModule.clear();
-      showToast('Form reset', 'info');
     }
   };
 };
