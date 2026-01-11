@@ -106,9 +106,10 @@
                     SOP Mode
                   </h5>
                   <div class="mode-toggle">
-                    <label>
+                    <label for="sopModePredefined">
                       <input
                         type="radio"
+                        id="sopModePredefined"
                         name="sopMode"
                         value="predefined"
                         x-model="sopMode"
@@ -117,9 +118,10 @@
                       />
                       <span>Predefined Templates</span>
                     </label>
-                    <label>
+                    <label for="sopModeCustom">
                       <input
                         type="radio"
+                        id="sopModeCustom"
                         name="sopMode"
                         value="custom"
                         x-model="sopMode"
@@ -140,10 +142,16 @@
 
                   <!-- Department Selection -->
                   <div class="input-field">
+                    <label for="departmentSelect" class="active"
+                      >Department</label
+                    >
                     <select
+                      id="departmentSelect"
+                      name="department"
                       x-model="department"
                       @change="departmentChanged"
                       class="browser-default"
+                      aria-label="Select department"
                     >
                       <option value="" disabled>Choose Department</option>
                       <template
@@ -153,28 +161,36 @@
                         <option :value="dept.key" x-text="dept.name"></option>
                       </template>
                     </select>
-                    <label class="active">Department</label>
                   </div>
 
                   <!-- SOP Selection -->
                   <div class="input-field">
+                    <label for="sopSelect" class="active">SOP Template</label>
                     <select
+                      id="sopSelect"
+                      name="sopTemplate"
                       x-model="sopKey"
                       @change="sopChanged"
                       :disabled="sopList.length === 0"
                       class="browser-default"
+                      aria-label="Select SOP template"
                     >
                       <option value="" disabled>Choose SOP Template</option>
                       <template x-for="sop in sopList" :key="sop.key">
                         <option :value="sop.key" x-text="sop.name"></option>
                       </template>
                     </select>
-                    <label class="active">SOP Template</label>
                   </div>
 
                   <!-- Loading Indicator -->
-                  <div x-show="isLoading" class="progress blue lighten-4">
+                  <div
+                    x-show="isLoading"
+                    class="progress blue lighten-4"
+                    role="status"
+                    aria-live="polite"
+                  >
                     <div class="indeterminate blue"></div>
+                    <span class="sr-only">Loading templates...</span>
                   </div>
                 </div>
 
@@ -188,8 +204,10 @@
                     <input
                       type="text"
                       id="instituteName"
+                      name="institutionName"
                       x-model="institute.name"
                       placeholder="Enter institution name"
+                      autocomplete="organization"
                     />
                     <label for="instituteName" class="active"
                       >Institution Name *</label
@@ -199,8 +217,10 @@
                     <input
                       type="text"
                       id="deptName"
+                      name="departmentName"
                       x-model="institute.dept"
                       placeholder="Enter department name"
+                      autocomplete="organization-title"
                     />
                     <label for="deptName" class="active">Department *</label>
                   </div>
@@ -216,6 +236,7 @@
                     <input
                       type="text"
                       id="sopTitle"
+                      name="sopTitle"
                       x-model="title"
                       placeholder="Enter SOP title"
                     />
@@ -227,6 +248,7 @@
                         <input
                           type="text"
                           id="sopNumber"
+                          name="sopNumber"
                           x-model="metadata.sopNumber"
                           placeholder="e.g., SOP-001"
                         />
@@ -240,6 +262,7 @@
                         <input
                           type="date"
                           id="effectiveDate"
+                          name="effectiveDate"
                           x-model="metadata.effectiveDate"
                         />
                         <label for="effectiveDate" class="active"
@@ -252,6 +275,7 @@
                     <input
                       type="date"
                       id="reviewDate"
+                      name="nextReviewDate"
                       x-model="metadata.nextReviewDate"
                     />
                     <label for="reviewDate" class="active"
@@ -270,6 +294,7 @@
                   <div class="input-field">
                     <textarea
                       id="purpose"
+                      name="purpose"
                       class="materialize-textarea"
                       x-model="sections.purpose"
                       placeholder="Describe the purpose of this SOP"
@@ -282,6 +307,7 @@
                   <div class="input-field">
                     <textarea
                       id="scope"
+                      name="scope"
                       class="materialize-textarea"
                       x-model="sections.scope"
                       placeholder="Define the scope of this SOP"
@@ -294,6 +320,7 @@
                   <div class="input-field">
                     <textarea
                       id="procedure"
+                      name="procedure"
                       class="materialize-textarea"
                       x-model="sections.procedure"
                       placeholder="Enter procedure steps (one per line)"
@@ -309,6 +336,7 @@
                   <div class="input-field">
                     <textarea
                       id="precautions"
+                      name="precautions"
                       class="materialize-textarea"
                       x-model="sections.precautions"
                       placeholder="List safety precautions and warnings"
@@ -338,8 +366,10 @@
                         <input
                           type="text"
                           id="preparedName"
+                          name="preparedByName"
                           x-model="authority.prepared"
                           placeholder="Full name"
+                          autocomplete="name"
                         />
                         <label for="preparedName" class="active">Name</label>
                       </div>
@@ -349,8 +379,10 @@
                         <input
                           type="text"
                           id="preparedDesig"
+                          name="preparedByDesignation"
                           x-model="authority.preparedDesig"
                           placeholder="Job title"
+                          autocomplete="organization-title"
                         />
                         <label for="preparedDesig" class="active"
                           >Designation</label
@@ -362,6 +394,7 @@
                     <input
                       type="date"
                       id="preparedDate"
+                      name="preparedDate"
                       x-model="dates.prepared"
                     />
                     <label for="preparedDate" class="active">Date</label>
@@ -375,8 +408,10 @@
                         <input
                           type="text"
                           id="reviewedName"
+                          name="reviewedByName"
                           x-model="authority.reviewed"
                           placeholder="Full name"
+                          autocomplete="name"
                         />
                         <label for="reviewedName" class="active">Name</label>
                       </div>
@@ -386,8 +421,10 @@
                         <input
                           type="text"
                           id="reviewedDesig"
+                          name="reviewedByDesignation"
                           x-model="authority.reviewedDesig"
                           placeholder="Job title"
+                          autocomplete="organization-title"
                         />
                         <label for="reviewedDesig" class="active"
                           >Designation</label
@@ -399,6 +436,7 @@
                     <input
                       type="date"
                       id="reviewedDate"
+                      name="reviewedDate"
                       x-model="dates.reviewed"
                     />
                     <label for="reviewedDate" class="active">Date</label>
@@ -412,8 +450,10 @@
                         <input
                           type="text"
                           id="approvedName"
+                          name="approvedByName"
                           x-model="authority.approved"
                           placeholder="Full name"
+                          autocomplete="name"
                         />
                         <label for="approvedName" class="active">Name</label>
                       </div>
@@ -423,8 +463,10 @@
                         <input
                           type="text"
                           id="approvedDesig"
+                          name="approvedByDesignation"
                           x-model="authority.approvedDesig"
                           placeholder="Job title"
+                          autocomplete="organization-title"
                         />
                         <label for="approvedDesig" class="active"
                           >Designation</label
@@ -436,6 +478,7 @@
                     <input
                       type="date"
                       id="approvedDate"
+                      name="approvedDate"
                       x-model="dates.approved"
                     />
                     <label for="approvedDate" class="active">Date</label>
@@ -445,35 +488,43 @@
                 <!-- Action Buttons -->
                 <div class="section action-buttons">
                   <button
+                    type="button"
                     @click="printSOP()"
                     class="btn blue waves-effect waves-light"
                     :disabled="!title"
+                    aria-label="Print SOP document"
                   >
                     <i class="material-icons left">print</i>
                     Print SOP
                   </button>
 
                   <button
+                    type="button"
                     @click="copySOP()"
                     class="btn green waves-effect waves-light"
                     :disabled="!title"
+                    aria-label="Copy SOP to Word format"
                   >
                     <i class="material-icons left">content_copy</i>
                     Copy to Word
                   </button>
 
                   <button
+                    type="button"
                     @click="exportData()"
                     class="btn orange waves-effect waves-light"
                     :disabled="!title"
+                    aria-label="Export SOP as JSON file"
                   >
                     <i class="material-icons left">save_alt</i>
                     Export JSON
                   </button>
 
                   <button
+                    type="button"
                     @click="resetForm()"
                     class="btn red waves-effect waves-light"
+                    aria-label="Reset form to default values"
                   >
                     <i class="material-icons left">refresh</i>
                     Reset
@@ -481,7 +532,7 @@
                 </div>
 
                 <!-- Status Indicator -->
-                <div class="status-indicator">
+                <div class="status-indicator" role="status" aria-live="polite">
                   <template x-if="!title">
                     <div class="chip blue lighten-4">
                       <i class="material-icons tiny">info_outline</i>
@@ -518,7 +569,12 @@
                 </div>
               </div>
 
-              <div id="preview-container" class="preview-container">
+              <div
+                id="preview-container"
+                class="preview-container"
+                role="region"
+                aria-label="SOP document preview"
+              >
                 <div id="preview" class="preview-content">
                   <!-- SOP Title -->
                   <div class="sop-header">
@@ -527,56 +583,60 @@
 
                   <!-- Institution Details Table -->
                   <table class="sop-table">
-                    <tr>
-                      <td class="label-cell">Institution</td>
-                      <td
-                        class="value-cell"
-                        x-text="institute.name || '________________'"
-                      ></td>
-                    </tr>
-                    <tr>
-                      <td class="label-cell">Department</td>
-                      <td
-                        class="value-cell"
-                        x-text="institute.dept || '________________'"
-                      ></td>
-                    </tr>
-                    <tr>
-                      <td class="label-cell">SOP Title</td>
-                      <td
-                        class="value-cell"
-                        x-text="title || '________________'"
-                      ></td>
-                    </tr>
+                    <tbody>
+                      <tr>
+                        <td class="label-cell">Institution</td>
+                        <td
+                          class="value-cell"
+                          x-text="institute.name || '________________'"
+                        ></td>
+                      </tr>
+                      <tr>
+                        <td class="label-cell">Department</td>
+                        <td
+                          class="value-cell"
+                          x-text="institute.dept || '________________'"
+                        ></td>
+                      </tr>
+                      <tr>
+                        <td class="label-cell">SOP Title</td>
+                        <td
+                          class="value-cell"
+                          x-text="title || '________________'"
+                        ></td>
+                      </tr>
+                    </tbody>
                   </table>
 
                   <!-- Metadata Table -->
                   <table class="sop-table">
-                    <tr>
-                      <td class="label-cell" style="width: 25%">SOP No.</td>
-                      <td
-                        class="value-cell"
-                        style="width: 25%"
-                        x-text="metadata.sopNumber || '________________'"
-                      ></td>
-                      <td class="label-cell" style="width: 25%">
-                        Effective Date
-                      </td>
-                      <td
-                        class="value-cell"
-                        style="width: 25%"
-                        x-text="metadata.effectiveDate || '________________'"
-                      ></td>
-                    </tr>
-                    <tr>
-                      <td class="label-cell">Revision No.</td>
-                      <td class="value-cell">________________</td>
-                      <td class="label-cell">To Be Reviewed On</td>
-                      <td
-                        class="value-cell"
-                        x-text="metadata.nextReviewDate || '________________'"
-                      ></td>
-                    </tr>
+                    <tbody>
+                      <tr>
+                        <td class="label-cell" style="width: 25%">SOP No.</td>
+                        <td
+                          class="value-cell"
+                          style="width: 25%"
+                          x-text="metadata.sopNumber || '________________'"
+                        ></td>
+                        <td class="label-cell" style="width: 25%">
+                          Effective Date
+                        </td>
+                        <td
+                          class="value-cell"
+                          style="width: 25%"
+                          x-text="metadata.effectiveDate || '________________'"
+                        ></td>
+                      </tr>
+                      <tr>
+                        <td class="label-cell">Revision No.</td>
+                        <td class="value-cell">________________</td>
+                        <td class="label-cell">To Be Reviewed On</td>
+                        <td
+                          class="value-cell"
+                          x-text="metadata.nextReviewDate || '________________'"
+                        ></td>
+                      </tr>
+                    </tbody>
                   </table>
 
                   <!-- Purpose -->
@@ -632,53 +692,55 @@
 
                   <!-- Signature Table -->
                   <table class="signature-table">
-                    <tr>
-                      <td class="signature-cell">
-                        <div class="signature-label">Prepared By</div>
-                        <div
-                          class="signature-name"
-                          x-text="authority.prepared || '________________'"
-                        ></div>
-                        <div
-                          class="signature-desig"
-                          x-text="authority.preparedDesig"
-                        ></div>
-                        <div class="signature-date">
-                          Date:
-                          <span x-text="dates.prepared || '________'"></span>
-                        </div>
-                      </td>
-                      <td class="signature-cell">
-                        <div class="signature-label">Checked By</div>
-                        <div
-                          class="signature-name"
-                          x-text="authority.reviewed || '________________'"
-                        ></div>
-                        <div
-                          class="signature-desig"
-                          x-text="authority.reviewedDesig"
-                        ></div>
-                        <div class="signature-date">
-                          Date:
-                          <span x-text="dates.reviewed || '________'"></span>
-                        </div>
-                      </td>
-                      <td class="signature-cell">
-                        <div class="signature-label">Authorized By</div>
-                        <div
-                          class="signature-name"
-                          x-text="authority.approved || '________________'"
-                        ></div>
-                        <div
-                          class="signature-desig"
-                          x-text="authority.approvedDesig"
-                        ></div>
-                        <div class="signature-date">
-                          Date:
-                          <span x-text="dates.approved || '________'"></span>
-                        </div>
-                      </td>
-                    </tr>
+                    <tbody>
+                      <tr>
+                        <td class="signature-cell">
+                          <div class="signature-label">Prepared By</div>
+                          <div
+                            class="signature-name"
+                            x-text="authority.prepared || '________________'"
+                          ></div>
+                          <div
+                            class="signature-desig"
+                            x-text="authority.preparedDesig"
+                          ></div>
+                          <div class="signature-date">
+                            Date:
+                            <span x-text="dates.prepared || '________'"></span>
+                          </div>
+                        </td>
+                        <td class="signature-cell">
+                          <div class="signature-label">Checked By</div>
+                          <div
+                            class="signature-name"
+                            x-text="authority.reviewed || '________________'"
+                          ></div>
+                          <div
+                            class="signature-desig"
+                            x-text="authority.reviewedDesig"
+                          ></div>
+                          <div class="signature-date">
+                            Date:
+                            <span x-text="dates.reviewed || '________'"></span>
+                          </div>
+                        </td>
+                        <td class="signature-cell">
+                          <div class="signature-label">Authorized By</div>
+                          <div
+                            class="signature-name"
+                            x-text="authority.approved || '________________'"
+                          ></div>
+                          <div
+                            class="signature-desig"
+                            x-text="authority.approvedDesig"
+                          ></div>
+                          <div class="signature-date">
+                            Date:
+                            <span x-text="dates.approved || '________'"></span>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
                   </table>
 
                   <!-- End Marker -->
@@ -716,7 +778,7 @@
     </div>
 
     <!-- Toast Container for Notifications -->
-    <div id="toast-container"></div>
+    <div id="toast-container" role="alert" aria-live="assertive"></div>
 
     <!-- Scripts - CRITICAL LOADING ORDER -->
 
