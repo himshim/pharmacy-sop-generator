@@ -114,17 +114,17 @@ window.sopApp = function () {
     /* =========================
        EVENTS
     ========================= */
-    departmentChanged(e) {
-      this.department = e.target.value;
-      this.loadDepartment();
-    },
+departmentChanged() {
+  // x-model already updated this.department
+  this.loadDepartment();
+},
 
-    sopChanged(e) {
-      this.sopKey = e.target.value;
-      if (this.sopKey) {
-        this.loadSOP(this.sopKey);
-      }
-    },
+sopChanged() {
+  // x-model already updated this.sopKey
+  if (this.sopKey) {
+    this.loadSOP(this.sopKey);
+  }
+},
 
     /* =========================
        DATA LOADING
